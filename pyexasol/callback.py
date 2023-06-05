@@ -42,6 +42,15 @@ def export_to_pandas(pipe, dst, **kwargs):
     return pandas.read_csv(pipe, skip_blank_lines=False, **kwargs)
 
 
+def export_to_polars(pipe, dst, **kwargs):
+    """
+    Basic example how to export into Polars DataFrame
+    Custom params for "read_csv" may be passed in **kwargs
+    """
+    import polars
+    return polars.read_csv(pipe, try_parse_dates=True, **kwargs)
+
+
 def export_to_file(pipe, dst):
     """
     Basic example how to export into file or file-like object opened in binary mode
@@ -84,6 +93,19 @@ def import_from_pandas(pipe, src, **kwargs):
         return src.to_csv(wrapped_pipe, header=False, index=False, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC, **kwargs)
     else:
         return src.to_csv(wrapped_pipe, header=False, index=False, line_terminator='\n', quoting=csv.QUOTE_NONNUMERIC, **kwargs)
+
+
+def import_from_polars(pipe, src, **kwargs):
+    """
+    Basic example how to import from Polars DataFrame
+    Custom params for "write_csv" may be passed in **kwargs
+    """
+    import polars
+
+    if not isinstance(src, polars.DataFrame):
+        raise ValueError('Data source is not polars.DataFrame')
+
+    return src.write_csv(has_header=False, date_format="%Y-%m-%d", datetime_format="%Y-%m-%d %H:%M:%S%.f", **kwargs)
 
 
 def import_from_file(pipe, src):

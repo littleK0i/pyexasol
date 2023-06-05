@@ -58,6 +58,7 @@ Please read "Best practices" manual page to learn how to use PyEXASOL with maxim
 
     extras_require={
         'pandas': ['pandas'],
+        'polars': ['polars'],
         'ujson': ['ujson'],
         'rapidjson': ['python-rapidjson'],
         'orjson': ['orjson>=3.6'],

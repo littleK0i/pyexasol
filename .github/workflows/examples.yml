@@ -48,7 +48,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: "Install dependencies (Python ${{ matrix.python-version }} Exasol ${{ matrix.exasol-tag }})"
-        run: pip install -e .[pandas,ujson,rapidjson,orjson,examples]
+        run: pip install -e .[pandas,polars,ujson,rapidjson,orjson,examples]
 
       - name: "Wait for Exasol container (Python ${{ matrix.python-version }} Exasol ${{ matrix.exasol-tag }})"
         run: python examples/_wait_container.py
@@ -75,6 +75,7 @@ jobs:
           python examples/b04_parallel_import.py
           python examples/b05_parallel_export_import.py
           python examples/b06_http_transport_errors.py
+          python examples/b07_polars.py
           python examples/c01_redundancy.py
           python examples/c02_edge_case.py
           python examples/c03_db2_compat.py
