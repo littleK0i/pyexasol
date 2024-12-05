@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="grass" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Best Practices - pyexasol</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Dependencies" href="dependencies.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=83eaa723" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    
+    <meta property="og:type" content="website"/><meta property="og:title" content="Best Practices"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/light-exasol-logo.svg" alt="pyexasol" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/dark-exasol-logo.svg" alt="pyexasol" height="28" loading="lazy" />
+      <strong>pyexasol</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-cpu" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5.75V2h3V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75V5h1.25a.75.75 0 0 1 0 1.5H14v3h1.25a.75.75 0 0 1 0 1.5H14v1.25A1.75 1.75 0 0 1 12.25 14H11v1.25a.75.75 0 0 1-1.5 0V14h-3v1.25a.75.75 0 0 1-1.5 0V14H3.75A1.75 1.75 0 0 1 2 12.25V11H.75a.75.75 0 0 1 0-1.5H2v-3H.75a.75.75 0 0 1 0-1.5H2V3.75C2 2.784 2.784 2 3.75 2H5V.75a.75.75 0 0 1 1.5 0Zm5.75 11.75a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25ZM5.75 5h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-4.5A.75.75 0 0 1 5.75 5Zm.75 4.5h3v-3h-3Z"></path></svg> API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes/changelog.html">Changes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#enable-compression-for-wifi-connections">Enable Compression for WiFi Connections</a></li>
+<li><a class="reference internal" href="#use-http-transport-for-big-volumes-of-data">Use HTTP Transport for Big Volumes of Data</a></li>
+<li><a class="reference internal" href="#prefer-iterator-syntax-to-fetch-result-sets">Prefer Iterator Syntax to Fetch Result Sets</a></li>
+<li><a class="reference internal" href="#avoid-using-insert-prepared-statement-to-import-raw-values-in-sql">Avoid Using INSERT Prepared Statement to Import Raw Values in SQL</a></li>
+<li><a class="reference internal" href="#always-specify-full-connection-string-for-exasol-cluster">Always Specify Full Connection String for Exasol Cluster</a></li>
+<li><a class="reference internal" href="#consider-faster-json-parsing-libraries">Consider Faster JSON-Parsing Libraries</a><ul>
+<li><a class="reference internal" href="#id1">rapidjson</a></li>
+<li><a class="reference internal" href="#id2">ujson</a></li>
+<li><a class="reference internal" href="#id3">orjson</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#use-meta-functions-to-perform-lock-free-meta-data-requests">Use <code class="docutils literal notranslate"><span class="pre">.meta</span></code> Functions to Perform Lock-Free Meta Data Requests</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">pyexasol</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Best Practices</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="best-practices">
+<h1>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h1>
+<p>This page explains how to use PyEXASOL with maximum efficiency.</p>
+<section id="enable-compression-for-wifi-connections">
+<h2>Enable Compression for WiFi Connections<a class="headerlink" href="#enable-compression-for-wifi-connections" title="Link to this heading">¶</a></h2>
+<p>Wireless network bandwidth is usually the main bottleneck for laptops. <code class="docutils literal notranslate"><span class="pre">Compression</span></code> flag enables zlib compression both for common fetching and for <a class="reference internal" href="http_transport.html#http-transport"><span class="std std-ref">HTTP Transport</span></a> It may improve overall performance by factor 4-8x.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">C</span> <span class="o">=</span> <span class="n">pyexasol</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">...</span> <span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="use-http-transport-for-big-volumes-of-data">
+<h2>Use HTTP Transport for Big Volumes of Data<a class="headerlink" href="#use-http-transport-for-big-volumes-of-data" title="Link to this heading">¶</a></h2>
+<p>It is okay to use common fetching for small data sets up to 1M of records.</p>
+<p>For large data sets you should always consider <a class="reference internal" href="http_transport.html#http-transport"><span class="std std-ref">HTTP Transport</span></a> (<code class="docutils literal notranslate"><span class="pre">export_*</span></code> and <code class="docutils literal notranslate"><span class="pre">import_*</span></code> functions). It scales well and prevents creation and destruction of intermediate Python objects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">pd</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">export_to_pandas</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span><span data-line="2"><span class="n">C</span><span class="o">.</span><span class="n">export_to_file</span><span class="p">(</span><span class="s1">&#39;my_file.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="n">C</span><span class="o">.</span><span class="n">import_from_pandas</span><span class="p">(</span><span class="n">pd</span><span class="p">,</span> <span class="s1">&#39;table&#39;</span><span class="p">)</span>
+</span><span data-line="5"><span class="n">C</span><span class="o">.</span><span class="n">import_from_file</span><span class="p">(</span><span class="s1">&#39;my_file.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;table&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="prefer-iterator-syntax-to-fetch-result-sets">
+<h2>Prefer Iterator Syntax to Fetch Result Sets<a class="headerlink" href="#prefer-iterator-syntax-to-fetch-result-sets" title="Link to this heading">¶</a></h2>
+<p>Iterator syntax is much shorter and easier to use. Also, there is no need to check for <code class="docutils literal notranslate"><span class="pre">None</span></code> or empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code> to detect end of result set.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">stmt</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">stmt</span><span class="p">:</span>
+</span><span data-line="4">    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="avoid-using-insert-prepared-statement-to-import-raw-values-in-sql">
+<h2>Avoid Using INSERT Prepared Statement to Import Raw Values in SQL<a class="headerlink" href="#avoid-using-insert-prepared-statement-to-import-raw-values-in-sql" title="Link to this heading">¶</a></h2>
+<p>PyEXASOL supports INSERT prepared statements via <code class="docutils literal notranslate"><span class="pre">.ext.insert_multi()</span></code> function. It works for small data sets and may provide some performance benefits.</p>
+<p>However, it is strongly advised to use more efficient <code class="docutils literal notranslate"><span class="pre">IMPORT</span></code> command and HTTP transport instead. It has a small overhead to initiate the communication, but large data sets will be transferred and processed much faster. It is also more CPU and memory efficient.</p>
+<p>You may use <code class="docutils literal notranslate"><span class="pre">import_from_iterable()</span></code> to insert data from list of rows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="2">    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">),</span>
+</span><span data-line="3">    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Gill&#39;</span><span class="p">),</span>
+</span><span data-line="4">    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Ben&#39;</span><span class="p">)</span>
+</span><span data-line="5"><span class="p">]</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="n">C</span><span class="o">.</span><span class="n">import_from_iterable</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;table&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Please note: if you want to INSERT single row only into Exasol, you’re probably doing something wrong. It is advised to use row-based databases (MySQL, PostgreSQL, etc) to track status of ETL jobs, etc.</p>
+</section>
+<section id="always-specify-full-connection-string-for-exasol-cluster">
+<h2>Always Specify Full Connection String for Exasol Cluster<a class="headerlink" href="#always-specify-full-connection-string-for-exasol-cluster" title="Link to this heading">¶</a></h2>
+<p>Unlike standard WebSocket Python driver, PyEXASOL supports full connection strings and node redundancy. For example, connection string <cite>myexasol1..5:8563</cite> will be expanded as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">myexasol1</span><span class="p">:</span><span class="mi">8563</span>
+</span><span data-line="2"><span class="n">myexasol2</span><span class="p">:</span><span class="mi">8563</span>
+</span><span data-line="3"><span class="n">myexasol3</span><span class="p">:</span><span class="mi">8563</span>
+</span><span data-line="4"><span class="n">myexasol4</span><span class="p">:</span><span class="mi">8563</span>
+</span><span data-line="5"><span class="n">myexasol5</span><span class="p">:</span><span class="mi">8563</span>
+</span></pre></div>
+</div>
+<p>PyEXASOL tries to connect to random node from this list. If it fails, it tries to connect to another random node. The main benefits of this approach are:</p>
+<ul class="simple">
+<li><p>Multiple connections are evenly distributed across the whole cluster;</p></li>
+<li><p>If one or more nodes are down, but the cluster is still operational due to redundancy, users will be able to connect without any problems or random error messages;</p></li>
+</ul>
+</section>
+<section id="consider-faster-json-parsing-libraries">
+<h2>Consider Faster JSON-Parsing Libraries<a class="headerlink" href="#consider-faster-json-parsing-libraries" title="Link to this heading">¶</a></h2>
+<p>PyEXASOL defaults to standard <cite>json &lt;https://docs.python.org/3/library/json.html&gt;</cite> library for best compatibility. It is sufficient for the majority of use-cases. However, if you are unhappy with HTTP transport, and you wish to load large amounts of data using standard fetching, we highly recommend trying faster JSON libraries.</p>
+<section id="id1">
+<h3><a class="reference external" href="https://github.com/python-rapidjson/python-rapidjson">rapidjson</a><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<p>Rapidjson provides significant performance boost and is well maintained by creators. PyEXASOL defaults to <code class="docutils literal notranslate"><span class="pre">number_mode=NM_NATIVE</span></code>. Exasol server wraps big decimals with quotes and returns as strings, so it should be a safe option.</p>
+<p><code class="docutils literal notranslate"><span class="pre">json_lib=[rapidjson]</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pyexasol[rapidjson]</span></code></p>
+</section>
+<section id="id2">
+<h3><a class="reference external" href="https://github.com/esnme/ultrajson">ujson</a><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>Ujson provides great performance in our internal tests. It was abandoned by maintainers for a while, but now it is supported once again.</p>
+<p><code class="docutils literal notranslate"><span class="pre">json_lib=[ujson]</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pyexasol[ujson]</span></code></p>
+</section>
+<section id="id3">
+<h3><a class="reference external" href="https://github.com/ijl/orjson">orjson</a><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>Orjson is the fastest modern JSON library.</p>
+<p><code class="docutils literal notranslate"><span class="pre">json_lib=[orjson]</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pyexasol[orjson]</span></code></p>
+<p>You may try any other json library. All you need to do is to overload <code class="docutils literal notranslate"><span class="pre">_init_json()</span></code> method in <code class="docutils literal notranslate"><span class="pre">ExaConnection</span></code>.</p>
+</section>
+</section>
+<section id="use-meta-functions-to-perform-lock-free-meta-data-requests">
+<h2>Use <code class="docutils literal notranslate"><span class="pre">.meta</span></code> Functions to Perform Lock-Free Meta Data Requests<a class="headerlink" href="#use-meta-functions-to-perform-lock-free-meta-data-requests" title="Link to this heading">¶</a></h2>
+<p>It is quite common for Exasol system views to become locked by DML statements, which prevents clients from retrieving metadata.</p>
+<p>In order to mitigate this problem, Exasol provided special SQL hint described in <cite>IDEA-476 &lt;https://www.exasol.com/support/browse/IDEA-476&gt;</cite> which is available in latest versions. It does not require user to enable “snapshot transaction” mode for the whole session. Currently this is the best way to access meta data using WebSocket protocol.</p>
+<p>Also, it is possible to get SQL result set column structure without executing the actual query. This method relies on prepared statements and it is also free from locks.</p>
+<p>Few examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Get SQL result set column structure without executing the actual query</span>
+</span><span data-line="2"><span class="n">C</span><span class="o">.</span><span class="n">sql_columns</span><span class="p">(</span><span class="s1">&#39;SELECT user_id, user_name FROM users&#39;</span><span class="p">)</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Get list of tables matching specified LIKE-pattern</span>
+</span><span data-line="5"><span class="n">C</span><span class="o">.</span><span class="n">list_tables</span><span class="p">(</span><span class="s1">&#39;MY_SCHEMA&#39;</span><span class="p">,</span> <span class="s1">&#39;USER_%&#39;</span><span class="p">)</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="c1"># Get list of views matching specified LIKE-pattern</span>
+</span><span data-line="8"><span class="n">C</span><span class="o">.</span><span class="n">list_views</span><span class="p">(</span><span class="s1">&#39;MY_SCHEMA&#39;</span><span class="p">,</span> <span class="s1">&#39;USER_VIEW_%&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="dependencies.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Dependencies</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="examples.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Examples</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Exasol</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=e2e99575"></script></body>
+</html>

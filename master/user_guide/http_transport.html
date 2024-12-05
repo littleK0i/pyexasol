@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="grass" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HTTP Transport - pyexasol</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="HTTP Transport (parallel)" href="http_transport_parallel.html" /><link rel="prev" title="Encryption" href="encryption.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=83eaa723" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    
+    <meta property="og:type" content="website"/><meta property="og:title" content="HTTP Transport"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/light-exasol-logo.svg" alt="pyexasol" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/dark-exasol-logo.svg" alt="pyexasol" height="28" loading="lazy" />
+      <strong>pyexasol</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-cpu" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5.75V2h3V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75V5h1.25a.75.75 0 0 1 0 1.5H14v3h1.25a.75.75 0 0 1 0 1.5H14v1.25A1.75 1.75 0 0 1 12.25 14H11v1.25a.75.75 0 0 1-1.5 0V14h-3v1.25a.75.75 0 0 1-1.5 0V14H3.75A1.75 1.75 0 0 1 2 12.25V11H.75a.75.75 0 0 1 0-1.5H2v-3H.75a.75.75 0 0 1 0-1.5H2V3.75C2 2.784 2.784 2 3.75 2H5V.75a.75.75 0 0 1 1.5 0Zm5.75 11.75a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25ZM5.75 5h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-4.5A.75.75 0 0 1 5.75 5Zm.75 4.5h3v-3h-3Z"></path></svg> API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes/changelog.html">Changes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#">HTTP Transport</a></li>
+<li><a class="reference internal" href="#pre-defined-functions">Pre-defined Functions</a><ul>
+<li><a class="reference internal" href="#export-from-exasol-to-pandas">Export from Exasol to pandas</a></li>
+<li><a class="reference internal" href="#import-from-pandas-to-exasol">Import from pandas to Exasol</a></li>
+<li><a class="reference internal" href="#import-from-list-a-la-insert">Import from list (a-la INSERT)</a></li>
+<li><a class="reference internal" href="#import-from-generator">Import from generator</a></li>
+<li><a class="reference internal" href="#import-from-file">Import from file</a></li>
+<li><a class="reference internal" href="#export-to-file">Export to file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#parameters">Parameters</a><ul>
+<li><a class="reference internal" href="#import-params">import_params</a></li>
+<li><a class="reference internal" href="#export-params">export_params</a></li>
+<li><a class="reference internal" href="#the-comment-parameter-for-adding-comments-to-queries">The <cite>comment</cite> parameter, for adding comments to queries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-to-write-custom-export-import-functions">How to write custom EXPORT / IMPORT functions</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">pyexasol</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">HTTP Transport</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="http-transport">
+<span id="id1"></span><h1>HTTP Transport<a class="headerlink" href="#http-transport" title="Link to this heading">¶</a></h1>
+<p>The main purpose of HTTP transport is to reduce massive fetching overhead associated with large data sets (1M+ rows). It uses native Exasol commands <cite>EXPORT</cite> and <cite>IMPORT</cite> specifically designed to move large amounts of data. Data is transferred using CSV format with optional zlib compression.</p>
+<p>This is a powerful tool which helps to bypass the creation of intermediate Python objects altogether and dramatically increases performance.</p>
+<p>PyEXASOL offloads HTTP communication and decompression to a separate thread using the <a class="reference external" href="https://docs.python.org/3/library/threading.html">threading</a> module. The main thread deals with a simple <a class="reference external" href="https://docs.python.org/3/library/os.html#os.pipe">pipe</a> opened in binary mode.</p>
+<p>You may specify a custom <cite>callback</cite> function to read or write from the raw pipe and to apply complex logic. Use <cite>callback_params</cite> to pass additional parameters to the <cite>callback</cite> function (e.g. options for pandas).</p>
+<p>You may also specify <cite>import_params</cite> or <cite>export_params</cite> to alter the <cite>IMPORT</cite> or <cite>EXPORT</cite> query and modify the CSV data stream.</p>
+</section>
+<section id="pre-defined-functions">
+<h1>Pre-defined Functions<a class="headerlink" href="#pre-defined-functions" title="Link to this heading">¶</a></h1>
+<section id="export-from-exasol-to-pandas">
+<h2>Export from Exasol to pandas<a class="headerlink" href="#export-from-exasol-to-pandas" title="Link to this heading">¶</a></h2>
+<p>Export data from Exasol into <cite>pandas.DataFrame</cite>. You may use the <cite>callback_params</cite> argument to pass custom options for the pandas <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html">read_csv</a> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Read from SQL</span>
+</span><span data-line="2"><span class="n">pd</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">export_to_pandas</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM users&quot;</span><span class="p">)</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Read from table</span>
+</span><span data-line="5"><span class="n">pd</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">export_to_pandas</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="import-from-pandas-to-exasol">
+<h2>Import from pandas to Exasol<a class="headerlink" href="#import-from-pandas-to-exasol" title="Link to this heading">¶</a></h2>
+<p>Import data from <cite>pandas.DataFrame</cite> into Exasol table. You may use the <cite>callback_params</cite> argument to pass custom options for the pandas <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html">to_csv</a> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">C</span><span class="o">.</span><span class="n">import_from_pandas</span><span class="p">(</span><span class="n">pd</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="import-from-list-a-la-insert">
+<h2>Import from list (a-la INSERT)<a class="headerlink" href="#import-from-list-a-la-insert" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="2">    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;2018-01-01&#39;</span><span class="p">),</span>
+</span><span data-line="3">    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Gill&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;2018-02-01&#39;</span><span class="p">),</span>
+</span><span data-line="4"><span class="p">]</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="n">C</span><span class="o">.</span><span class="n">import_from_iterable</span><span class="p">(</span><span class="n">my_list</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="import-from-generator">
+<h2>Import from generator<a class="headerlink" href="#import-from-generator" title="Link to this heading">¶</a></h2>
+<p>This function is suitable for very big INSERTS as long as the generator returns rows one-by-one and does not run out of memory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">def</span> <span class="nf">my_generator</span><span class="p">():</span>
+</span><span data-line="2">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+</span><span data-line="3">        <span class="k">yield</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;2017-01-01&#39;</span><span class="p">)</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="n">C</span><span class="o">.</span><span class="n">import_from_iterable</span><span class="p">(</span><span class="n">my_generator</span><span class="p">(),</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="import-from-file">
+<h2>Import from file<a class="headerlink" href="#import-from-file" title="Link to this heading">¶</a></h2>
+<p>Import data from a file, path object, or file-like object opened in binary mode. You may import from process <cite>STDIN</cite> using <cite>sys.stdin.buffer</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Import from file defined with string path</span>
+</span><span data-line="2"><span class="n">C</span><span class="o">.</span><span class="n">import_from_file</span><span class="p">(</span><span class="s1">&#39;/test/my_file.csv&#39;</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Import from path object</span>
+</span><span data-line="5"><span class="n">C</span><span class="o">.</span><span class="n">import_from_file</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/test/my_file.csv&#39;</span><span class="p">),</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="c1"># Import from opened file</span>
+</span><span data-line="8"><span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/test/my_file.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+</span><span data-line="9"><span class="n">C</span><span class="o">.</span><span class="n">import_from_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span><span data-line="10"><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="c1"># Import from STDIN</span>
+</span><span data-line="13"><span class="n">C</span><span class="o">.</span><span class="n">import_from_file</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="export-to-file">
+<h2>Export to file<a class="headerlink" href="#export-to-file" title="Link to this heading">¶</a></h2>
+<p>Export data from Exasol into a file, path object, or file-like object opened in binary mode. You may export to process <cite>STDOUT</cite> using <cite>sys.stdout.buffer</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Export from file defined with string path</span>
+</span><span data-line="2"><span class="n">C</span><span class="o">.</span><span class="n">export_to_file</span><span class="p">(</span><span class="s1">&#39;my_file.csv&#39;</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Export into STDOUT</span>
+</span><span data-line="5"><span class="n">C</span><span class="o">.</span><span class="n">export_to_file</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="s2">&quot;users&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="parameters">
+<h1>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h1>
+<p>Please refer to the Exasol User Manual to learn more about <cite>IMPORT</cite> and <cite>EXPORT</cite> parameters.</p>
+<section id="import-params">
+<h2>import_params<a class="headerlink" href="#import-params" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>column_separator</cite></p></td>
+<td><p><cite>,</cite></p></td>
+<td><p>Column separator for CSV</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>column_delimiter</cite></p></td>
+<td><p><cite>“</cite></p></td>
+<td><p>Column delimiter for CSV (quoting)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>columns</cite></p></td>
+<td><p><cite>[‘id’, ‘name’]</cite></p></td>
+<td><p>List of table columns in the data source, useful if the column order of data source does not match the column order of Exasol table</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>csv_cols</cite></p></td>
+<td><p><cite>[“1..5”, “6 FORMAT=’999.99’”, “8”]</cite></p></td>
+<td><p>List of CSV columns with optional <a class="reference external" href="https://docs.exasol.com/sql_references/formatmodels.htm#NumericFormat">numeric</a> or <a class="reference external" href="https://docs.exasol.com/sql_references/formatmodels.htm#DateTimeFormat">date</a> formats</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>row_separator</cite></p></td>
+<td><p><cite>LF</cite></p></td>
+<td><p>Row separator for CSV (line-endings)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>encoding</cite></p></td>
+<td><p><cite>UTF8</cite></p></td>
+<td><p>File encoding</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>with_column_names</cite></p></td>
+<td><p><cite>True</cite></p></td>
+<td><p>Add column names as the first line, useful for Pandas</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>null</cite></p></td>
+<td><p><cite>N</cite></p></td>
+<td><p>Custom <cite>NULL</cite> value</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>delimit</cite></p></td>
+<td><p><cite>AUTO</cite></p></td>
+<td><p>Delimiter mode: <cite>AUTO</cite>, <cite>ALWAYS</cite>, <cite>NEVER</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>format</cite></p></td>
+<td><p><cite>gz</cite></p></td>
+<td><p>Import file or stream compressed with <cite>gz</cite>, <cite>bzip2</cite>, <cite>zip</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><cite>comment</cite></p></td>
+<td><p><cite>This is a query description</cite></p></td>
+<td><p>Add a comment before the beginning of the query</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="export-params">
+<h2>export_params<a class="headerlink" href="#export-params" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>column_separator</cite></p></td>
+<td><p><cite>,</cite></p></td>
+<td><p>Column separator for CSV</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>column_delimiter</cite></p></td>
+<td><p><cite>“</cite></p></td>
+<td><p>Column delimiter for CSV (quoting)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>columns</cite></p></td>
+<td><p><cite>[‘id’, ‘name’]</cite></p></td>
+<td><p>List of table columns, useful to reorder table columns during export from table</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>csv_cols</cite></p></td>
+<td><p><cite>[“1..5”, “6 FORMAT=’999.99’”, “8”]</cite></p></td>
+<td><p>List of CSV columns with optional <a class="reference external" href="https://docs.exasol.com/sql_references/formatmodels.htm#NumericFormat">numeric</a> or <a class="reference external" href="https://docs.exasol.com/sql_references/formatmodels.htm#DateTimeFormat">date</a> formats</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>row_separator</cite></p></td>
+<td><p><cite>LF</cite></p></td>
+<td><p>Row separator for CSV (line-endings)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>encoding</cite></p></td>
+<td><p><cite>UTF8</cite></p></td>
+<td><p>File encoding</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>skip</cite></p></td>
+<td><p><cite>1</cite></p></td>
+<td><p>How many first rows to skip, useful for skipping header</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>null</cite></p></td>
+<td><p><cite>N</cite></p></td>
+<td><p>Custom <cite>NULL</cite> value</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>trim</cite></p></td>
+<td><p><cite>TRIM</cite></p></td>
+<td><p>Trim mode: <cite>TRIM</cite>, <cite>RTRIM</cite>, <cite>LTRIM</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>format</cite></p></td>
+<td><p><cite>gz</cite></p></td>
+<td><p>Export file or stream compressed with <cite>gz</cite>, <cite>bzip2</cite>, <cite>zip</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><cite>comment</cite></p></td>
+<td><p><cite>This is a query description</cite></p></td>
+<td><p>Add a comment before the beginning of the query</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="the-comment-parameter-for-adding-comments-to-queries">
+<h2>The <cite>comment</cite> parameter, for adding comments to queries<a class="headerlink" href="#the-comment-parameter-for-adding-comments-to-queries" title="Link to this heading">¶</a></h2>
+<p>For any <cite>export_*</cite> or <cite>import_*</cite> call, you can add a comment that will be inserted before the beginning of the query.</p>
+<p>This can be used for profiling and auditing. Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">C</span><span class="o">.</span><span class="n">import_from_file</span><span class="p">(</span><span class="s1">&#39;/test/my_file.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;&#39;</span>
+</span><span data-line="2"><span class="s1">This comment will be inserted before the query.</span>
+</span><span data-line="3"><span class="s1">This query is importing user from CSV.</span>
+</span><span data-line="4"><span class="s1">&#39;&#39;&#39;</span><span class="p">})</span>
+</span></pre></div>
+</div>
+<p>The comment is inserted as a block comment (<cite>/* &lt;comment&gt; */</cite>). The block comment closing sequence (<cite>*/</cite>) is forbidden in the comment.</p>
+</section>
+</section>
+<section id="how-to-write-custom-export-import-functions">
+<h1>How to write custom EXPORT / IMPORT functions<a class="headerlink" href="#how-to-write-custom-export-import-functions" title="Link to this heading">¶</a></h1>
+<p>A full collection of pre-defined callback functions is available in <code class="docutils literal notranslate"><span class="pre">callback.py</span></code> module.</p>
+<p>Example of a callback exporting into a basic Python list.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Define callback function</span>
+</span><span data-line="2"><span class="k">def</span> <span class="nf">export_to_list</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="3">    <span class="n">wrapped_pipe</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span data-line="4">    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">wrapped_pipe</span><span class="p">,</span> <span class="n">lineterminator</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="5">
+</span><span data-line="6">    <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">]</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="c1"># Run EXPORT using the defined callback function</span>
+</span><span data-line="9"><span class="n">C</span><span class="o">.</span><span class="n">export_to_callback</span><span class="p">(</span><span class="n">export_to_list</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;my_table&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Example of a callback importing from Pandas into Exasol.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">df</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">&gt;</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="k">def</span> <span class="nf">import_from_pandas</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="4">    <span class="n">wrapped_pipe</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span data-line="5">    <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">wrapped_pipe</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_NONNUMERIC</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="c1"># Run IMPORT using the defined callback function</span>
+</span><span data-line="8"><span class="n">C</span><span class="o">.</span><span class="n">export_from_callback</span><span class="p">(</span><span class="n">import_from_pandas</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="s1">&#39;my_table&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="encryption.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Encryption</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="http_transport_parallel.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">HTTP Transport (parallel)</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Exasol</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=e2e99575"></script></body>
+</html>

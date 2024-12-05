@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="grass" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DB-API 2.0 Compatibility - pyexasol</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Design" href="design.html" /><link rel="prev" title="SQL Formatting" href="sql_formatting.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=83eaa723" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    
+    <meta property="og:type" content="website"/><meta property="og:title" content="DB-API 2.0 Compatibility"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/light-exasol-logo.svg" alt="pyexasol" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/dark-exasol-logo.svg" alt="pyexasol" height="28" loading="lazy" />
+      <strong>pyexasol</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-cpu" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5.75V2h3V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75V5h1.25a.75.75 0 0 1 0 1.5H14v3h1.25a.75.75 0 0 1 0 1.5H14v1.25A1.75 1.75 0 0 1 12.25 14H11v1.25a.75.75 0 0 1-1.5 0V14h-3v1.25a.75.75 0 0 1-1.5 0V14H3.75A1.75 1.75 0 0 1 2 12.25V11H.75a.75.75 0 0 1 0-1.5H2v-3H.75a.75.75 0 0 1 0-1.5H2V3.75C2 2.784 2.784 2 3.75 2H5V.75a.75.75 0 0 1 1.5 0Zm5.75 11.75a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25ZM5.75 5h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-4.5A.75.75 0 0 1 5.75 5Zm.75 4.5h3v-3h-3Z"></path></svg> API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes/changelog.html">Changes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#alternatives">Alternatives</a><ul>
+<li><a class="reference internal" href="#exasol-websocket-driver">Exasol WebSocket Driver</a></li>
+<li><a class="reference internal" href="#turboodbc">TurboODBC</a></li>
+<li><a class="reference internal" href="#pyodbc">Pyodbc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rationale">Rationale</a></li>
+<li><a class="reference internal" href="#exasol-specific-problems-with-db-api-2-0">Exasol Specific Problems with DB-API 2.0</a></li>
+<li><a class="reference internal" href="#ideas-for-migration">Ideas for Migration</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">pyexasol</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">DB-API 2.0 Compatibility</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="db-api-2-0-compatibility">
+<h1>DB-API 2.0 Compatibility<a class="headerlink" href="#db-api-2-0-compatibility" title="Link to this heading">¶</a></h1>
+<p><a class="reference external" href="publicinterface">PyEXASOL</a> is similar to <a class="reference external" href="https://www.python.org/dev/peps/pep-0249/">PEP-249 DB-API 2.0</a> specification, but it does not strictly follow it. This page explains the reasons behind this decision and your alternative(s) if you need or want to use a DBAPI2 compatible driver.</p>
+<section id="alternatives">
+<h2>Alternatives<a class="headerlink" href="#alternatives" title="Link to this heading">¶</a></h2>
+<section id="exasol-websocket-driver">
+<h3>Exasol WebSocket Driver<a class="headerlink" href="#exasol-websocket-driver" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">pyexasol</span></code> package includes a DBAPI2 compatible driver facade, located in the <code class="docutils literal notranslate"><span class="pre">exasol.driver</span></code> package. However, using pyexasol directly will generally yield better performance when utilizing Exasol in an OLAP manner, which is likely the typical use case.</p>
+<p>That said, in specific scenarios, the DBAPI2 API can be advantageous or even necessary. This is particularly true when integrating with “DB-Agnostic” frameworks. In such cases, you can just import and use the DBAPI2 compliant facade as illustrated in the example below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">exasol.driver.websocket.dbapi2</span> <span class="kn">import</span> <span class="n">connect</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">connection</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">dsn</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;exasol&#39;</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s1">&#39;TEST&#39;</span><span class="p">)</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="k">with</span> <span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+</span><span data-line="6">    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT 1;&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="turboodbc">
+<h3>TurboODBC<a class="headerlink" href="#turboodbc" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/blue-yonder/turbodbc">TurboODBC</a> offers an alternative ODBC-based, DBAPI2-compatible driver, which supports the Exasol database.</p>
+</section>
+<section id="pyodbc">
+<h3>Pyodbc<a class="headerlink" href="#pyodbc" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/mkleehammer/pyodbc">Pyodbc</a> provides an ODBC-based, DBAPI2-compatible driver. For further details, please refer to our <a class="reference external" href="https://github.com/mkleehammer/pyodbc/wiki">wiki</a>.</p>
+</section>
+</section>
+<section id="rationale">
+<h2>Rationale<a class="headerlink" href="#rationale" title="Link to this heading">¶</a></h2>
+<p>PEP-249 was originally created for general purpose OLTP row store databases running on a single server: SQLite, MySQL, PostgreSQL, MSSQL, Oracle, etc.</p>
+<p>It does not work very well for OLAP columnar databases (like Exasol) running on multiple servers because it was never designed for this purpose. Despite both OLTP DBMS and OLAP DBMS using SQL for communication, the foundation and usage patterns are completely different.</p>
+<p>When people use DB-API 2.0 drivers, they tend to skip manuals and automatically apply OLTP usage patterns without even realizing how much they lose in terms of performance and efficiency.</p>
+<p>A good example is <a class="reference external" href="https://github.com/blue-yonder/turbodbc">TurboODBC</a>. Very few know that it is possible to fetch data as <a class="reference external" href="https://turbodbc.readthedocs.io/en/latest/pages/advanced_usage.html#numpy-support">NumPy arrays</a> and as <a class="reference external" href="https://turbodbc.readthedocs.io/en/latest/pages/advanced_usage.html#apache-arrow-support">Apache Arrow</a>.</p>
+<p>Minor intentional incompatibilities with DB-API 2.0 force users to look through the manual and to learn about <a class="reference external" href="../../docs/BEST_PRACTICES.md">better ways</a> of getting the job done.</p>
+</section>
+<section id="exasol-specific-problems-with-db-api-2-0">
+<h2>Exasol Specific Problems with DB-API 2.0<a class="headerlink" href="#exasol-specific-problems-with-db-api-2-0" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Default <code class="docutils literal notranslate"><span class="pre">autocommit=off</span></code> prevents indexes from being stored permanently on disk for <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> statements;</p></li>
+<li><p>Default <code class="docutils literal notranslate"><span class="pre">autocommit=off</span></code> may hold transaction for a long time (e.g., opened connection in an IPython notebook);</p></li>
+<li><p>Python object creation and destruction overhead is very significant when you process large amounts of data;</p></li>
+<li><p>Functions <code class="docutils literal notranslate"><span class="pre">fetchmany()</span></code> and <code class="docutils literal notranslate"><span class="pre">executemany()</span></code> have significant additional overhead related to JSON serialization;</p></li>
+<li><p>Exasol WebSocket protocol provides more information about columns than is normally available in <code class="docutils literal notranslate"><span class="pre">.description</span></code> property of <code class="docutils literal notranslate"><span class="pre">cursor</span></code>;</p></li>
+</ul>
+<p>We also wanted to discourage:</p>
+<ul class="simple">
+<li><p>“Drop-in” replacements of other Exasol drivers without reading the manual;</p></li>
+<li><p>Usage of OLTP-oriented ORM (e.g., SQLAlchemy, Django);</p></li>
+</ul>
+<p>Unlike common OLTP databases, each OLAP database is very unique. It is important to understand implementation details and features of the specific database and to build applications around those features. Generalization of any kind and the “copy-paste” approach may lead to abysmal performance in trivial cases.</p>
+</section>
+<section id="ideas-for-migration">
+<h2>Ideas for Migration<a class="headerlink" href="#ideas-for-migration" title="Link to this heading">¶</a></h2>
+<p>Find <code class="docutils literal notranslate"><span class="pre">cursor()</span></code> calls:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">cur</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span><span data-line="2"><span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span><span data-line="3"><span class="n">data</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Replace with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">st</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span><span data-line="2"><span class="n">data</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Find <code class="docutils literal notranslate"><span class="pre">.description</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">cur</span><span class="o">.</span><span class="n">description</span><span class="p">))))</span>
+</span></pre></div>
+</div>
+<p>Replace with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">columns</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">column_names</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Find all reads into pandas:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span><span data-line="2"><span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Replace with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">C</span><span class="o">.</span><span class="n">export_to_pandas</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM table&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>…etc.</p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="sql_formatting.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">SQL Formatting</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="design.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Design</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Exasol</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=e2e99575"></script></body>
+</html>
