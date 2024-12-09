@@ -105,260 +105,278 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.formatter</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">string</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">re</span>
+<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">re</span>
+</span><span data-line="2"><span class="kn">import</span> <span class="nn">string</span>
 </span><span data-line="3">
 </span><span data-line="4">
 <div class="viewcode-block" id="ExaFormatter">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter">[docs]</a>
 </span><span data-line="5"><span class="k">class</span> <span class="nc">ExaFormatter</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
 </span><span data-line="6"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="7"><span class="sd">    :class:`pyexasol.ExaFormatter` is a subclass of :class:`string.Formatter` designed to prevent SQL injections in Exasol dynamic SQL queries.</span>
-</span><span data-line="8"><span class="sd">    </span>
-</span><span data-line="9"><span class="sd">    Note:</span>
-</span><span data-line="10"><span class="sd">        It introduces set of placeholders to prevent SQL injections specifically</span>
-</span><span data-line="11"><span class="sd">        in Exasol dynamic SQL queries. It also completely disables `format_spec`</span>
-</span><span data-line="12"><span class="sd">        section of standard formatting since it has no use in context of</span>
-</span><span data-line="13"><span class="sd">        SQL queries and may cause more harm than good.</span>
+</span><span data-line="7"><span class="sd">        :class:`pyexasol.ExaFormatter` is a subclass of :class:`string.Formatter` designed to prevent SQL injections in Exasol dynamic SQL queries.</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="sd">        Note:</span>
+</span><span data-line="10"><span class="sd">            It introduces set of placeholders to prevent SQL injections specifically</span>
+</span><span data-line="11"><span class="sd">            in Exasol dynamic SQL queries. It also completely disables `format_spec`</span>
+</span><span data-line="12"><span class="sd">            section of standard formatting since it has no use in context of</span>
+</span><span data-line="13"><span class="sd">            SQL queries and may cause more harm than good.</span>
 </span><span data-line="14">
-</span><span data-line="15"><span class="sd">You may access these functions using `.format` property of connection object. Example:</span>
+</span><span data-line="15"><span class="sd">    You may access these functions using `.format` property of connection object. Example:</span>
 </span><span data-line="16">
-</span><span data-line="17"><span class="sd">    Examples:</span>
+</span><span data-line="17"><span class="sd">        Examples:</span>
 </span><span data-line="18">
-</span><span data-line="19"><span class="sd">        &gt;&gt;&gt; C = pyexasol.connect(...)</span>
-</span><span data-line="20"><span class="sd">        ... print(C.format.escape(&#39;abc&#39;))</span>
+</span><span data-line="19"><span class="sd">            &gt;&gt;&gt; C = pyexasol.connect(...)</span>
+</span><span data-line="20"><span class="sd">            ... print(C.format.escape(&#39;abc&#39;))</span>
 </span><span data-line="21"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="22">    <span class="n">safe_ident_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[A-Za-z_][A-Za-z0-9_]*$&#39;</span><span class="p">)</span>
-</span><span data-line="23">    <span class="n">safe_decimal_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(\+|-)?[0-9]+(\.[0-9]+)?$&#39;</span><span class="p">)</span>
-</span><span data-line="24">    <span class="n">safe_float_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(\+|-)?[0-9]+(\.[0-9]+((e|E)(\+|-)[0-9]+)?)?$&#39;</span><span class="p">)</span>
-</span><span data-line="25">
-</span><span data-line="26">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
-</span><span data-line="27">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
-</span><span data-line="28">
-</span><span data-line="29">        <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="30">            <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">quote</span><span class="p">,</span>
-</span><span data-line="31">            <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_decimal</span><span class="p">,</span>
-</span><span data-line="32">            <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_float</span><span class="p">,</span>
-</span><span data-line="33">            <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_ident</span><span class="p">,</span>
-</span><span data-line="34">            <span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">quote_ident</span><span class="p">,</span>
-</span><span data-line="35">            <span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="nb">str</span>
-</span><span data-line="36">        <span class="p">}</span>
-</span><span data-line="37">
-</span><span data-line="38">        <span class="bp">self</span><span class="o">.</span><span class="n">default_conversion</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
-</span><span data-line="39">
-</span><span data-line="40">        <span class="c1"># Set default treatment for identifiers passed as strings to relevant functions</span>
-</span><span data-line="41">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;quote_ident&#39;</span><span class="p">]:</span>
-</span><span data-line="42">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quote_ident</span>  <span class="c1"># Identifiers will be quoted and escaped</span>
-</span><span data-line="43">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident_value</span> <span class="o">=</span> <span class="nb">str</span>         <span class="c1"># Identifier values will be left unchanged</span>
-</span><span data-line="44">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="45">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_ident</span>   <span class="c1"># Identifiers will only be checked for safety</span>
-</span><span data-line="46">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident_value</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span>   <span class="c1"># Identifier values will be transformed to upper-case</span>
-</span><span data-line="47">
+</span><span data-line="22">
+</span><span data-line="23">    <span class="n">safe_ident_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z_][A-Za-z0-9_]*$&quot;</span><span class="p">)</span>
+</span><span data-line="24">    <span class="n">safe_decimal_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(\+|-)?[0-9]+(\.[0-9]+)?$&quot;</span><span class="p">)</span>
+</span><span data-line="25">    <span class="n">safe_float_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(\+|-)?[0-9]+(\.[0-9]+((e|E)(\+|-)[0-9]+)?)?$&quot;</span><span class="p">)</span>
+</span><span data-line="26">
+</span><span data-line="27">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+</span><span data-line="28">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+</span><span data-line="29">
+</span><span data-line="30">        <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="31">            <span class="s2">&quot;s&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">quote</span><span class="p">,</span>
+</span><span data-line="32">            <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_decimal</span><span class="p">,</span>
+</span><span data-line="33">            <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_float</span><span class="p">,</span>
+</span><span data-line="34">            <span class="s2">&quot;i&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">safe_ident</span><span class="p">,</span>
+</span><span data-line="35">            <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">quote_ident</span><span class="p">,</span>
+</span><span data-line="36">            <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="37">        <span class="p">}</span>
+</span><span data-line="38">
+</span><span data-line="39">        <span class="bp">self</span><span class="o">.</span><span class="n">default_conversion</span> <span class="o">=</span> <span class="s2">&quot;s&quot;</span>
+</span><span data-line="40">
+</span><span data-line="41">        <span class="c1"># Set default treatment for identifiers passed as strings to relevant functions</span>
+</span><span data-line="42">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;quote_ident&quot;</span><span class="p">]:</span>
+</span><span data-line="43">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="44">                <span class="bp">self</span><span class="o">.</span><span class="n">quote_ident</span>
+</span><span data-line="45">            <span class="p">)</span>  <span class="c1"># Identifiers will be quoted and escaped</span>
+</span><span data-line="46">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident_value</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="47">                <span class="nb">str</span>  <span class="c1"># Identifier values will be left unchanged</span>
+</span><span data-line="48">            <span class="p">)</span>
+</span><span data-line="49">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="50">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="51">                <span class="bp">self</span><span class="o">.</span><span class="n">safe_ident</span>
+</span><span data-line="52">            <span class="p">)</span>  <span class="c1"># Identifiers will only be checked for safety</span>
+</span><span data-line="53">            <span class="bp">self</span><span class="o">.</span><span class="n">default_format_ident_value</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="54">                <span class="nb">str</span><span class="o">.</span><span class="n">upper</span>
+</span><span data-line="55">            <span class="p">)</span>  <span class="c1"># Identifier values will be transformed to upper-case</span>
+</span><span data-line="56">
 <div class="viewcode-block" id="ExaFormatter.format_field">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.format_field">[docs]</a>
-</span><span data-line="48">    <span class="k">def</span> <span class="nf">format_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
-</span><span data-line="49">        <span class="k">if</span> <span class="n">format_spec</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-</span><span data-line="50">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;format_spec is disabled for ExaFormatter&quot;</span><span class="p">)</span>
-</span><span data-line="51">
-</span><span data-line="52">        <span class="k">return</span> <span class="n">value</span></div>
+</span><span data-line="57">    <span class="k">def</span> <span class="nf">format_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
+</span><span data-line="58">        <span class="k">if</span> <span class="n">format_spec</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+</span><span data-line="59">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;format_spec is disabled for ExaFormatter&quot;</span><span class="p">)</span>
+</span><span data-line="60">
+</span><span data-line="61">        <span class="k">return</span> <span class="n">value</span></div>
 
-</span><span data-line="53">
+</span><span data-line="62">
 <div class="viewcode-block" id="ExaFormatter.convert_field">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.convert_field">[docs]</a>
-</span><span data-line="54">    <span class="k">def</span> <span class="nf">convert_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">conversion</span><span class="p">):</span>
-</span><span data-line="55">        <span class="k">if</span> <span class="n">conversion</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="56">            <span class="n">conversion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_conversion</span>
-</span><span data-line="57">
-</span><span data-line="58">        <span class="k">if</span> <span class="n">conversion</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span><span class="p">:</span>
-</span><span data-line="59">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown conversion </span><span class="si">{</span><span class="n">conversion</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="60">
-</span><span data-line="61">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span data-line="62">            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
-</span><span data-line="63">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trying to format an empty list&quot;</span><span class="p">)</span>
-</span><span data-line="64">            <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">conversions</span><span class="p">[</span><span class="n">conversion</span><span class="p">](</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])</span>
-</span><span data-line="65">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="66">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span><span class="p">[</span><span class="n">conversion</span><span class="p">](</span><span class="n">value</span><span class="p">)</span></div>
+</span><span data-line="63">    <span class="k">def</span> <span class="nf">convert_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">conversion</span><span class="p">):</span>
+</span><span data-line="64">        <span class="k">if</span> <span class="n">conversion</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="65">            <span class="n">conversion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_conversion</span>
+</span><span data-line="66">
+</span><span data-line="67">        <span class="k">if</span> <span class="n">conversion</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span><span class="p">:</span>
+</span><span data-line="68">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown conversion </span><span class="si">{</span><span class="n">conversion</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="69">
+</span><span data-line="70">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span data-line="71">            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+</span><span data-line="72">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trying to format an empty list&quot;</span><span class="p">)</span>
+</span><span data-line="73">            <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">conversions</span><span class="p">[</span><span class="n">conversion</span><span class="p">](</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])</span>
+</span><span data-line="74">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="75">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span><span class="p">[</span><span class="n">conversion</span><span class="p">](</span><span class="n">value</span><span class="p">)</span></div>
 
-</span><span data-line="67">
+</span><span data-line="76">
 <div class="viewcode-block" id="ExaFormatter.escape">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.escape">[docs]</a>
-</span><span data-line="68">    <span class="nd">@classmethod</span>
-</span><span data-line="69">    <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="70"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="71"><span class="sd">        Takes a raw value and converts it into an and escaped string.</span>
-</span><span data-line="72">
-</span><span data-line="73"><span class="sd">        Args:</span>
-</span><span data-line="74"><span class="sd">            val: Value to be escaped.</span>
-</span><span data-line="75">
-</span><span data-line="76"><span class="sd">        Returns:</span>
-</span><span data-line="77"><span class="sd">            A string where all single quotes ``&#39;`` have been replaced</span>
-</span><span data-line="78"><span class="sd">            with two single quotes ``&#39;&#39;``.</span>
-</span><span data-line="79"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="80">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">)</span></div>
-
+</span><span data-line="77">    <span class="nd">@classmethod</span>
+</span><span data-line="78">    <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="79"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="80"><span class="sd">        Takes a raw value and converts it into an and escaped string.</span>
 </span><span data-line="81">
+</span><span data-line="82"><span class="sd">        Args:</span>
+</span><span data-line="83"><span class="sd">            val: Value to be escaped.</span>
+</span><span data-line="84">
+</span><span data-line="85"><span class="sd">        Returns:</span>
+</span><span data-line="86"><span class="sd">            A string where all single quotes ``&#39;`` have been replaced</span>
+</span><span data-line="87"><span class="sd">            with two single quotes ``&#39;&#39;``.</span>
+</span><span data-line="88"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="89">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">)</span></div>
+
+</span><span data-line="90">
 <div class="viewcode-block" id="ExaFormatter.escape_ident">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.escape_ident">[docs]</a>
-</span><span data-line="82">    <span class="nd">@classmethod</span>
-</span><span data-line="83">    <span class="k">def</span> <span class="nf">escape_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="84"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="85"><span class="sd">        Takes a raw value and converts it into an and escaped string.</span>
-</span><span data-line="86">
-</span><span data-line="87"><span class="sd">        Args:</span>
-</span><span data-line="88"><span class="sd">            val: Value to be escaped.</span>
-</span><span data-line="89">
-</span><span data-line="90"><span class="sd">        Returns:</span>
-</span><span data-line="91"><span class="sd">            A string where all double quotes ``&quot;`` have been replaced </span>
-</span><span data-line="92"><span class="sd">            with two double quotes ``&quot;&quot;``.</span>
-</span><span data-line="93"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="94">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span></div>
-
+</span><span data-line="91">    <span class="nd">@classmethod</span>
+</span><span data-line="92">    <span class="k">def</span> <span class="nf">escape_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="93"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="94"><span class="sd">        Takes a raw value and converts it into an and escaped string.</span>
 </span><span data-line="95">
+</span><span data-line="96"><span class="sd">        Args:</span>
+</span><span data-line="97"><span class="sd">            val: Value to be escaped.</span>
+</span><span data-line="98">
+</span><span data-line="99"><span class="sd">        Returns:</span>
+</span><span data-line="100"><span class="sd">            A string where all double quotes ``&quot;`` have been replaced</span>
+</span><span data-line="101"><span class="sd">            with two double quotes ``&quot;&quot;``.</span>
+</span><span data-line="102"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="103">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span></div>
+
+</span><span data-line="104">
 <div class="viewcode-block" id="ExaFormatter.escape_like">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.escape_like">[docs]</a>
-</span><span data-line="96">    <span class="nd">@classmethod</span>
-</span><span data-line="97">    <span class="k">def</span> <span class="nf">escape_like</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="98"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="99"><span class="sd">        Escape LIKE-patterns.</span>
-</span><span data-line="100">
-</span><span data-line="101"><span class="sd">        Args:</span>
-</span><span data-line="102"><span class="sd">            val: Value to be escaped.</span>
-</span><span data-line="103">
-</span><span data-line="104"><span class="sd">        Returns:</span>
-</span><span data-line="105"><span class="sd">            A string where all double quotes ``\\`` have been replaced </span>
-</span><span data-line="106"><span class="sd">            with ``\\\\``, where ``%`` have been replaced with ``\%``,</span>
-</span><span data-line="107"><span class="sd">            where ``_`` have been replaced with ``\_``.</span>
-</span><span data-line="108"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="109">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\%&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\_&#39;</span><span class="p">)</span></div>
+</span><span data-line="105">    <span class="nd">@classmethod</span>
+</span><span data-line="106">    <span class="k">def</span> <span class="nf">escape_like</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="107"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="108"><span class="sd">        Escape LIKE-patterns.</span>
+</span><span data-line="109">
+</span><span data-line="110"><span class="sd">        Args:</span>
+</span><span data-line="111"><span class="sd">            val: Value to be escaped.</span>
+</span><span data-line="112">
+</span><span data-line="113"><span class="sd">        Returns:</span>
+</span><span data-line="114"><span class="sd">            A string where all double quotes ``\\`` have been replaced</span>
+</span><span data-line="115"><span class="sd">            with ``\\\\``, where ``%`` have been replaced with ``\\%``,</span>
+</span><span data-line="116"><span class="sd">            where ``_`` have been replaced with ``\\_``.</span>
+</span><span data-line="117"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="118">        <span class="k">return</span> <span class="p">(</span>
+</span><span data-line="119">            <span class="bp">cls</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="120">            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="121">            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\%&quot;</span><span class="p">)</span>
+</span><span data-line="122">            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\_&quot;</span><span class="p">)</span>
+</span><span data-line="123">        <span class="p">)</span></div>
 
-</span><span data-line="110">
+</span><span data-line="124">
 <div class="viewcode-block" id="ExaFormatter.quote">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.quote">[docs]</a>
-</span><span data-line="111">    <span class="nd">@classmethod</span>
-</span><span data-line="112">    <span class="k">def</span> <span class="nf">quote</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="113"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="114"><span class="sd">        Escapes a string using :meth:`pyexasol.ExaFormatter.escape` and wraps it in single quotes ``&#39;``.</span>
-</span><span data-line="115"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="116">        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="117">            <span class="k">return</span> <span class="s1">&#39;NULL&#39;</span>
-</span><span data-line="118">
-</span><span data-line="119">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
+</span><span data-line="125">    <span class="nd">@classmethod</span>
+</span><span data-line="126">    <span class="k">def</span> <span class="nf">quote</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="127"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="128"><span class="sd">        Escapes a string using :meth:`pyexasol.ExaFormatter.escape` and wraps it in single quotes ``&#39;``.</span>
+</span><span data-line="129"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="130">        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="131">            <span class="k">return</span> <span class="s2">&quot;NULL&quot;</span>
+</span><span data-line="132">
+</span><span data-line="133">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
-</span><span data-line="120">
+</span><span data-line="134">
 <div class="viewcode-block" id="ExaFormatter.quote_ident">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.quote_ident">[docs]</a>
-</span><span data-line="121">    <span class="nd">@classmethod</span>
-</span><span data-line="122">    <span class="k">def</span> <span class="nf">quote_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="123"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="124"><span class="sd">        Escapes an object or a tuple of objects using :meth:`pyexasol.ExaFormatter.escape_ident` and wraps it in double quotes ``&quot;``.</span>
-</span><span data-line="125">
-</span><span data-line="126"><span class="sd">        Args:</span>
-</span><span data-line="127"><span class="sd">            val: Raw identifier(s) to be escaped.</span>
-</span><span data-line="128">
-</span><span data-line="129"><span class="sd">        Returns:</span>
-</span><span data-line="130"><span class="sd">            str: The formatted and quoted identifier, or joined identifiers if </span>
-</span><span data-line="131"><span class="sd">            a tuple was provided.</span>
-</span><span data-line="132"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="133">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="134">            <span class="k">return</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">quote_ident</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
-</span><span data-line="135">
-</span><span data-line="136">        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">escape_ident</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;&#39;</span></div>
+</span><span data-line="135">    <span class="nd">@classmethod</span>
+</span><span data-line="136">    <span class="k">def</span> <span class="nf">quote_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="137"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="138"><span class="sd">        Escapes an object or a tuple of objects using :meth:`pyexasol.ExaFormatter.escape_ident` and wraps it in double quotes ``&quot;``.</span>
+</span><span data-line="139">
+</span><span data-line="140"><span class="sd">        Args:</span>
+</span><span data-line="141"><span class="sd">            val: Raw identifier(s) to be escaped.</span>
+</span><span data-line="142">
+</span><span data-line="143"><span class="sd">        Returns:</span>
+</span><span data-line="144"><span class="sd">            str: The formatted and quoted identifier, or joined identifiers if</span>
+</span><span data-line="145"><span class="sd">            a tuple was provided.</span>
+</span><span data-line="146"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="147">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="148">            <span class="k">return</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">quote_ident</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+</span><span data-line="149">
+</span><span data-line="150">        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">escape_ident</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">&quot;&#39;</span></div>
 
-</span><span data-line="137">
+</span><span data-line="151">
 <div class="viewcode-block" id="ExaFormatter.safe_ident">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.safe_ident">[docs]</a>
-</span><span data-line="138">    <span class="nd">@classmethod</span>
-</span><span data-line="139">    <span class="k">def</span> <span class="nf">safe_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="140"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="141"><span class="sd">        Convert a raw identifier safely.</span>
-</span><span data-line="142">
-</span><span data-line="143"><span class="sd">        Args:</span>
-</span><span data-line="144"><span class="sd">            val (str or tuple): Raw identifier(s).</span>
-</span><span data-line="145">
-</span><span data-line="146"><span class="sd">        Returns:</span>
-</span><span data-line="147"><span class="sd">            Validates identifier as string.</span>
-</span><span data-line="148">
-</span><span data-line="149"><span class="sd">        Raises:</span>
-</span><span data-line="150"><span class="sd">            ValueError If passed values is not a valid identifier (e.g. contains spaces)</span>
-</span><span data-line="151">
-</span><span data-line="152"><span class="sd">        Warning:</span>
-</span><span data-line="153"><span class="sd">            It puts it into SQL query without any quotting.</span>
-</span><span data-line="154"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="155">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="156">            <span class="k">return</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">safe_ident</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
-</span><span data-line="157">
-</span><span data-line="158">        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="152">    <span class="nd">@classmethod</span>
+</span><span data-line="153">    <span class="k">def</span> <span class="nf">safe_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="154"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="155"><span class="sd">        Convert a raw identifier safely.</span>
+</span><span data-line="156">
+</span><span data-line="157"><span class="sd">        Args:</span>
+</span><span data-line="158"><span class="sd">            val (str or tuple): Raw identifier(s).</span>
 </span><span data-line="159">
-</span><span data-line="160">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">safe_ident_regexp</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-</span><span data-line="161">            <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
-</span><span data-line="162">                <span class="n">parts</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
-</span><span data-line="163">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe identifier. Please use tuple to pass schema names. &quot;</span>
-</span><span data-line="164">                                 <span class="sa">f</span><span class="s2">&quot;Example: (&#39;</span><span class="si">{</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span>
-</span><span data-line="165">            <span class="k">elif</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
-</span><span data-line="166">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe identifier. Please use &#39;quote_ident&#39; or &#39;!q&#39; conversion &quot;</span>
-</span><span data-line="167">                                 <span class="sa">f</span><span class="s2">&quot;to pass identifiers with lowercase or special characters.&quot;</span><span class="p">)</span>
-</span><span data-line="168">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="169">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe identifier&quot;</span><span class="p">)</span>
-</span><span data-line="170">
-</span><span data-line="171">        <span class="k">return</span> <span class="n">val</span></div>
+</span><span data-line="160"><span class="sd">        Returns:</span>
+</span><span data-line="161"><span class="sd">            Validates identifier as string.</span>
+</span><span data-line="162">
+</span><span data-line="163"><span class="sd">        Raises:</span>
+</span><span data-line="164"><span class="sd">            ValueError If passed values is not a valid identifier (e.g. contains spaces)</span>
+</span><span data-line="165">
+</span><span data-line="166"><span class="sd">        Warning:</span>
+</span><span data-line="167"><span class="sd">            It puts it into SQL query without any quotting.</span>
+</span><span data-line="168"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="169">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="170">            <span class="k">return</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">safe_ident</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+</span><span data-line="171">
+</span><span data-line="172">        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="173">
+</span><span data-line="174">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">safe_ident_regexp</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+</span><span data-line="175">            <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+</span><span data-line="176">                <span class="n">parts</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+</span><span data-line="177">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="178">                    <span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe identifier. Please use tuple to pass schema names. &quot;</span>
+</span><span data-line="179">                    <span class="sa">f</span><span class="s2">&quot;Example: (&#39;</span><span class="si">{</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+</span><span data-line="180">                <span class="p">)</span>
+</span><span data-line="181">            <span class="k">elif</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+</span><span data-line="182">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="183">                    <span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe identifier. Please use &#39;quote_ident&#39; or &#39;!q&#39; conversion &quot;</span>
+</span><span data-line="184">                    <span class="sa">f</span><span class="s2">&quot;to pass identifiers with lowercase or special characters.&quot;</span>
+</span><span data-line="185">                <span class="p">)</span>
+</span><span data-line="186">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="187">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe identifier&quot;</span><span class="p">)</span>
+</span><span data-line="188">
+</span><span data-line="189">        <span class="k">return</span> <span class="n">val</span></div>
 
-</span><span data-line="172">
+</span><span data-line="190">
 <div class="viewcode-block" id="ExaFormatter.safe_float">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.safe_float">[docs]</a>
-</span><span data-line="173">    <span class="nd">@classmethod</span>
-</span><span data-line="174">    <span class="k">def</span> <span class="nf">safe_float</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="175"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="176"><span class="sd">        Convert a float safely to string.</span>
-</span><span data-line="177">
-</span><span data-line="178"><span class="sd">        Args:</span>
-</span><span data-line="179"><span class="sd">            val: Float value to convert.</span>
-</span><span data-line="180">
-</span><span data-line="181"><span class="sd">        Returns:</span>
-</span><span data-line="182"><span class="sd">            Validates identifier as string.</span>
-</span><span data-line="183">
-</span><span data-line="184"><span class="sd">        Raises:</span>
-</span><span data-line="185"><span class="sd">            ValueError: If value is not valid, e.g.: ``+infinity`` or ``-infinity``.</span>
-</span><span data-line="186"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="187">        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="188">            <span class="k">return</span> <span class="s1">&#39;NULL&#39;</span>
-</span><span data-line="189">
-</span><span data-line="190">        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-</span><span data-line="191">
-</span><span data-line="192">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">safe_float_regexp</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-</span><span data-line="193">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">] is not a safe float&#39;</span><span class="p">)</span>
-</span><span data-line="194">
-</span><span data-line="195">        <span class="k">return</span> <span class="n">val</span></div>
+</span><span data-line="191">    <span class="nd">@classmethod</span>
+</span><span data-line="192">    <span class="k">def</span> <span class="nf">safe_float</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="193"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="194"><span class="sd">        Convert a float safely to string.</span>
+</span><span data-line="195">
+</span><span data-line="196"><span class="sd">        Args:</span>
+</span><span data-line="197"><span class="sd">            val: Float value to convert.</span>
+</span><span data-line="198">
+</span><span data-line="199"><span class="sd">        Returns:</span>
+</span><span data-line="200"><span class="sd">            Validates identifier as string.</span>
+</span><span data-line="201">
+</span><span data-line="202"><span class="sd">        Raises:</span>
+</span><span data-line="203"><span class="sd">            ValueError: If value is not valid, e.g.: ``+infinity`` or ``-infinity``.</span>
+</span><span data-line="204"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="205">        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="206">            <span class="k">return</span> <span class="s2">&quot;NULL&quot;</span>
+</span><span data-line="207">
+</span><span data-line="208">        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="209">
+</span><span data-line="210">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">safe_float_regexp</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+</span><span data-line="211">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe float&quot;</span><span class="p">)</span>
+</span><span data-line="212">
+</span><span data-line="213">        <span class="k">return</span> <span class="n">val</span></div>
 
-</span><span data-line="196">
+</span><span data-line="214">
 <div class="viewcode-block" id="ExaFormatter.safe_decimal">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.safe_decimal">[docs]</a>
-</span><span data-line="197">    <span class="nd">@classmethod</span>
-</span><span data-line="198">    <span class="k">def</span> <span class="nf">safe_decimal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-</span><span data-line="199"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="200"><span class="sd">        Convert a decimal safely to string.</span>
-</span><span data-line="201">
-</span><span data-line="202"><span class="sd">        Args:</span>
-</span><span data-line="203"><span class="sd">            val: Decimal value to convert.</span>
-</span><span data-line="204">
-</span><span data-line="205"><span class="sd">        Returns:</span>
-</span><span data-line="206"><span class="sd">            Validates identifier as string.</span>
-</span><span data-line="207">
-</span><span data-line="208"><span class="sd">        Raises:</span>
-</span><span data-line="209"><span class="sd">            ValueError: If value is not valid.</span>
-</span><span data-line="210"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="211">        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="212">            <span class="k">return</span> <span class="s1">&#39;NULL&#39;</span>
-</span><span data-line="213">
-</span><span data-line="214">        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-</span><span data-line="215">
-</span><span data-line="216">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">safe_decimal_regexp</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-</span><span data-line="217">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">] is not a safe integer&#39;</span><span class="p">)</span>
-</span><span data-line="218">
-</span><span data-line="219">        <span class="k">return</span> <span class="n">val</span></div>
+</span><span data-line="215">    <span class="nd">@classmethod</span>
+</span><span data-line="216">    <span class="k">def</span> <span class="nf">safe_decimal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="217"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="218"><span class="sd">        Convert a decimal safely to string.</span>
+</span><span data-line="219">
+</span><span data-line="220"><span class="sd">        Args:</span>
+</span><span data-line="221"><span class="sd">            val: Decimal value to convert.</span>
+</span><span data-line="222">
+</span><span data-line="223"><span class="sd">        Returns:</span>
+</span><span data-line="224"><span class="sd">            Validates identifier as string.</span>
+</span><span data-line="225">
+</span><span data-line="226"><span class="sd">        Raises:</span>
+</span><span data-line="227"><span class="sd">            ValueError: If value is not valid.</span>
+</span><span data-line="228"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="229">        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="230">            <span class="k">return</span> <span class="s2">&quot;NULL&quot;</span>
+</span><span data-line="231">
+</span><span data-line="232">        <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="233">
+</span><span data-line="234">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">safe_decimal_regexp</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+</span><span data-line="235">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value [</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">] is not a safe integer&quot;</span><span class="p">)</span>
+</span><span data-line="236">
+</span><span data-line="237">        <span class="k">return</span> <span class="n">val</span></div>
 
-</span><span data-line="220">
-</span><span data-line="221">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="222">        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+</span><span data-line="238">
+</span><span data-line="239">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="240">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

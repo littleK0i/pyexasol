@@ -114,7 +114,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="7">
 <div class="viewcode-block" id="ExaExtension">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension">[docs]</a>
-</span><span data-line="8"><span class="k">class</span> <span class="nc">ExaExtension</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span data-line="8"><span class="k">class</span> <span class="nc">ExaExtension</span><span class="p">:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="10"><span class="sd">    This class extends the functionality of a simple SQL driver to address common Exasol-related problems.</span>
 </span><span data-line="11">
@@ -139,7 +139,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="28"><span class="sd">        Args:</span>
 </span><span data-line="29"><span class="sd">            object_name: Object name may be passed as tuple to specify custom schema.</span>
 </span><span data-line="30">
-</span><span data-line="31"><span class="sd">        Caution: </span>
+</span><span data-line="31"><span class="sd">        Caution:</span>
 </span><span data-line="32"><span class="sd">            **DEPRECATED**, please use ``.meta.sql_columns`` instead.</span>
 </span><span data-line="33"><span class="sd">        &quot;&quot;&quot;</span>
 </span><span data-line="34">        <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="n">object_name</span><span class="p">)</span>
@@ -155,487 +155,558 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="41"><span class="sd">        Args:</span>
 </span><span data-line="42"><span class="sd">            object_name: Object name may be passed as tuple to specify custom schema.</span>
 </span><span data-line="43">
-</span><span data-line="44"><span class="sd">        Caution: </span>
+</span><span data-line="44"><span class="sd">        Caution:</span>
 </span><span data-line="45"><span class="sd">            **DEPRECATED**, please use ``.meta.sql_columns`` instead.</span>
 </span><span data-line="46">
 </span><span data-line="47"><span class="sd">        Note:</span>
 </span><span data-line="48"><span class="sd">            It relies on prepared statement which is closed immediately without execution</span>
 </span><span data-line="49"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="50">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="51">        <span class="n">columns</span> <span class="o">=</span> <span class="n">stmt</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
-</span><span data-line="52">        <span class="n">stmt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="53">
-</span><span data-line="54">        <span class="k">return</span> <span class="n">columns</span></div>
-
+</span><span data-line="50">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span>
+</span><span data-line="51">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">True</span>
+</span><span data-line="52">        <span class="p">)</span>
+</span><span data-line="53">        <span class="n">columns</span> <span class="o">=</span> <span class="n">stmt</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
+</span><span data-line="54">        <span class="n">stmt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span data-line="55">
+</span><span data-line="56">        <span class="k">return</span> <span class="n">columns</span></div>
+
+</span><span data-line="57">
 <div class="viewcode-block" id="ExaExtension.insert_multi">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.insert_multi">[docs]</a>
-</span><span data-line="56">    <span class="k">def</span> <span class="nf">insert_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="57"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="58"><span class="sd">        Insert a samll number of rows into a table using a prepared statement.</span>
-</span><span data-line="59">
-</span><span data-line="60"><span class="sd">        Args:</span>
-</span><span data-line="61"><span class="sd">            table_name:</span>
-</span><span data-line="62"><span class="sd">                Target table for INSERT.</span>
-</span><span data-line="63"><span class="sd">            data:</span>
-</span><span data-line="64"><span class="sd">                Source object implementing ``__iter__`` (e.g. list or tuple).</span>
-</span><span data-line="65"><span class="sd">            columns:</span>
-</span><span data-line="66"><span class="sd">                List of column names to specify custom order of columns.</span>
-</span><span data-line="67">
-</span><span data-line="68"><span class="sd">        Tip:</span>
-</span><span data-line="69"><span class="sd">            Compared to ``.import_from_iterable``, this method offers better performance for small data sets of 10,000 rows or fewer.</span>
-</span><span data-line="70">
-</span><span data-line="71"><span class="sd">            * Use ``.import_from_iterable`` for larger data sets and better memory efficiency</span>
-</span><span data-line="72"><span class="sd">            * Use ``.import_from_pandas`` to import from data frame regardless of its size</span>
-</span><span data-line="73">
-</span><span data-line="74"><span class="sd">            You may use &quot;columns&quot; argument to specify custom order of columns for insertion</span>
-</span><span data-line="75"><span class="sd">            If some columns are not included in this list, ``NULL`` or ``DEFAULT`` value will be used instead</span>
-</span><span data-line="76">
-</span><span data-line="77"><span class="sd">        Note:</span>
-</span><span data-line="78"><span class="sd">            Please note that data should be presented in a row format. You may use ``zip(*data_cols)`` to convert columnar format into row format.</span>
-</span><span data-line="79"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="80">
-</span><span data-line="81">        <span class="c1"># Convert possible iterator into list</span>
-</span><span data-line="82">        <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="83">
-</span><span data-line="84">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="85">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s2">&quot;At least one row of data is required for insert_multi()&quot;</span><span class="p">)</span>
-</span><span data-line="86">
-</span><span data-line="87">        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="88">            <span class="s1">&#39;table_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="n">table_name</span><span class="p">),</span>
-</span><span data-line="89">            <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span data-line="90">            <span class="s1">&#39;values&#39;</span><span class="p">:</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;?&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-</span><span data-line="91">        <span class="p">}</span>
-</span><span data-line="92">
-</span><span data-line="93">        <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
-</span><span data-line="94">            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">columns</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span data-line="95">
-</span><span data-line="96">        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO </span><span class="si">{table_name!r}{columns!r}</span><span class="s2"> VALUES (</span><span class="si">{values!r}</span><span class="s2">)&quot;</span>
+</span><span data-line="58">    <span class="k">def</span> <span class="nf">insert_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="59"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="60"><span class="sd">        Insert a samll number of rows into a table using a prepared statement.</span>
+</span><span data-line="61">
+</span><span data-line="62"><span class="sd">        Args:</span>
+</span><span data-line="63"><span class="sd">            table_name:</span>
+</span><span data-line="64"><span class="sd">                Target table for INSERT.</span>
+</span><span data-line="65"><span class="sd">            data:</span>
+</span><span data-line="66"><span class="sd">                Source object implementing ``__iter__`` (e.g. list or tuple).</span>
+</span><span data-line="67"><span class="sd">            columns:</span>
+</span><span data-line="68"><span class="sd">                List of column names to specify custom order of columns.</span>
+</span><span data-line="69">
+</span><span data-line="70"><span class="sd">        Tip:</span>
+</span><span data-line="71"><span class="sd">            Compared to ``.import_from_iterable``, this method offers better performance for small data sets of 10,000 rows or fewer.</span>
+</span><span data-line="72">
+</span><span data-line="73"><span class="sd">            * Use ``.import_from_iterable`` for larger data sets and better memory efficiency</span>
+</span><span data-line="74"><span class="sd">            * Use ``.import_from_pandas`` to import from data frame regardless of its size</span>
+</span><span data-line="75">
+</span><span data-line="76"><span class="sd">            You may use &quot;columns&quot; argument to specify custom order of columns for insertion</span>
+</span><span data-line="77"><span class="sd">            If some columns are not included in this list, ``NULL`` or ``DEFAULT`` value will be used instead</span>
+</span><span data-line="78">
+</span><span data-line="79"><span class="sd">        Note:</span>
+</span><span data-line="80"><span class="sd">            Please note that data should be presented in a row format. You may use ``zip(*data_cols)`` to convert columnar format into row format.</span>
+</span><span data-line="81"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="82">
+</span><span data-line="83">        <span class="c1"># Convert possible iterator into list</span>
+</span><span data-line="84">        <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="85">
+</span><span data-line="86">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="87">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="88">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="89">                <span class="s2">&quot;At least one row of data is required for insert_multi()&quot;</span><span class="p">,</span>
+</span><span data-line="90">            <span class="p">)</span>
+</span><span data-line="91">
+</span><span data-line="92">        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="93">            <span class="s2">&quot;table_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="n">table_name</span><span class="p">),</span>
+</span><span data-line="94">            <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="95">            <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;?&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+</span><span data-line="96">        <span class="p">}</span>
 </span><span data-line="97">
-</span><span data-line="98">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="99">        <span class="n">stmt</span><span class="o">.</span><span class="n">execute_prepared</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="100">        <span class="n">stmt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="101">
-</span><span data-line="102">        <span class="k">return</span> <span class="n">stmt</span></div>
+</span><span data-line="98">        <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
+</span><span data-line="99">            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="100">                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">columns</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span>
+</span><span data-line="101">            <span class="p">)</span>
+</span><span data-line="102">
+</span><span data-line="103">        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO </span><span class="si">{table_name!r}{columns!r}</span><span class="s2"> VALUES (</span><span class="si">{values!r}</span><span class="s2">)&quot;</span>
+</span><span data-line="104">
+</span><span data-line="105">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span>
+</span><span data-line="106">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">True</span>
+</span><span data-line="107">        <span class="p">)</span>
+</span><span data-line="108">        <span class="n">stmt</span><span class="o">.</span><span class="n">execute_prepared</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="109">        <span class="n">stmt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="110">
+</span><span data-line="111">        <span class="k">return</span> <span class="n">stmt</span></div>
 
-</span><span data-line="103">
+</span><span data-line="112">
 <div class="viewcode-block" id="ExaExtension.get_sys_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_columns">[docs]</a>
-</span><span data-line="104">    <span class="k">def</span> <span class="nf">get_sys_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
-</span><span data-line="105"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="106"><span class="sd">        Get information about columns of table or view (SYS format)</span>
-</span><span data-line="107">
-</span><span data-line="108"><span class="sd">        Args:</span>
-</span><span data-line="109"><span class="sd">            object_name: Object name may be passed as tuple to specify custom schema.</span>
-</span><span data-line="110">
-</span><span data-line="111"><span class="sd">        Caution: </span>
-</span><span data-line="112"><span class="sd">            **DEPRECATED**, please use ``.meta.list_columns`` instead.</span>
-</span><span data-line="113"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="114">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="115">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">object_name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span data-line="116">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">object_name</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</span><span data-line="117">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="118">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
-</span><span data-line="119">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">object_name</span><span class="p">)</span>
-</span><span data-line="120">
-</span><span data-line="121">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
-</span><span data-line="122"><span class="s2">            SELECT c.column_name, c.column_type, c.column_maxsize, c.column_num_scale,</span>
-</span><span data-line="123"><span class="s2">                   c.column_is_nullable, c.column_is_distribution_key, c.column_default,</span>
-</span><span data-line="124"><span class="s2">                   c.column_comment, t.type_name</span>
-</span><span data-line="125"><span class="s2">            FROM EXA_ALL_COLUMNS c</span>
-</span><span data-line="126"><span class="s2">                JOIN EXA_SQL_TYPES t ON (c.column_type_id=t.type_id)</span>
-</span><span data-line="127"><span class="s2">            WHERE c.column_schema=</span><span class="si">{schema}</span>
-</span><span data-line="128"><span class="s2">                AND c.column_table=</span><span class="si">{object_name}</span>
-</span><span data-line="129"><span class="s2">            ORDER BY c.column_ordinal_position</span>
-</span><span data-line="130"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="113">    <span class="k">def</span> <span class="nf">get_sys_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
+</span><span data-line="114"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="115"><span class="sd">        Get information about columns of table or view (SYS format)</span>
+</span><span data-line="116">
+</span><span data-line="117"><span class="sd">        Args:</span>
+</span><span data-line="118"><span class="sd">            object_name: Object name may be passed as tuple to specify custom schema.</span>
+</span><span data-line="119">
+</span><span data-line="120"><span class="sd">        Caution:</span>
+</span><span data-line="121"><span class="sd">            **DEPRECATED**, please use ``.meta.list_columns`` instead.</span>
+</span><span data-line="122"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="123">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="124">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">object_name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="125">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="126">                <span class="n">object_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="127">            <span class="p">)</span>
+</span><span data-line="128">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="129">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
+</span><span data-line="130">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">object_name</span><span class="p">)</span>
 </span><span data-line="131">
-</span><span data-line="132">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;object_name&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">})</span>
-</span><span data-line="133">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-</span><span data-line="134">
-</span><span data-line="135">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
-</span><span data-line="136">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span data-line="137">                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_name&#39;</span><span class="p">],</span>
-</span><span data-line="138">                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;type_name&#39;</span><span class="p">],</span>
-</span><span data-line="139">                <span class="s1">&#39;sql_type&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_type&#39;</span><span class="p">],</span>
-</span><span data-line="140">                <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_maxsize&#39;</span><span class="p">],</span>
-</span><span data-line="141">                <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_num_scale&#39;</span><span class="p">],</span>
-</span><span data-line="142">                <span class="s1">&#39;nulls&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_is_nullable&#39;</span><span class="p">],</span>
-</span><span data-line="143">                <span class="s1">&#39;distribution_key&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_is_distribution_key&#39;</span><span class="p">],</span>
-</span><span data-line="144">                <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_default&#39;</span><span class="p">],</span>
-</span><span data-line="145">                <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;column_comment&#39;</span><span class="p">],</span>
-</span><span data-line="146">            <span class="p">})</span>
-</span><span data-line="147">
-</span><span data-line="148">        <span class="k">return</span> <span class="n">res</span></div>
+</span><span data-line="132">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
+</span><span data-line="133"><span class="s2">            SELECT c.column_name, c.column_type, c.column_maxsize, c.column_num_scale,</span>
+</span><span data-line="134"><span class="s2">                   c.column_is_nullable, c.column_is_distribution_key, c.column_default,</span>
+</span><span data-line="135"><span class="s2">                   c.column_comment, t.type_name</span>
+</span><span data-line="136"><span class="s2">            FROM EXA_ALL_COLUMNS c</span>
+</span><span data-line="137"><span class="s2">                JOIN EXA_SQL_TYPES t ON (c.column_type_id=t.type_id)</span>
+</span><span data-line="138"><span class="s2">            WHERE c.column_schema=</span><span class="si">{schema}</span>
+</span><span data-line="139"><span class="s2">                AND c.column_table=</span><span class="si">{object_name}</span>
+</span><span data-line="140"><span class="s2">            ORDER BY c.column_ordinal_position</span>
+</span><span data-line="141"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="142">
+</span><span data-line="143">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s2">&quot;object_name&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">})</span>
+</span><span data-line="144">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+</span><span data-line="145">
+</span><span data-line="146">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
+</span><span data-line="147">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="148">                <span class="p">{</span>
+</span><span data-line="149">                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_name&quot;</span><span class="p">],</span>
+</span><span data-line="150">                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;type_name&quot;</span><span class="p">],</span>
+</span><span data-line="151">                    <span class="s2">&quot;sql_type&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_type&quot;</span><span class="p">],</span>
+</span><span data-line="152">                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_maxsize&quot;</span><span class="p">],</span>
+</span><span data-line="153">                    <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_num_scale&quot;</span><span class="p">],</span>
+</span><span data-line="154">                    <span class="s2">&quot;nulls&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_is_nullable&quot;</span><span class="p">],</span>
+</span><span data-line="155">                    <span class="s2">&quot;distribution_key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_is_distribution_key&quot;</span><span class="p">],</span>
+</span><span data-line="156">                    <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_default&quot;</span><span class="p">],</span>
+</span><span data-line="157">                    <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;column_comment&quot;</span><span class="p">],</span>
+</span><span data-line="158">                <span class="p">}</span>
+</span><span data-line="159">            <span class="p">)</span>
+</span><span data-line="160">
+</span><span data-line="161">        <span class="k">return</span> <span class="n">res</span></div>
 
-</span><span data-line="149">
+</span><span data-line="162">
 <div class="viewcode-block" id="ExaExtension.get_sys_tables">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_tables">[docs]</a>
-</span><span data-line="150">    <span class="k">def</span> <span class="nf">get_sys_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table_name_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-</span><span data-line="151"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="152"><span class="sd">        Get information about tables in selected schema(SYS format)</span>
-</span><span data-line="153">
-</span><span data-line="154"><span class="sd">        Args:</span>
-</span><span data-line="155"><span class="sd">            schema:</span>
-</span><span data-line="156"><span class="sd">                -</span>
-</span><span data-line="157"><span class="sd">            table_name_prefix:</span>
-</span><span data-line="158"><span class="sd">                Output may be optionally filtered by table name prefix.</span>
-</span><span data-line="159">
-</span><span data-line="160"><span class="sd">        Caution: </span>
-</span><span data-line="161"><span class="sd">            **DEPRECATED**, please use ``.meta.list_tables`` instead.</span>
-</span><span data-line="162"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="163">        <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="164">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
-</span><span data-line="165">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="166">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
-</span><span data-line="167">
-</span><span data-line="168">        <span class="n">table_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">table_name_prefix</span><span class="p">)</span>
-</span><span data-line="169">        <span class="n">table_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">escape_like</span><span class="p">(</span><span class="n">table_name_prefix</span><span class="p">)</span>
-</span><span data-line="170">
-</span><span data-line="171">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
-</span><span data-line="172"><span class="s2">            SELECT *</span>
-</span><span data-line="173"><span class="s2">            FROM EXA_ALL_TABLES</span>
-</span><span data-line="174"><span class="s2">            WHERE table_schema=</span><span class="si">{schema}</span>
-</span><span data-line="175"><span class="s2">                AND table_name LIKE &#39;</span><span class="si">{table_name_prefix!r}</span><span class="s2">%&#39;</span>
-</span><span data-line="176"><span class="s2">            ORDER BY table_name ASC</span>
-</span><span data-line="177"><span class="s2">        &quot;&quot;&quot;</span>
-</span><span data-line="178">
-</span><span data-line="179">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;table_name_prefix&#39;</span><span class="p">:</span> <span class="n">table_name_prefix</span><span class="p">})</span>
-</span><span data-line="180">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-</span><span data-line="181">
-</span><span data-line="182">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
-</span><span data-line="183">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span data-line="184">                <span class="s1">&#39;table_name&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_name&#39;</span><span class="p">],</span>
-</span><span data-line="185">                <span class="s1">&#39;table_schema&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_schema&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_schema&#39;</span><span class="p">],</span>
-</span><span data-line="186">                <span class="s1">&#39;table_is_virtual&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_is_virtual&#39;</span><span class="p">],</span>
-</span><span data-line="187">                <span class="s1">&#39;table_has_distribution_key&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_has_distribution_key&#39;</span><span class="p">],</span>
-</span><span data-line="188">                <span class="s1">&#39;table_comment&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;table_comment&#39;</span><span class="p">],</span>
-</span><span data-line="189">            <span class="p">})</span>
-</span><span data-line="190">
-</span><span data-line="191">        <span class="k">return</span> <span class="n">res</span></div>
+</span><span data-line="163">    <span class="k">def</span> <span class="nf">get_sys_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span data-line="164"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="165"><span class="sd">        Get information about tables in selected schema(SYS format)</span>
+</span><span data-line="166">
+</span><span data-line="167"><span class="sd">        Args:</span>
+</span><span data-line="168"><span class="sd">            schema:</span>
+</span><span data-line="169"><span class="sd">                -</span>
+</span><span data-line="170"><span class="sd">            table_name_prefix:</span>
+</span><span data-line="171"><span class="sd">                Output may be optionally filtered by table name prefix.</span>
+</span><span data-line="172">
+</span><span data-line="173"><span class="sd">        Caution:</span>
+</span><span data-line="174"><span class="sd">            **DEPRECATED**, please use ``.meta.list_tables`` instead.</span>
+</span><span data-line="175"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="176">        <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="177">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
+</span><span data-line="178">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="179">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+</span><span data-line="180">
+</span><span data-line="181">        <span class="n">table_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="182">            <span class="n">table_name_prefix</span>
+</span><span data-line="183">        <span class="p">)</span>
+</span><span data-line="184">        <span class="n">table_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">escape_like</span><span class="p">(</span><span class="n">table_name_prefix</span><span class="p">)</span>
+</span><span data-line="185">
+</span><span data-line="186">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
+</span><span data-line="187"><span class="s2">            SELECT *</span>
+</span><span data-line="188"><span class="s2">            FROM EXA_ALL_TABLES</span>
+</span><span data-line="189"><span class="s2">            WHERE table_schema=</span><span class="si">{schema}</span>
+</span><span data-line="190"><span class="s2">                AND table_name LIKE &#39;</span><span class="si">{table_name_prefix!r}</span><span class="s2">%&#39;</span>
+</span><span data-line="191"><span class="s2">            ORDER BY table_name ASC</span>
+</span><span data-line="192"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="193">
+</span><span data-line="194">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span>
+</span><span data-line="195">            <span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s2">&quot;table_name_prefix&quot;</span><span class="p">:</span> <span class="n">table_name_prefix</span><span class="p">}</span>
+</span><span data-line="196">        <span class="p">)</span>
+</span><span data-line="197">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+</span><span data-line="198">
+</span><span data-line="199">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
+</span><span data-line="200">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="201">                <span class="p">{</span>
+</span><span data-line="202">                    <span class="s2">&quot;table_name&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="203">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="204">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="205">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_name&quot;</span><span class="p">]</span>
+</span><span data-line="206">                    <span class="p">),</span>
+</span><span data-line="207">                    <span class="s2">&quot;table_schema&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="208">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_schema&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="209">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="210">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_schema&quot;</span><span class="p">]</span>
+</span><span data-line="211">                    <span class="p">),</span>
+</span><span data-line="212">                    <span class="s2">&quot;table_is_virtual&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_is_virtual&quot;</span><span class="p">],</span>
+</span><span data-line="213">                    <span class="s2">&quot;table_has_distribution_key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_has_distribution_key&quot;</span><span class="p">],</span>
+</span><span data-line="214">                    <span class="s2">&quot;table_comment&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;table_comment&quot;</span><span class="p">],</span>
+</span><span data-line="215">                <span class="p">}</span>
+</span><span data-line="216">            <span class="p">)</span>
+</span><span data-line="217">
+</span><span data-line="218">        <span class="k">return</span> <span class="n">res</span></div>
 
-</span><span data-line="192">
+</span><span data-line="219">
 <div class="viewcode-block" id="ExaExtension.get_sys_views">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_views">[docs]</a>
-</span><span data-line="193">    <span class="k">def</span> <span class="nf">get_sys_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view_name_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-</span><span data-line="194"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="195"><span class="sd">        Get information about views in selected schema(SYS format)</span>
-</span><span data-line="196">
-</span><span data-line="197"><span class="sd">        Args:</span>
-</span><span data-line="198"><span class="sd">            schema:</span>
-</span><span data-line="199"><span class="sd">                -</span>
-</span><span data-line="200"><span class="sd">            view_name_prefix:</span>
-</span><span data-line="201"><span class="sd">                Output may be optionally filtered by view name prefix.</span>
-</span><span data-line="202">
-</span><span data-line="203"><span class="sd">        Caution: </span>
-</span><span data-line="204"><span class="sd">            **DEPRECATED**, please use ``.meta.list_views`` instead.</span>
-</span><span data-line="205"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="206">        <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="207">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
-</span><span data-line="208">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="209">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
-</span><span data-line="210">
-</span><span data-line="211">        <span class="n">view_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">view_name_prefix</span><span class="p">)</span>
-</span><span data-line="212">        <span class="n">view_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">escape_like</span><span class="p">(</span><span class="n">view_name_prefix</span><span class="p">)</span>
-</span><span data-line="213">
-</span><span data-line="214">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
-</span><span data-line="215"><span class="s2">            SELECT *</span>
-</span><span data-line="216"><span class="s2">            FROM EXA_ALL_VIEWS</span>
-</span><span data-line="217"><span class="s2">            WHERE view_schema=</span><span class="si">{schema}</span>
-</span><span data-line="218"><span class="s2">                AND view_name LIKE &#39;</span><span class="si">{view_name_prefix!r}</span><span class="s2">%&#39;</span>
-</span><span data-line="219"><span class="s2">            ORDER BY view_name ASC</span>
-</span><span data-line="220"><span class="s2">        &quot;&quot;&quot;</span>
-</span><span data-line="221">
-</span><span data-line="222">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;view_name_prefix&#39;</span><span class="p">:</span> <span class="n">view_name_prefix</span><span class="p">})</span>
-</span><span data-line="223">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-</span><span data-line="224">
-</span><span data-line="225">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
-</span><span data-line="226">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span data-line="227">                <span class="s1">&#39;view_name&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;view_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;view_name&#39;</span><span class="p">],</span>
-</span><span data-line="228">                <span class="s1">&#39;view_schema&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;view_schema&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;view_schema&#39;</span><span class="p">],</span>
-</span><span data-line="229">                <span class="s1">&#39;scope_schema&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;scope_schema&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;scope_schema&#39;</span><span class="p">],</span>
-</span><span data-line="230">                <span class="s1">&#39;view_text&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;view_text&#39;</span><span class="p">],</span>
-</span><span data-line="231">                <span class="s1">&#39;view_comment&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;view_comment&#39;</span><span class="p">],</span>
-</span><span data-line="232">            <span class="p">})</span>
-</span><span data-line="233">
-</span><span data-line="234">        <span class="k">return</span> <span class="n">res</span></div>
+</span><span data-line="220">    <span class="k">def</span> <span class="nf">get_sys_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span data-line="221"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="222"><span class="sd">        Get information about views in selected schema(SYS format)</span>
+</span><span data-line="223">
+</span><span data-line="224"><span class="sd">        Args:</span>
+</span><span data-line="225"><span class="sd">            schema:</span>
+</span><span data-line="226"><span class="sd">                -</span>
+</span><span data-line="227"><span class="sd">            view_name_prefix:</span>
+</span><span data-line="228"><span class="sd">                Output may be optionally filtered by view name prefix.</span>
+</span><span data-line="229">
+</span><span data-line="230"><span class="sd">        Caution:</span>
+</span><span data-line="231"><span class="sd">            **DEPRECATED**, please use ``.meta.list_views`` instead.</span>
+</span><span data-line="232"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="233">        <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="234">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
+</span><span data-line="235">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="236">            <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+</span><span data-line="237">
+</span><span data-line="238">        <span class="n">view_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="239">            <span class="n">view_name_prefix</span>
+</span><span data-line="240">        <span class="p">)</span>
+</span><span data-line="241">        <span class="n">view_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">escape_like</span><span class="p">(</span><span class="n">view_name_prefix</span><span class="p">)</span>
+</span><span data-line="242">
+</span><span data-line="243">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
+</span><span data-line="244"><span class="s2">            SELECT *</span>
+</span><span data-line="245"><span class="s2">            FROM EXA_ALL_VIEWS</span>
+</span><span data-line="246"><span class="s2">            WHERE view_schema=</span><span class="si">{schema}</span>
+</span><span data-line="247"><span class="s2">                AND view_name LIKE &#39;</span><span class="si">{view_name_prefix!r}</span><span class="s2">%&#39;</span>
+</span><span data-line="248"><span class="s2">            ORDER BY view_name ASC</span>
+</span><span data-line="249"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="250">
+</span><span data-line="251">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span>
+</span><span data-line="252">            <span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s2">&quot;view_name_prefix&quot;</span><span class="p">:</span> <span class="n">view_name_prefix</span><span class="p">}</span>
+</span><span data-line="253">        <span class="p">)</span>
+</span><span data-line="254">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+</span><span data-line="255">
+</span><span data-line="256">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
+</span><span data-line="257">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="258">                <span class="p">{</span>
+</span><span data-line="259">                    <span class="s2">&quot;view_name&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="260">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;view_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="261">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="262">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;view_name&quot;</span><span class="p">]</span>
+</span><span data-line="263">                    <span class="p">),</span>
+</span><span data-line="264">                    <span class="s2">&quot;view_schema&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="265">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;view_schema&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="266">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="267">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;view_schema&quot;</span><span class="p">]</span>
+</span><span data-line="268">                    <span class="p">),</span>
+</span><span data-line="269">                    <span class="s2">&quot;scope_schema&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="270">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;scope_schema&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="271">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="272">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;scope_schema&quot;</span><span class="p">]</span>
+</span><span data-line="273">                    <span class="p">),</span>
+</span><span data-line="274">                    <span class="s2">&quot;view_text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;view_text&quot;</span><span class="p">],</span>
+</span><span data-line="275">                    <span class="s2">&quot;view_comment&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;view_comment&quot;</span><span class="p">],</span>
+</span><span data-line="276">                <span class="p">}</span>
+</span><span data-line="277">            <span class="p">)</span>
+</span><span data-line="278">
+</span><span data-line="279">        <span class="k">return</span> <span class="n">res</span></div>
 
-</span><span data-line="235">
+</span><span data-line="280">
 <div class="viewcode-block" id="ExaExtension.get_sys_schemas">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_schemas">[docs]</a>
-</span><span data-line="236">    <span class="k">def</span> <span class="nf">get_sys_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-</span><span data-line="237"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="238"><span class="sd">        Get information about schemas (SYS format)</span>
-</span><span data-line="239">
-</span><span data-line="240"><span class="sd">        Args:</span>
-</span><span data-line="241"><span class="sd">            schema_name_prefix:</span>
-</span><span data-line="242"><span class="sd">                Output may be optionally filtered by schema name prefix</span>
-</span><span data-line="243">
-</span><span data-line="244"><span class="sd">        Caution: </span>
-</span><span data-line="245"><span class="sd">            **DEPRECATED**, please use ``.meta.list_schemas`` instead.</span>
-</span><span data-line="246"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="247">        <span class="n">schema_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema_name_prefix</span><span class="p">)</span>
-</span><span data-line="248">        <span class="n">schema_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">escape_like</span><span class="p">(</span><span class="n">schema_name_prefix</span><span class="p">)</span>
-</span><span data-line="249">
-</span><span data-line="250">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
-</span><span data-line="251"><span class="s2">            SELECT *</span>
-</span><span data-line="252"><span class="s2">            FROM EXA_SCHEMAS</span>
-</span><span data-line="253"><span class="s2">            WHERE schema_name LIKE &#39;</span><span class="si">{schema_name_prefix!r}</span><span class="s2">%&#39;</span>
-</span><span data-line="254"><span class="s2">            ORDER BY schema_name ASC</span>
-</span><span data-line="255"><span class="s2">        &quot;&quot;&quot;</span>
-</span><span data-line="256">
-</span><span data-line="257">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;schema_name_prefix&#39;</span><span class="p">:</span> <span class="n">schema_name_prefix</span><span class="p">})</span>
-</span><span data-line="258">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-</span><span data-line="259">
-</span><span data-line="260">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
-</span><span data-line="261">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span data-line="262">                <span class="s1">&#39;schema_name&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;schema_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;schema_name&#39;</span><span class="p">],</span>
-</span><span data-line="263">                <span class="s1">&#39;schema_owner&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;schema_owner&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;schema_owner&#39;</span><span class="p">],</span>
-</span><span data-line="264">                <span class="s1">&#39;schema_is_virtual&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;schema_is_virtual&#39;</span><span class="p">],</span>
-</span><span data-line="265">                <span class="s1">&#39;schema_comment&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;schema_comment&#39;</span><span class="p">],</span>
-</span><span data-line="266">            <span class="p">})</span>
-</span><span data-line="267">
-</span><span data-line="268">        <span class="k">return</span> <span class="n">res</span></div>
+</span><span data-line="281">    <span class="k">def</span> <span class="nf">get_sys_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span data-line="282"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="283"><span class="sd">        Get information about schemas (SYS format)</span>
+</span><span data-line="284">
+</span><span data-line="285"><span class="sd">        Args:</span>
+</span><span data-line="286"><span class="sd">            schema_name_prefix:</span>
+</span><span data-line="287"><span class="sd">                Output may be optionally filtered by schema name prefix</span>
+</span><span data-line="288">
+</span><span data-line="289"><span class="sd">        Caution:</span>
+</span><span data-line="290"><span class="sd">            **DEPRECATED**, please use ``.meta.list_schemas`` instead.</span>
+</span><span data-line="291"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="292">        <span class="n">schema_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="293">            <span class="n">schema_name_prefix</span>
+</span><span data-line="294">        <span class="p">)</span>
+</span><span data-line="295">        <span class="n">schema_name_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">escape_like</span><span class="p">(</span><span class="n">schema_name_prefix</span><span class="p">)</span>
+</span><span data-line="296">
+</span><span data-line="297">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;/*snapshot execution*/</span>
+</span><span data-line="298"><span class="s2">            SELECT *</span>
+</span><span data-line="299"><span class="s2">            FROM EXA_SCHEMAS</span>
+</span><span data-line="300"><span class="s2">            WHERE schema_name LIKE &#39;</span><span class="si">{schema_name_prefix!r}</span><span class="s2">%&#39;</span>
+</span><span data-line="301"><span class="s2">            ORDER BY schema_name ASC</span>
+</span><span data-line="302"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="303">
+</span><span data-line="304">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;schema_name_prefix&quot;</span><span class="p">:</span> <span class="n">schema_name_prefix</span><span class="p">})</span>
+</span><span data-line="305">        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+</span><span data-line="306">
+</span><span data-line="307">        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
+</span><span data-line="308">            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="309">                <span class="p">{</span>
+</span><span data-line="310">                    <span class="s2">&quot;schema_name&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="311">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;schema_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="312">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="313">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;schema_name&quot;</span><span class="p">]</span>
+</span><span data-line="314">                    <span class="p">),</span>
+</span><span data-line="315">                    <span class="s2">&quot;schema_owner&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="316">                        <span class="n">r</span><span class="p">[</span><span class="s2">&quot;schema_owner&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="317">                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="318">                        <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;schema_owner&quot;</span><span class="p">]</span>
+</span><span data-line="319">                    <span class="p">),</span>
+</span><span data-line="320">                    <span class="s2">&quot;schema_is_virtual&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;schema_is_virtual&quot;</span><span class="p">],</span>
+</span><span data-line="321">                    <span class="s2">&quot;schema_comment&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;schema_comment&quot;</span><span class="p">],</span>
+</span><span data-line="322">                <span class="p">}</span>
+</span><span data-line="323">            <span class="p">)</span>
+</span><span data-line="324">
+</span><span data-line="325">        <span class="k">return</span> <span class="n">res</span></div>
 
-</span><span data-line="269">
+</span><span data-line="326">
 <div class="viewcode-block" id="ExaExtension.get_reserved_words">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_reserved_words">[docs]</a>
-</span><span data-line="270">    <span class="k">def</span> <span class="nf">get_reserved_words</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="271"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="272"><span class="sd">        Get reserved keywords which cannot be used as identifiers without double-quotes.</span>
-</span><span data-line="273">
-</span><span data-line="274"><span class="sd">        Caution: </span>
-</span><span data-line="275"><span class="sd">            **DEPRECATED**, please use ``.meta.list_sql_keywords`` instead.</span>
-</span><span data-line="276">
-</span><span data-line="277"><span class="sd">        Warning:</span>
-</span><span data-line="278"><span class="sd">            Never hard-code this list! It changes with every Exasol versions.</span>
-</span><span data-line="279"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="280">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="281">            <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="282"><span class="s2">                SELECT keyword</span>
-</span><span data-line="283"><span class="s2">                FROM EXA_SQL_KEYWORDS</span>
-</span><span data-line="284"><span class="s2">                WHERE reserved IS TRUE</span>
-</span><span data-line="285"><span class="s2">                ORDER BY keyword</span>
-</span><span data-line="286"><span class="s2">            &quot;&quot;&quot;</span>
-</span><span data-line="287">
-</span><span data-line="288">            <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchcol</span><span class="p">()</span>
-</span><span data-line="289">
-</span><span data-line="290">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span></div>
+</span><span data-line="327">    <span class="k">def</span> <span class="nf">get_reserved_words</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="328"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="329"><span class="sd">        Get reserved keywords which cannot be used as identifiers without double-quotes.</span>
+</span><span data-line="330">
+</span><span data-line="331"><span class="sd">        Caution:</span>
+</span><span data-line="332"><span class="sd">            **DEPRECATED**, please use ``.meta.list_sql_keywords`` instead.</span>
+</span><span data-line="333">
+</span><span data-line="334"><span class="sd">        Warning:</span>
+</span><span data-line="335"><span class="sd">            Never hard-code this list! It changes with every Exasol versions.</span>
+</span><span data-line="336"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="337">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="338">            <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span data-line="339"><span class="s2">                SELECT keyword</span>
+</span><span data-line="340"><span class="s2">                FROM EXA_SQL_KEYWORDS</span>
+</span><span data-line="341"><span class="s2">                WHERE reserved IS TRUE</span>
+</span><span data-line="342"><span class="s2">                ORDER BY keyword</span>
+</span><span data-line="343"><span class="s2">            &quot;&quot;&quot;</span>
+</span><span data-line="344">
+</span><span data-line="345">            <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchcol</span><span class="p">()</span>
+</span><span data-line="346">
+</span><span data-line="347">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span></div>
 
-</span><span data-line="291">
+</span><span data-line="348">
 <div class="viewcode-block" id="ExaExtension.get_disk_space_usage">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_disk_space_usage">[docs]</a>
-</span><span data-line="292">    <span class="k">def</span> <span class="nf">get_disk_space_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="293"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="294"><span class="sd">        Get the disk space usage of the exasol DB.</span>
-</span><span data-line="295">
-</span><span data-line="296"><span class="sd">        Returns:</span>
-</span><span data-line="297">
-</span><span data-line="298"><span class="sd">            A dict with 4 keys, providing all disk space details.</span>
-</span><span data-line="299">
-</span><span data-line="300"><span class="sd">            .. list-table:: </span>
-</span><span data-line="301"><span class="sd">               :header-rows: 1</span>
-</span><span data-line="302">
-</span><span data-line="303"><span class="sd">               * - Key</span>
-</span><span data-line="304"><span class="sd">                 - Description</span>
-</span><span data-line="305"><span class="sd">               * - ``occupied_size``</span>
-</span><span data-line="306"><span class="sd">                 - How much space is occupied (in bytes)</span>
-</span><span data-line="307"><span class="sd">               * - ``free_size``</span>
-</span><span data-line="308"><span class="sd">                 - How much space is available (in bytes)</span>
-</span><span data-line="309"><span class="sd">               * - ``total_size``</span>
-</span><span data-line="310"><span class="sd">                 - occupied_size + free_size</span>
-</span><span data-line="311"><span class="sd">               * - ``occupied_size_percent``</span>
-</span><span data-line="312"><span class="sd">                 - Percentage of occupied disk space (0-100%)</span>
-</span><span data-line="313">
-</span><span data-line="314"><span class="sd">        Note:</span>
-</span><span data-line="315"><span class="sd">            Exasol still lacks a standard function to measure actual disk space usage. </span>
-</span><span data-line="316"><span class="sd">            We are trying to mitigate this problem by creating a custom function.</span>
-</span><span data-line="317"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="318">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="319"><span class="s2">            SELECT measure_time,</span>
-</span><span data-line="320"><span class="s2">                   (committed_size * redundancy + temp_swap_data) AS occupied_size,</span>
-</span><span data-line="321"><span class="s2">                   (device_size * redundancy + hdd_free) AS total_size</span>
-</span><span data-line="322"><span class="s2">            FROM &quot;$EXA_STATS_DB_SIZE&quot;</span>
-</span><span data-line="323"><span class="s2">            ORDER BY measure_time DESC</span>
-</span><span data-line="324"><span class="s2">            LIMIT 1</span>
-</span><span data-line="325"><span class="s2">        &quot;&quot;&quot;</span>
-</span><span data-line="326">
-</span><span data-line="327">        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
-</span><span data-line="328">
-</span><span data-line="329">        <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="330">            <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="331">
-</span><span data-line="332">        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;occupied_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;occupied_size&#39;</span><span class="p">])</span>
-</span><span data-line="333">        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;total_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;total_size&#39;</span><span class="p">])</span>
-</span><span data-line="334">
-</span><span data-line="335">        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;free_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;total_size&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;occupied_size&#39;</span><span class="p">]</span>
-</span><span data-line="336">        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;occupied_size_percent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;occupied_size&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;total_size&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-</span><span data-line="337">
-</span><span data-line="338">        <span class="k">return</span> <span class="n">row</span></div>
+</span><span data-line="349">    <span class="k">def</span> <span class="nf">get_disk_space_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="350"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="351"><span class="sd">        Get the disk space usage of the exasol DB.</span>
+</span><span data-line="352">
+</span><span data-line="353"><span class="sd">        Returns:</span>
+</span><span data-line="354">
+</span><span data-line="355"><span class="sd">            A dict with 4 keys, providing all disk space details.</span>
+</span><span data-line="356">
+</span><span data-line="357"><span class="sd">            .. list-table::</span>
+</span><span data-line="358"><span class="sd">               :header-rows: 1</span>
+</span><span data-line="359">
+</span><span data-line="360"><span class="sd">               * - Key</span>
+</span><span data-line="361"><span class="sd">                 - Description</span>
+</span><span data-line="362"><span class="sd">               * - ``occupied_size``</span>
+</span><span data-line="363"><span class="sd">                 - How much space is occupied (in bytes)</span>
+</span><span data-line="364"><span class="sd">               * - ``free_size``</span>
+</span><span data-line="365"><span class="sd">                 - How much space is available (in bytes)</span>
+</span><span data-line="366"><span class="sd">               * - ``total_size``</span>
+</span><span data-line="367"><span class="sd">                 - occupied_size + free_size</span>
+</span><span data-line="368"><span class="sd">               * - ``occupied_size_percent``</span>
+</span><span data-line="369"><span class="sd">                 - Percentage of occupied disk space (0-100%)</span>
+</span><span data-line="370">
+</span><span data-line="371"><span class="sd">        Note:</span>
+</span><span data-line="372"><span class="sd">            Exasol still lacks a standard function to measure actual disk space usage.</span>
+</span><span data-line="373"><span class="sd">            We are trying to mitigate this problem by creating a custom function.</span>
+</span><span data-line="374"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="375">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span data-line="376"><span class="s2">            SELECT measure_time,</span>
+</span><span data-line="377"><span class="s2">                   (committed_size * redundancy + temp_swap_data) AS occupied_size,</span>
+</span><span data-line="378"><span class="s2">                   (device_size * redundancy + hdd_free) AS total_size</span>
+</span><span data-line="379"><span class="s2">            FROM &quot;$EXA_STATS_DB_SIZE&quot;</span>
+</span><span data-line="380"><span class="s2">            ORDER BY measure_time DESC</span>
+</span><span data-line="381"><span class="s2">            LIMIT 1</span>
+</span><span data-line="382"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="383">
+</span><span data-line="384">        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+</span><span data-line="385">
+</span><span data-line="386">        <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="387">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="388">
+</span><span data-line="389">        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;occupied_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;occupied_size&quot;</span><span class="p">])</span>
+</span><span data-line="390">        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;total_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;total_size&quot;</span><span class="p">])</span>
+</span><span data-line="391">
+</span><span data-line="392">        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;free_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;total_size&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;occupied_size&quot;</span><span class="p">]</span>
+</span><span data-line="393">        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;occupied_size_percent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+</span><span data-line="394">            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;occupied_size&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;total_size&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span>
+</span><span data-line="395">        <span class="p">)</span>
+</span><span data-line="396">
+</span><span data-line="397">        <span class="k">return</span> <span class="n">row</span></div>
 
-</span><span data-line="339">
+</span><span data-line="398">
 <div class="viewcode-block" id="ExaExtension.export_to_pandas_with_dtype">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.export_to_pandas_with_dtype">[docs]</a>
-</span><span data-line="340">    <span class="k">def</span> <span class="nf">export_to_pandas_with_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="341"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="342"><span class="sd">        Export to pandas and attempt to guess correct dtypes based on Exasol columns.</span>
-</span><span data-line="343">
-</span><span data-line="344"><span class="sd">        Args:</span>
-</span><span data-line="345"><span class="sd">            query_or_table:</span>
-</span><span data-line="346"><span class="sd">                Query or table to export.</span>
-</span><span data-line="347"><span class="sd">            query_params:</span>
-</span><span data-line="348"><span class="sd">                Additional query parameters.</span>
-</span><span data-line="349">
-</span><span data-line="350"><span class="sd">        Note:</span>
-</span><span data-line="351"><span class="sd">            Since pandas has significantly smaller range of allowed values, this function makes many assumptions</span>
-</span><span data-line="352"><span class="sd">            Please use it as baseline for your own function for complex cases</span>
-</span><span data-line="353">
-</span><span data-line="354"><span class="sd">            .. list-table::</span>
-</span><span data-line="355"><span class="sd">               :widths: 25 25</span>
-</span><span data-line="356"><span class="sd">               :header-rows: 1</span>
-</span><span data-line="357">
-</span><span data-line="358"><span class="sd">               * - Exasol Type</span>
-</span><span data-line="359"><span class="sd">                 - Pandas Type</span>
-</span><span data-line="360"><span class="sd">               * - Small decimal</span>
-</span><span data-line="361"><span class="sd">                 - int32</span>
-</span><span data-line="362"><span class="sd">               * - Big decimal</span>
-</span><span data-line="363"><span class="sd">                 - int64</span>
-</span><span data-line="364"><span class="sd">               * - Double</span>
-</span><span data-line="365"><span class="sd">                 - float64</span>
-</span><span data-line="366"><span class="sd">               * - Date, Timestamp</span>
-</span><span data-line="367"><span class="sd">                 - datetime64[ns]</span>
-</span><span data-line="368"><span class="sd">               * - Everything else</span>
-</span><span data-line="369"><span class="sd">                 - category (!)</span>
-</span><span data-line="370"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="371">
-</span><span data-line="372">        <span class="k">if</span> <span class="n">query_params</span><span class="p">:</span>
-</span><span data-line="373">            <span class="n">query_or_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">,</span> <span class="o">**</span><span class="n">query_params</span><span class="p">)</span>
-</span><span data-line="374">
-</span><span data-line="375">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-</span><span data-line="376">            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">)</span>
-</span><span data-line="377">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="378">            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_columns_sql</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">)</span>
-</span><span data-line="379">
-</span><span data-line="380">        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="381">            <span class="s1">&#39;names&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
-</span><span data-line="382">            <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
-</span><span data-line="383">            <span class="s1">&#39;parse_dates&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
-</span><span data-line="384">            <span class="s1">&#39;na_values&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
-</span><span data-line="385">            <span class="s1">&#39;infer_datetime_format&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="386">            <span class="s1">&#39;engine&#39;</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span>
-</span><span data-line="387">            <span class="s1">&#39;skip_blank_lines&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="388">        <span class="p">}</span>
-</span><span data-line="389">
-</span><span data-line="390">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="391">            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-</span><span data-line="392">
-</span><span data-line="393">            <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DATE&#39;</span><span class="p">:</span>
-</span><span data-line="394">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;object&#39;</span>
-</span><span data-line="395">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;na_values&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0001-01-01&#39;</span>
-</span><span data-line="396">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;parse_dates&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-</span><span data-line="397">
-</span><span data-line="398">            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TIMESTAMP&#39;</span><span class="p">:</span>
-</span><span data-line="399">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;object&#39;</span>
-</span><span data-line="400">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;na_values&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0001-01-01 00:00:00&#39;</span>
-</span><span data-line="401">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;parse_dates&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span><span data-line="399">    <span class="k">def</span> <span class="nf">export_to_pandas_with_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="400"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="401"><span class="sd">        Export to pandas and attempt to guess correct dtypes based on Exasol columns.</span>
 </span><span data-line="402">
-</span><span data-line="403">            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DECIMAL&#39;</span><span class="p">:</span>
-</span><span data-line="404">                <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="405">                    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;float64&#39;</span>
-</span><span data-line="406">                <span class="k">else</span><span class="p">:</span>
-</span><span data-line="407">                    <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
-</span><span data-line="408">                        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;int32&#39;</span>
-</span><span data-line="409">                    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="410">                        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;int64&#39;</span>
-</span><span data-line="411">
-</span><span data-line="412">            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DOUBLE&#39;</span><span class="p">:</span>
-</span><span data-line="413">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;float64&#39;</span>
-</span><span data-line="414">
-</span><span data-line="415">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="416">                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;category&#39;</span>
-</span><span data-line="417">
-</span><span data-line="418">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="419">            <span class="kn">import</span> <span class="nn">pandas</span>
-</span><span data-line="420">            <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="421">
-</span><span data-line="422">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">export_to_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+</span><span data-line="403"><span class="sd">        Args:</span>
+</span><span data-line="404"><span class="sd">            query_or_table:</span>
+</span><span data-line="405"><span class="sd">                Query or table to export.</span>
+</span><span data-line="406"><span class="sd">            query_params:</span>
+</span><span data-line="407"><span class="sd">                Additional query parameters.</span>
+</span><span data-line="408">
+</span><span data-line="409"><span class="sd">        Note:</span>
+</span><span data-line="410"><span class="sd">            Since pandas has significantly smaller range of allowed values, this function makes many assumptions</span>
+</span><span data-line="411"><span class="sd">            Please use it as baseline for your own function for complex cases</span>
+</span><span data-line="412">
+</span><span data-line="413"><span class="sd">            .. list-table::</span>
+</span><span data-line="414"><span class="sd">               :widths: 25 25</span>
+</span><span data-line="415"><span class="sd">               :header-rows: 1</span>
+</span><span data-line="416">
+</span><span data-line="417"><span class="sd">               * - Exasol Type</span>
+</span><span data-line="418"><span class="sd">                 - Pandas Type</span>
+</span><span data-line="419"><span class="sd">               * - Small decimal</span>
+</span><span data-line="420"><span class="sd">                 - int32</span>
+</span><span data-line="421"><span class="sd">               * - Big decimal</span>
+</span><span data-line="422"><span class="sd">                 - int64</span>
+</span><span data-line="423"><span class="sd">               * - Double</span>
+</span><span data-line="424"><span class="sd">                 - float64</span>
+</span><span data-line="425"><span class="sd">               * - Date, Timestamp</span>
+</span><span data-line="426"><span class="sd">                 - datetime64[ns]</span>
+</span><span data-line="427"><span class="sd">               * - Everything else</span>
+</span><span data-line="428"><span class="sd">                 - category (!)</span>
+</span><span data-line="429"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="430">
+</span><span data-line="431">        <span class="k">if</span> <span class="n">query_params</span><span class="p">:</span>
+</span><span data-line="432">            <span class="n">query_or_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+</span><span data-line="433">                <span class="n">query_or_table</span><span class="p">,</span> <span class="o">**</span><span class="n">query_params</span>
+</span><span data-line="434">            <span class="p">)</span>
+</span><span data-line="435">
+</span><span data-line="436">        <span class="k">if</span> <span class="p">(</span>
+</span><span data-line="437">            <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+</span><span data-line="438">            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+</span><span data-line="439">        <span class="p">):</span>
+</span><span data-line="440">            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">)</span>
+</span><span data-line="441">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="442">            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_columns_sql</span><span class="p">(</span><span class="n">query_or_table</span><span class="p">)</span>
+</span><span data-line="443">
+</span><span data-line="444">        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="445">            <span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+</span><span data-line="446">            <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+</span><span data-line="447">            <span class="s2">&quot;parse_dates&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+</span><span data-line="448">            <span class="s2">&quot;na_values&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span>
+</span><span data-line="449">            <span class="s2">&quot;infer_datetime_format&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="450">            <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span>
+</span><span data-line="451">            <span class="s2">&quot;skip_blank_lines&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="452">        <span class="p">}</span>
+</span><span data-line="453">
+</span><span data-line="454">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="455">            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span><span data-line="456">
+</span><span data-line="457">            <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DATE&quot;</span><span class="p">:</span>
+</span><span data-line="458">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;object&quot;</span>
+</span><span data-line="459">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;na_values&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0001-01-01&quot;</span>
+</span><span data-line="460">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;parse_dates&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span><span data-line="461">
+</span><span data-line="462">            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;TIMESTAMP&quot;</span><span class="p">:</span>
+</span><span data-line="463">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;object&quot;</span>
+</span><span data-line="464">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;na_values&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0001-01-01 00:00:00&quot;</span>
+</span><span data-line="465">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;parse_dates&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span><span data-line="466">
+</span><span data-line="467">            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DECIMAL&quot;</span><span class="p">:</span>
+</span><span data-line="468">                <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;scale&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="469">                    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;float64&quot;</span>
+</span><span data-line="470">                <span class="k">else</span><span class="p">:</span>
+</span><span data-line="471">                    <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;precision&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
+</span><span data-line="472">                        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;int32&quot;</span>
+</span><span data-line="473">                    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="474">                        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;int64&quot;</span>
+</span><span data-line="475">
+</span><span data-line="476">            <span class="k">elif</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DOUBLE&quot;</span><span class="p">:</span>
+</span><span data-line="477">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;float64&quot;</span>
+</span><span data-line="478">
+</span><span data-line="479">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="480">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;category&quot;</span>
+</span><span data-line="481">
+</span><span data-line="482">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="483">            <span class="kn">import</span> <span class="nn">pandas</span>
+</span><span data-line="484">
+</span><span data-line="485">            <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="486">
+</span><span data-line="487">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">export_to_callback</span><span class="p">(</span>
+</span><span data-line="488">            <span class="n">callback</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">params</span>
+</span><span data-line="489">        <span class="p">)</span></div>
 
-</span><span data-line="423">
+</span><span data-line="490">
 <div class="viewcode-block" id="ExaExtension.explain_last">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.explain_last">[docs]</a>
-</span><span data-line="424">    <span class="k">def</span> <span class="nf">explain_last</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span data-line="425"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="426"><span class="sd">        Args:</span>
-</span><span data-line="427"><span class="sd">            details (bool): </span>
-</span><span data-line="428"><span class="sd">                - ``False``, the function returns the average (AVG) or maximum (MAX) values aggregated for all Exasol nodes.</span>
-</span><span data-line="429"><span class="sd">                - ``True``, the function returns separate rows for each individual Exasol node, with a column labeled &quot;iproc&quot; representing the node.</span>
-</span><span data-line="430">
-</span><span data-line="431"><span class="sd">        Returns:</span>
-</span><span data-line="432"><span class="sd">            Profiling information for last executed query.</span>
-</span><span data-line="433">
-</span><span data-line="434"><span class="sd">        Note:</span>
-</span><span data-line="435"><span class="sd">            This function should be called immediately after ``execute()``</span>
-</span><span data-line="436"><span class="sd">            ``COMMIT``, ``ROLLBACK`` and ``FLUSH STATISTICS`` queries are ignored.</span>
-</span><span data-line="437"><span class="sd">        Tip:</span>
-</span><span data-line="438"><span class="sd">            Details are useful to detect bad data distribution and imbalanced execution</span>
-</span><span data-line="439"><span class="sd">            If you want to see real values of ``CPU, MEM, HDD, NET`` columns,</span>
-</span><span data-line="440"><span class="sd">            please enable Exasol profiling first with:</span>
-</span><span data-line="441">
-</span><span data-line="442"><span class="sd">            .. code-block:: sql</span>
-</span><span data-line="443">
-</span><span data-line="444"><span class="sd">                ALTER SESSION SET PROFILE = &#39;ON&#39;;</span>
-</span><span data-line="445">
-</span><span data-line="446"><span class="sd">        *Please refer to Exasol User Manuals for explanations about profiling columns.*</span>
-</span><span data-line="447"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="448">        <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="s1">&#39;FLUSH STATISTICS&#39;</span><span class="p">)</span>
-</span><span data-line="449">
-</span><span data-line="450">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="451"><span class="s2">            SELECT part_id /* PyEXASOL explain_last */</span>
-</span><span data-line="452"><span class="s2">                </span><span class="si">{iproc_col!r}</span>
-</span><span data-line="453"><span class="s2">                , part_name</span>
-</span><span data-line="454"><span class="s2">                , part_info</span>
-</span><span data-line="455"><span class="s2">                , object_schema</span>
-</span><span data-line="456"><span class="s2">                , object_name</span>
-</span><span data-line="457"><span class="s2">                , object_rows</span>
-</span><span data-line="458"><span class="s2">                , in_rows</span>
-</span><span data-line="459"><span class="s2">                , out_rows</span>
-</span><span data-line="460"><span class="s2">                , duration</span>
-</span><span data-line="461"><span class="s2">                , start_time</span>
-</span><span data-line="462"><span class="s2">                , stop_time</span>
-</span><span data-line="463"><span class="s2">                , cpu</span>
-</span><span data-line="464"><span class="s2">                , mem_peak</span>
-</span><span data-line="465"><span class="s2">                , temp_db_ram_peak</span>
-</span><span data-line="466"><span class="s2">                , hdd_read</span>
-</span><span data-line="467"><span class="s2">                , hdd_write</span>
-</span><span data-line="468"><span class="s2">                , net</span>
-</span><span data-line="469"><span class="s2">                , remarks</span>
-</span><span data-line="470"><span class="s2">            FROM {table_name!q}</span>
-</span><span data-line="471"><span class="s2">            WHERE session_id=CURRENT_SESSION</span>
-</span><span data-line="472"><span class="s2">                AND stmt_id = CURRENT_STATEMENT - {stmt_offset!d}</span>
-</span><span data-line="473"><span class="s2">            ORDER BY </span><span class="si">{order_by!r}</span>
-</span><span data-line="474"><span class="s2">        &quot;&quot;&quot;</span>
-</span><span data-line="475">
-</span><span data-line="476">        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="477">            <span class="s1">&#39;iproc_col&#39;</span><span class="p">:</span> <span class="s1">&#39;, iproc&#39;</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span data-line="478">            <span class="s1">&#39;table_name&#39;</span><span class="p">:</span> <span class="s1">&#39;$EXA_PROFILE_DETAILS_LAST_DAY&#39;</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="s1">&#39;$EXA_PROFILE_LAST_DAY&#39;</span><span class="p">,</span>
-</span><span data-line="479">            <span class="s1">&#39;order_by&#39;</span><span class="p">:</span> <span class="s1">&#39;part_id ASC, iproc ASC&#39;</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="s1">&#39;part_id ASC&#39;</span><span class="p">,</span>
-</span><span data-line="480">            <span class="s1">&#39;stmt_offset&#39;</span><span class="p">:</span> <span class="mi">4</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="s1">&#39;autocommit&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">2</span><span class="p">,</span>
-</span><span data-line="481">        <span class="p">}</span>
-</span><span data-line="482">
-</span><span data-line="483">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+</span><span data-line="491">    <span class="k">def</span> <span class="nf">explain_last</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="492"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="493"><span class="sd">        Args:</span>
+</span><span data-line="494"><span class="sd">            details (bool):</span>
+</span><span data-line="495"><span class="sd">                - ``False``, the function returns the average (AVG) or maximum (MAX) values aggregated for all Exasol nodes.</span>
+</span><span data-line="496"><span class="sd">                - ``True``, the function returns separate rows for each individual Exasol node, with a column labeled &quot;iproc&quot; representing the node.</span>
+</span><span data-line="497">
+</span><span data-line="498"><span class="sd">        Returns:</span>
+</span><span data-line="499"><span class="sd">            Profiling information for last executed query.</span>
+</span><span data-line="500">
+</span><span data-line="501"><span class="sd">        Note:</span>
+</span><span data-line="502"><span class="sd">            This function should be called immediately after ``execute()``</span>
+</span><span data-line="503"><span class="sd">            ``COMMIT``, ``ROLLBACK`` and ``FLUSH STATISTICS`` queries are ignored.</span>
+</span><span data-line="504"><span class="sd">        Tip:</span>
+</span><span data-line="505"><span class="sd">            Details are useful to detect bad data distribution and imbalanced execution</span>
+</span><span data-line="506"><span class="sd">            If you want to see real values of ``CPU, MEM, HDD, NET`` columns,</span>
+</span><span data-line="507"><span class="sd">            please enable Exasol profiling first with:</span>
+</span><span data-line="508">
+</span><span data-line="509"><span class="sd">            .. code-block:: sql</span>
+</span><span data-line="510">
+</span><span data-line="511"><span class="sd">                ALTER SESSION SET PROFILE = &#39;ON&#39;;</span>
+</span><span data-line="512">
+</span><span data-line="513"><span class="sd">        *Please refer to Exasol User Manuals for explanations about profiling columns.*</span>
+</span><span data-line="514"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="515">        <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="s2">&quot;FLUSH STATISTICS&quot;</span><span class="p">)</span>
+</span><span data-line="516">
+</span><span data-line="517">        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><span data-line="518"><span class="s2">            SELECT part_id /* PyEXASOL explain_last */</span>
+</span><span data-line="519"><span class="s2">                </span><span class="si">{iproc_col!r}</span>
+</span><span data-line="520"><span class="s2">                , part_name</span>
+</span><span data-line="521"><span class="s2">                , part_info</span>
+</span><span data-line="522"><span class="s2">                , object_schema</span>
+</span><span data-line="523"><span class="s2">                , object_name</span>
+</span><span data-line="524"><span class="s2">                , object_rows</span>
+</span><span data-line="525"><span class="s2">                , in_rows</span>
+</span><span data-line="526"><span class="s2">                , out_rows</span>
+</span><span data-line="527"><span class="s2">                , duration</span>
+</span><span data-line="528"><span class="s2">                , start_time</span>
+</span><span data-line="529"><span class="s2">                , stop_time</span>
+</span><span data-line="530"><span class="s2">                , cpu</span>
+</span><span data-line="531"><span class="s2">                , mem_peak</span>
+</span><span data-line="532"><span class="s2">                , temp_db_ram_peak</span>
+</span><span data-line="533"><span class="s2">                , hdd_read</span>
+</span><span data-line="534"><span class="s2">                , hdd_write</span>
+</span><span data-line="535"><span class="s2">                , net</span>
+</span><span data-line="536"><span class="s2">                , remarks</span>
+</span><span data-line="537"><span class="s2">            FROM {table_name!q}</span>
+</span><span data-line="538"><span class="s2">            WHERE session_id=CURRENT_SESSION</span>
+</span><span data-line="539"><span class="s2">                AND stmt_id = CURRENT_STATEMENT - {stmt_offset!d}</span>
+</span><span data-line="540"><span class="s2">            ORDER BY </span><span class="si">{order_by!r}</span>
+</span><span data-line="541"><span class="s2">        &quot;&quot;&quot;</span>
+</span><span data-line="542">
+</span><span data-line="543">        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="544">            <span class="s2">&quot;iproc_col&quot;</span><span class="p">:</span> <span class="s2">&quot;, iproc&quot;</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="545">            <span class="s2">&quot;table_name&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="546">                <span class="s2">&quot;$EXA_PROFILE_DETAILS_LAST_DAY&quot;</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="s2">&quot;$EXA_PROFILE_LAST_DAY&quot;</span>
+</span><span data-line="547">            <span class="p">),</span>
+</span><span data-line="548">            <span class="s2">&quot;order_by&quot;</span><span class="p">:</span> <span class="s2">&quot;part_id ASC, iproc ASC&quot;</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="s2">&quot;part_id ASC&quot;</span><span class="p">,</span>
+</span><span data-line="549">            <span class="s2">&quot;stmt_offset&quot;</span><span class="p">:</span> <span class="mi">4</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">attr</span><span class="p">[</span><span class="s2">&quot;autocommit&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">2</span><span class="p">,</span>
+</span><span data-line="550">        <span class="p">}</span>
+</span><span data-line="551">
+</span><span data-line="552">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
-</span><span data-line="484">
-</span><span data-line="485">    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="486">        <span class="c1"># Preserve ext-functions output format regardless of current options for user queries</span>
-</span><span data-line="487">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="488">            <span class="s1">&#39;fetch_dict&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="489">            <span class="s1">&#39;fetch_mapper&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="490">            <span class="s1">&#39;lower_ident&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="491">        <span class="p">}</span>
-</span><span data-line="492">
-</span><span data-line="493">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
-</span><span data-line="494">
-</span><span data-line="495">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="496">        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+</span><span data-line="553">
+</span><span data-line="554">    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="555">        <span class="c1"># Preserve ext-functions output format regardless of current options for user queries</span>
+</span><span data-line="556">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="557">            <span class="s2">&quot;fetch_dict&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="558">            <span class="s2">&quot;fetch_mapper&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="559">            <span class="s2">&quot;lower_ident&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="560">        <span class="p">}</span>
+</span><span data-line="561">
+</span><span data-line="562">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span>
+</span><span data-line="563">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
+</span><span data-line="564">        <span class="p">)</span>
+</span><span data-line="565">
+</span><span data-line="566">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="567">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

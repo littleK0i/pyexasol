@@ -111,7 +111,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="4">
 <div class="viewcode-block" id="ExaMetaData">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData">[docs]</a>
-</span><span data-line="5"><span class="k">class</span> <span class="nc">ExaMetaData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span data-line="5"><span class="k">class</span> <span class="nc">ExaMetaData</span><span class="p">:</span>
 </span><span data-line="6"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="7"><span class="sd">    This class implements lock-free meta data requests using ``/*snapshot execution*/`` SQL hint described in `IDEA-476 &lt;https://www.exasol.com/support/browse/IDEA-476&gt;`_.</span>
 </span><span data-line="8">
@@ -125,508 +125,593 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="16"><span class="sd">        &gt;&gt;&gt; C = pyexasol.connect(...)</span>
 </span><span data-line="17"><span class="sd">        ... print(C.meta.sql_columns(&#39;SELECT 1 AS id&#39;))</span>
 </span><span data-line="18"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="19">    <span class="n">snapshot_execution_hint</span> <span class="o">=</span> <span class="s1">&#39;/*snapshot execution*/&#39;</span>
-</span><span data-line="20">
-</span><span data-line="21">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
-</span><span data-line="22">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
-</span><span data-line="23">        <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="24">
+</span><span data-line="19">
+</span><span data-line="20">    <span class="n">snapshot_execution_hint</span> <span class="o">=</span> <span class="s2">&quot;/*snapshot execution*/&quot;</span>
+</span><span data-line="21">
+</span><span data-line="22">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+</span><span data-line="23">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+</span><span data-line="24">        <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="25">
 <div class="viewcode-block" id="ExaMetaData.sql_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.sql_columns">[docs]</a>
-</span><span data-line="25">    <span class="k">def</span> <span class="nf">sql_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="26"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="27"><span class="sd">        Get result set columns of SQL query without executing it</span>
-</span><span data-line="28">
-</span><span data-line="29"><span class="sd">        Args:</span>
-</span><span data-line="30"><span class="sd">            query:</span>
-</span><span data-line="31"><span class="sd">                SQL query text, possibly with placholders.</span>
-</span><span data-line="32"><span class="sd">            query_params:</span>
-</span><span data-line="33"><span class="sd">                Values for placholders.</span>
-</span><span data-line="34">
-</span><span data-line="35"><span class="sd">        Returns:</span>
-</span><span data-line="36"><span class="sd">            Columns of SQL query result without executing it.</span>
-</span><span data-line="37"><span class="sd">            Output format is similar to :meth:`pyexasol.ExaStatement.columns`.</span>
-</span><span data-line="38"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="39">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="40">        <span class="n">columns</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
-</span><span data-line="41">        <span class="n">st</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="42">
-</span><span data-line="43">        <span class="k">return</span> <span class="n">columns</span></div>
+</span><span data-line="26">    <span class="k">def</span> <span class="nf">sql_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="27"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="28"><span class="sd">        Get result set columns of SQL query without executing it</span>
+</span><span data-line="29">
+</span><span data-line="30"><span class="sd">        Args:</span>
+</span><span data-line="31"><span class="sd">            query:</span>
+</span><span data-line="32"><span class="sd">                SQL query text, possibly with placholders.</span>
+</span><span data-line="33"><span class="sd">            query_params:</span>
+</span><span data-line="34"><span class="sd">                Values for placholders.</span>
+</span><span data-line="35">
+</span><span data-line="36"><span class="sd">        Returns:</span>
+</span><span data-line="37"><span class="sd">            Columns of SQL query result without executing it.</span>
+</span><span data-line="38"><span class="sd">            Output format is similar to :meth:`pyexasol.ExaStatement.columns`.</span>
+</span><span data-line="39"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="40">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span>
+</span><span data-line="41">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">True</span>
+</span><span data-line="42">        <span class="p">)</span>
+</span><span data-line="43">        <span class="n">columns</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
+</span><span data-line="44">        <span class="n">st</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="45">
+</span><span data-line="46">        <span class="k">return</span> <span class="n">columns</span></div>
 
-</span><span data-line="44">
+</span><span data-line="47">
 <div class="viewcode-block" id="ExaMetaData.schema_exists">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.schema_exists">[docs]</a>
-</span><span data-line="45">    <span class="k">def</span> <span class="nf">schema_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">):</span>
-</span><span data-line="46"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="47"><span class="sd">        Check if schema exists.</span>
-</span><span data-line="48">
-</span><span data-line="49"><span class="sd">        Args:</span>
-</span><span data-line="50"><span class="sd">            schema_name:</span>
-</span><span data-line="51"><span class="sd">                Name of the schema to check.</span>
-</span><span data-line="52">
-</span><span data-line="53"><span class="sd">        Returns:</span>
-</span><span data-line="54"><span class="sd">            ``True`` if the schema exists, otherwise ``False``.</span>
-</span><span data-line="55"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="56">        <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema_name</span><span class="p">)</span>
-</span><span data-line="57">
-</span><span data-line="58">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
-</span><span data-line="59">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span><span class="s1">&#39;getSchemas&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="60">                <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
-</span><span data-line="61">            <span class="p">})</span>
-</span><span data-line="62">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="63">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="64"><span class="s2">                SELECT 1</span>
-</span><span data-line="65"><span class="s2">                FROM sys.exa_schemas</span>
-</span><span data-line="66"><span class="s2">                WHERE schema_name=</span><span class="si">{object_name}</span>
-</span><span data-line="67"><span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="68">                <span class="s1">&#39;object_name&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
-</span><span data-line="69">            <span class="p">})</span>
-</span><span data-line="70">
-</span><span data-line="71">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">rowcount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+</span><span data-line="48">    <span class="k">def</span> <span class="nf">schema_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">):</span>
+</span><span data-line="49"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="50"><span class="sd">        Check if schema exists.</span>
+</span><span data-line="51">
+</span><span data-line="52"><span class="sd">        Args:</span>
+</span><span data-line="53"><span class="sd">            schema_name:</span>
+</span><span data-line="54"><span class="sd">                Name of the schema to check.</span>
+</span><span data-line="55">
+</span><span data-line="56"><span class="sd">        Returns:</span>
+</span><span data-line="57"><span class="sd">            ``True`` if the schema exists, otherwise ``False``.</span>
+</span><span data-line="58"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="59">        <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">schema_name</span><span class="p">)</span>
+</span><span data-line="60">
+</span><span data-line="61">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
+</span><span data-line="62">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span>
+</span><span data-line="63">                <span class="s2">&quot;getSchemas&quot;</span><span class="p">,</span>
+</span><span data-line="64">                <span class="p">{</span>
+</span><span data-line="65">                    <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
+</span><span data-line="66">                <span class="p">},</span>
+</span><span data-line="67">            <span class="p">)</span>
+</span><span data-line="68">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="69">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="70"><span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="71"><span class="sd">                SELECT 1</span>
+</span><span data-line="72"><span class="sd">                FROM sys.exa_schemas</span>
+</span><span data-line="73"><span class="sd">                WHERE schema_name={object_name}</span>
+</span><span data-line="74"><span class="sd">            &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="75">                <span class="p">{</span>
+</span><span data-line="76">                    <span class="s2">&quot;object_name&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
+</span><span data-line="77">                <span class="p">},</span>
+</span><span data-line="78">            <span class="p">)</span>
+</span><span data-line="79">
+</span><span data-line="80">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">rowcount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
-</span><span data-line="72">
+</span><span data-line="81">
 <div class="viewcode-block" id="ExaMetaData.table_exists">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.table_exists">[docs]</a>
-</span><span data-line="73">    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
-</span><span data-line="74"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="75"><span class="sd">        Check if table exists.</span>
-</span><span data-line="76">
-</span><span data-line="77"><span class="sd">        Args:</span>
-</span><span data-line="78"><span class="sd">            table_name:</span>
-</span><span data-line="79"><span class="sd">                Name of the table to check for.</span>
-</span><span data-line="80"><span class="sd">                If schema was not specified, ``current_schema`` is used.</span>
-</span><span data-line="81">
-</span><span data-line="82"><span class="sd">        Returns:</span>
-</span><span data-line="83"><span class="sd">            ``True`` if the table exists, otherwise ``False``.</span>
-</span><span data-line="84"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="85">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="86">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">table_name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span data-line="87">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">table_name</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</span><span data-line="88">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="89">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
-</span><span data-line="90">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
-</span><span data-line="91">
-</span><span data-line="92">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
-</span><span data-line="93">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span><span class="s1">&#39;getTables&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="94">                <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
-</span><span data-line="95">                <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
-</span><span data-line="96">                <span class="s1">&#39;tableTypes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;TABLE&#39;</span><span class="p">],</span>
-</span><span data-line="97">            <span class="p">})</span>
-</span><span data-line="98">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="99">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="100"><span class="s2">                SELECT 1</span>
-</span><span data-line="101"><span class="s2">                FROM sys.exa_all_tables</span>
-</span><span data-line="102"><span class="s2">                WHERE table_schema=</span><span class="si">{object_schema}</span>
-</span><span data-line="103"><span class="s2">                    AND table_name=</span><span class="si">{object_name}</span>
-</span><span data-line="104"><span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="105">                <span class="s1">&#39;object_schema&#39;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
-</span><span data-line="106">                <span class="s1">&#39;object_name&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
-</span><span data-line="107">            <span class="p">})</span>
-</span><span data-line="108">
-</span><span data-line="109">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">rowcount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+</span><span data-line="82">    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+</span><span data-line="83"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="84"><span class="sd">        Check if table exists.</span>
+</span><span data-line="85">
+</span><span data-line="86"><span class="sd">        Args:</span>
+</span><span data-line="87"><span class="sd">            table_name:</span>
+</span><span data-line="88"><span class="sd">                Name of the table to check for.</span>
+</span><span data-line="89"><span class="sd">                If schema was not specified, ``current_schema`` is used.</span>
+</span><span data-line="90">
+</span><span data-line="91"><span class="sd">        Returns:</span>
+</span><span data-line="92"><span class="sd">            ``True`` if the table exists, otherwise ``False``.</span>
+</span><span data-line="93"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="94">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="95">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="96">                <span class="n">table_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="97">            <span class="p">)</span>
+</span><span data-line="98">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="99">                <span class="n">table_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="100">            <span class="p">)</span>
+</span><span data-line="101">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="102">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
+</span><span data-line="103">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+</span><span data-line="104">
+</span><span data-line="105">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
+</span><span data-line="106">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span>
+</span><span data-line="107">                <span class="s2">&quot;getTables&quot;</span><span class="p">,</span>
+</span><span data-line="108">                <span class="p">{</span>
+</span><span data-line="109">                    <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
+</span><span data-line="110">                    <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
+</span><span data-line="111">                    <span class="s2">&quot;tableTypes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;TABLE&quot;</span><span class="p">],</span>
+</span><span data-line="112">                <span class="p">},</span>
+</span><span data-line="113">            <span class="p">)</span>
+</span><span data-line="114">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="115">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="116"><span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="117"><span class="sd">                SELECT 1</span>
+</span><span data-line="118"><span class="sd">                FROM sys.exa_all_tables</span>
+</span><span data-line="119"><span class="sd">                WHERE table_schema={object_schema}</span>
+</span><span data-line="120"><span class="sd">                    AND table_name={object_name}</span>
+</span><span data-line="121"><span class="sd">            &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="122">                <span class="p">{</span>
+</span><span data-line="123">                    <span class="s2">&quot;object_schema&quot;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
+</span><span data-line="124">                    <span class="s2">&quot;object_name&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
+</span><span data-line="125">                <span class="p">},</span>
+</span><span data-line="126">            <span class="p">)</span>
+</span><span data-line="127">
+</span><span data-line="128">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">rowcount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
-</span><span data-line="110">
+</span><span data-line="129">
 <div class="viewcode-block" id="ExaMetaData.view_exists">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.view_exists">[docs]</a>
-</span><span data-line="111">    <span class="k">def</span> <span class="nf">view_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_name</span><span class="p">):</span>
-</span><span data-line="112"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="113"><span class="sd">        Check if view exists.</span>
-</span><span data-line="114">
-</span><span data-line="115"><span class="sd">        Args:</span>
-</span><span data-line="116"><span class="sd">            view_name:</span>
-</span><span data-line="117"><span class="sd">                Name of the table to check for.</span>
-</span><span data-line="118"><span class="sd">                If schema was not specified, ``current_schema`` is used.</span>
-</span><span data-line="119">
-</span><span data-line="120"><span class="sd">        Returns:</span>
-</span><span data-line="121"><span class="sd">            ``True`` if the view exists, otherwise ``False``.</span>
-</span><span data-line="122"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="123">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view_name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="124">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">view_name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span data-line="125">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">view_name</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</span><span data-line="126">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="127">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
-</span><span data-line="128">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">view_name</span><span class="p">)</span>
-</span><span data-line="129">
-</span><span data-line="130">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
-</span><span data-line="131">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span><span class="s1">&#39;getTables&#39;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="132">                <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
-</span><span data-line="133">                <span class="s1">&#39;table&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
-</span><span data-line="134">                <span class="s1">&#39;tableTypes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;VIEW&#39;</span><span class="p">],</span>
-</span><span data-line="135">            <span class="p">})</span>
-</span><span data-line="136">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="137">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="138"><span class="s2">                SELECT 1</span>
-</span><span data-line="139"><span class="s2">                FROM sys.exa_all_views</span>
-</span><span data-line="140"><span class="s2">                WHERE view_schema=</span><span class="si">{object_schema}</span>
-</span><span data-line="141"><span class="s2">                    AND view_name=</span><span class="si">{object_name}</span>
-</span><span data-line="142"><span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="143">                <span class="s1">&#39;object_schema&#39;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
-</span><span data-line="144">                <span class="s1">&#39;object_name&#39;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
-</span><span data-line="145">            <span class="p">})</span>
-</span><span data-line="146">
-</span><span data-line="147">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">rowcount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+</span><span data-line="130">    <span class="k">def</span> <span class="nf">view_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_name</span><span class="p">):</span>
+</span><span data-line="131"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="132"><span class="sd">        Check if view exists.</span>
+</span><span data-line="133">
+</span><span data-line="134"><span class="sd">        Args:</span>
+</span><span data-line="135"><span class="sd">            view_name:</span>
+</span><span data-line="136"><span class="sd">                Name of the table to check for.</span>
+</span><span data-line="137"><span class="sd">                If schema was not specified, ``current_schema`` is used.</span>
+</span><span data-line="138">
+</span><span data-line="139"><span class="sd">        Returns:</span>
+</span><span data-line="140"><span class="sd">            ``True`` if the view exists, otherwise ``False``.</span>
+</span><span data-line="141"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="142">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view_name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="143">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="144">                <span class="n">view_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="145">            <span class="p">)</span>
+</span><span data-line="146">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span>
+</span><span data-line="147">                <span class="n">view_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="148">            <span class="p">)</span>
+</span><span data-line="149">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="150">            <span class="n">object_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">current_schema</span><span class="p">()</span>
+</span><span data-line="151">            <span class="n">object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident_value</span><span class="p">(</span><span class="n">view_name</span><span class="p">)</span>
+</span><span data-line="152">
+</span><span data-line="153">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
+</span><span data-line="154">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span>
+</span><span data-line="155">                <span class="s2">&quot;getTables&quot;</span><span class="p">,</span>
+</span><span data-line="156">                <span class="p">{</span>
+</span><span data-line="157">                    <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
+</span><span data-line="158">                    <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
+</span><span data-line="159">                    <span class="s2">&quot;tableTypes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;VIEW&quot;</span><span class="p">],</span>
+</span><span data-line="160">                <span class="p">},</span>
+</span><span data-line="161">            <span class="p">)</span>
+</span><span data-line="162">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="163">            <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="164"><span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="165"><span class="sd">                SELECT 1</span>
+</span><span data-line="166"><span class="sd">                FROM sys.exa_all_views</span>
+</span><span data-line="167"><span class="sd">                WHERE view_schema={object_schema}</span>
+</span><span data-line="168"><span class="sd">                    AND view_name={object_name}</span>
+</span><span data-line="169"><span class="sd">            &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="170">                <span class="p">{</span>
+</span><span data-line="171">                    <span class="s2">&quot;object_schema&quot;</span><span class="p">:</span> <span class="n">object_schema</span><span class="p">,</span>
+</span><span data-line="172">                    <span class="s2">&quot;object_name&quot;</span><span class="p">:</span> <span class="n">object_name</span><span class="p">,</span>
+</span><span data-line="173">                <span class="p">},</span>
+</span><span data-line="174">            <span class="p">)</span>
+</span><span data-line="175">
+</span><span data-line="176">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">rowcount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
-</span><span data-line="148">
+</span><span data-line="177">
 <div class="viewcode-block" id="ExaMetaData.list_schemas">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_schemas">[docs]</a>
-</span><span data-line="149">    <span class="k">def</span> <span class="nf">list_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="150"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="151"><span class="sd">        List Schemas.</span>
-</span><span data-line="152">
-</span><span data-line="153"><span class="sd">        Args:</span>
-</span><span data-line="154"><span class="sd">            schema_name_pattern:</span>
-</span><span data-line="155"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
-</span><span data-line="156"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="157">
-</span><span data-line="158"><span class="sd">        Returns:</span>
-</span><span data-line="159"><span class="sd">            List of schemas from `EXA_SCHEMAS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_schemas.htm&gt;`_ system view matching LIKE-pattern.</span>
-</span><span data-line="160">
-</span><span data-line="161"><span class="sd">        Note:</span>
-</span><span data-line="162"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
-</span><span data-line="163"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="164">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="165"><span class="s2">            SELECT *</span>
-</span><span data-line="166"><span class="s2">            FROM sys.exa_schemas</span>
-</span><span data-line="167"><span class="s2">            WHERE schema_name LIKE </span><span class="si">{schema_name_pattern}</span>
-</span><span data-line="168"><span class="s2">            ORDER BY schema_name ASC</span>
-</span><span data-line="169"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="170">            <span class="s1">&#39;schema_name_pattern&#39;</span><span class="p">:</span> <span class="n">schema_name_pattern</span><span class="p">,</span>
-</span><span data-line="171">        <span class="p">})</span>
-</span><span data-line="172">
-</span><span data-line="173">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
-
-</span><span data-line="174">
-<div class="viewcode-block" id="ExaMetaData.list_tables">
-<a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_tables">[docs]</a>
-</span><span data-line="175">    <span class="k">def</span> <span class="nf">list_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_schema_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">table_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="176"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="177"><span class="sd">        List Tables.</span>
-</span><span data-line="178">
-</span><span data-line="179"><span class="sd">        Args:</span>
-</span><span data-line="180"><span class="sd">            table_schema_pattern:</span>
-</span><span data-line="181"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
-</span><span data-line="182"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="183"><span class="sd">            table_name_pattern:</span>
-</span><span data-line="184"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
+</span><span data-line="178">    <span class="k">def</span> <span class="nf">list_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+</span><span data-line="179"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="180"><span class="sd">        List Schemas.</span>
+</span><span data-line="181">
+</span><span data-line="182"><span class="sd">        Args:</span>
+</span><span data-line="183"><span class="sd">            schema_name_pattern:</span>
+</span><span data-line="184"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
 </span><span data-line="185"><span class="sd">                (default: ``&#39;%&#39;``)</span>
 </span><span data-line="186">
 </span><span data-line="187"><span class="sd">        Returns:</span>
-</span><span data-line="188"><span class="sd">            List of tables from `EXA_ALL_TABLES &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_tables.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="188"><span class="sd">            List of schemas from `EXA_SCHEMAS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_schemas.htm&gt;`_ system view matching LIKE-pattern.</span>
 </span><span data-line="189">
 </span><span data-line="190"><span class="sd">        Note:</span>
 </span><span data-line="191"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
 </span><span data-line="192"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="193">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="194"><span class="s2">            SELECT *</span>
-</span><span data-line="195"><span class="s2">            FROM sys.exa_all_tables</span>
-</span><span data-line="196"><span class="s2">            WHERE table_schema LIKE </span><span class="si">{table_schema_pattern}</span>
-</span><span data-line="197"><span class="s2">                AND table_name LIKE </span><span class="si">{table_name_pattern}</span>
-</span><span data-line="198"><span class="s2">            ORDER BY table_schema ASC, table_name ASC</span>
-</span><span data-line="199"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="200">            <span class="s1">&#39;table_schema_pattern&#39;</span><span class="p">:</span> <span class="n">table_schema_pattern</span><span class="p">,</span>
-</span><span data-line="201">            <span class="s1">&#39;table_name_pattern&#39;</span><span class="p">:</span> <span class="n">table_name_pattern</span><span class="p">,</span>
-</span><span data-line="202">        <span class="p">})</span>
-</span><span data-line="203">
-</span><span data-line="204">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+</span><span data-line="193">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="194"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="195"><span class="sd">            SELECT *</span>
+</span><span data-line="196"><span class="sd">            FROM sys.exa_schemas</span>
+</span><span data-line="197"><span class="sd">            WHERE schema_name LIKE {schema_name_pattern}</span>
+</span><span data-line="198"><span class="sd">            ORDER BY schema_name ASC</span>
+</span><span data-line="199"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="200">            <span class="p">{</span>
+</span><span data-line="201">                <span class="s2">&quot;schema_name_pattern&quot;</span><span class="p">:</span> <span class="n">schema_name_pattern</span><span class="p">,</span>
+</span><span data-line="202">            <span class="p">},</span>
+</span><span data-line="203">        <span class="p">)</span>
+</span><span data-line="204">
+</span><span data-line="205">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
-</span><span data-line="205">
+</span><span data-line="206">
+<div class="viewcode-block" id="ExaMetaData.list_tables">
+<a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_tables">[docs]</a>
+</span><span data-line="207">    <span class="k">def</span> <span class="nf">list_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">table_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+</span><span data-line="208"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="209"><span class="sd">        List Tables.</span>
+</span><span data-line="210">
+</span><span data-line="211"><span class="sd">        Args:</span>
+</span><span data-line="212"><span class="sd">            table_schema_pattern:</span>
+</span><span data-line="213"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
+</span><span data-line="214"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="215"><span class="sd">            table_name_pattern:</span>
+</span><span data-line="216"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
+</span><span data-line="217"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="218">
+</span><span data-line="219"><span class="sd">        Returns:</span>
+</span><span data-line="220"><span class="sd">            List of tables from `EXA_ALL_TABLES &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_tables.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="221">
+</span><span data-line="222"><span class="sd">        Note:</span>
+</span><span data-line="223"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
+</span><span data-line="224"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="225">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="226"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="227"><span class="sd">            SELECT *</span>
+</span><span data-line="228"><span class="sd">            FROM sys.exa_all_tables</span>
+</span><span data-line="229"><span class="sd">            WHERE table_schema LIKE {table_schema_pattern}</span>
+</span><span data-line="230"><span class="sd">                AND table_name LIKE {table_name_pattern}</span>
+</span><span data-line="231"><span class="sd">            ORDER BY table_schema ASC, table_name ASC</span>
+</span><span data-line="232"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="233">            <span class="p">{</span>
+</span><span data-line="234">                <span class="s2">&quot;table_schema_pattern&quot;</span><span class="p">:</span> <span class="n">table_schema_pattern</span><span class="p">,</span>
+</span><span data-line="235">                <span class="s2">&quot;table_name_pattern&quot;</span><span class="p">:</span> <span class="n">table_name_pattern</span><span class="p">,</span>
+</span><span data-line="236">            <span class="p">},</span>
+</span><span data-line="237">        <span class="p">)</span>
+</span><span data-line="238">
+</span><span data-line="239">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+</span><span data-line="240">
 <div class="viewcode-block" id="ExaMetaData.list_views">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_views">[docs]</a>
-</span><span data-line="206">    <span class="k">def</span> <span class="nf">list_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_schema_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">view_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="207"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="208"><span class="sd">        List Views.</span>
-</span><span data-line="209">
-</span><span data-line="210"><span class="sd">        Args:</span>
-</span><span data-line="211"><span class="sd">            view_schema_pattern:</span>
-</span><span data-line="212"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
-</span><span data-line="213"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="214"><span class="sd">            view_name_pattern:</span>
-</span><span data-line="215"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
-</span><span data-line="216"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="217">
-</span><span data-line="218"><span class="sd">        Returns:</span>
-</span><span data-line="219"><span class="sd">            List of views from `EXA_ALL_VIEWS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_views.htm&gt;`_ system view matching LIKE-pattern.</span>
-</span><span data-line="220">
-</span><span data-line="221"><span class="sd">        Note:</span>
-</span><span data-line="222"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
-</span><span data-line="223"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="224">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="225"><span class="s2">            SELECT *</span>
-</span><span data-line="226"><span class="s2">            FROM sys.exa_all_views</span>
-</span><span data-line="227"><span class="s2">            WHERE view_schema LIKE </span><span class="si">{view_schema_pattern}</span>
-</span><span data-line="228"><span class="s2">                AND view_name LIKE </span><span class="si">{view_name_pattern}</span>
-</span><span data-line="229"><span class="s2">            ORDER BY view_schema ASC, view_name ASC</span>
-</span><span data-line="230"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="231">            <span class="s1">&#39;view_schema_pattern&#39;</span><span class="p">:</span> <span class="n">view_schema_pattern</span><span class="p">,</span>
-</span><span data-line="232">            <span class="s1">&#39;view_name_pattern&#39;</span><span class="p">:</span> <span class="n">view_name_pattern</span><span class="p">,</span>
-</span><span data-line="233">        <span class="p">})</span>
-</span><span data-line="234">
-</span><span data-line="235">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+</span><span data-line="241">    <span class="k">def</span> <span class="nf">list_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">view_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+</span><span data-line="242"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="243"><span class="sd">        List Views.</span>
+</span><span data-line="244">
+</span><span data-line="245"><span class="sd">        Args:</span>
+</span><span data-line="246"><span class="sd">            view_schema_pattern:</span>
+</span><span data-line="247"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
+</span><span data-line="248"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="249"><span class="sd">            view_name_pattern:</span>
+</span><span data-line="250"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
+</span><span data-line="251"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="252">
+</span><span data-line="253"><span class="sd">        Returns:</span>
+</span><span data-line="254"><span class="sd">            List of views from `EXA_ALL_VIEWS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_views.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="255">
+</span><span data-line="256"><span class="sd">        Note:</span>
+</span><span data-line="257"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
+</span><span data-line="258"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="259">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="260"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="261"><span class="sd">            SELECT *</span>
+</span><span data-line="262"><span class="sd">            FROM sys.exa_all_views</span>
+</span><span data-line="263"><span class="sd">            WHERE view_schema LIKE {view_schema_pattern}</span>
+</span><span data-line="264"><span class="sd">                AND view_name LIKE {view_name_pattern}</span>
+</span><span data-line="265"><span class="sd">            ORDER BY view_schema ASC, view_name ASC</span>
+</span><span data-line="266"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="267">            <span class="p">{</span>
+</span><span data-line="268">                <span class="s2">&quot;view_schema_pattern&quot;</span><span class="p">:</span> <span class="n">view_schema_pattern</span><span class="p">,</span>
+</span><span data-line="269">                <span class="s2">&quot;view_name_pattern&quot;</span><span class="p">:</span> <span class="n">view_name_pattern</span><span class="p">,</span>
+</span><span data-line="270">            <span class="p">},</span>
+</span><span data-line="271">        <span class="p">)</span>
+</span><span data-line="272">
+</span><span data-line="273">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
-</span><span data-line="236">
+</span><span data-line="274">
 <div class="viewcode-block" id="ExaMetaData.list_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_columns">[docs]</a>
-</span><span data-line="237">    <span class="k">def</span> <span class="nf">list_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_schema_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">column_table_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span>
-</span><span data-line="238">                     <span class="p">,</span> <span class="n">column_object_type_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">column_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="239"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="240"><span class="sd">        List Columns.</span>
-</span><span data-line="241">
-</span><span data-line="242"><span class="sd">        Args:</span>
-</span><span data-line="243"><span class="sd">            column_schema_pattern:</span>
-</span><span data-line="244"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
-</span><span data-line="245"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="246"><span class="sd">            column_table_pattern:</span>
-</span><span data-line="247"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
-</span><span data-line="248"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="249"><span class="sd">            column_object_type_pattern:</span>
-</span><span data-line="250"><span class="sd">                Object type or LIKE-pattern to filter on.</span>
-</span><span data-line="251"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="252"><span class="sd">            column_name_pattern:</span>
-</span><span data-line="253"><span class="sd">                Column name or LIKE-pattern to filter on.</span>
-</span><span data-line="254"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="255">
-</span><span data-line="256"><span class="sd">        Returns:</span>
-</span><span data-line="257"><span class="sd">            List of columns from `EXA_ALL_COLUMNS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_columns.htm&gt;`_ system view matching LIKE-pattern.</span>
-</span><span data-line="258">
-</span><span data-line="259"><span class="sd">        Note:</span>
-</span><span data-line="260"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
-</span><span data-line="261"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="262">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="263"><span class="s2">            SELECT *</span>
-</span><span data-line="264"><span class="s2">            FROM sys.exa_all_columns</span>
-</span><span data-line="265"><span class="s2">            WHERE column_schema LIKE </span><span class="si">{column_schema_pattern}</span>
-</span><span data-line="266"><span class="s2">                AND column_table LIKE </span><span class="si">{column_table_pattern}</span>
-</span><span data-line="267"><span class="s2">                AND column_object_type LIKE </span><span class="si">{column_object_type_pattern}</span>
-</span><span data-line="268"><span class="s2">                AND column_name LIKE </span><span class="si">{column_name_pattern}</span>
-</span><span data-line="269"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="270">            <span class="s1">&#39;column_schema_pattern&#39;</span><span class="p">:</span> <span class="n">column_schema_pattern</span><span class="p">,</span>
-</span><span data-line="271">            <span class="s1">&#39;column_table_pattern&#39;</span><span class="p">:</span> <span class="n">column_table_pattern</span><span class="p">,</span>
-</span><span data-line="272">            <span class="s1">&#39;column_object_type_pattern&#39;</span><span class="p">:</span> <span class="n">column_object_type_pattern</span><span class="p">,</span>
-</span><span data-line="273">            <span class="s1">&#39;column_name_pattern&#39;</span><span class="p">:</span> <span class="n">column_name_pattern</span><span class="p">,</span>
-</span><span data-line="274">        <span class="p">})</span>
-</span><span data-line="275">
-</span><span data-line="276">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+</span><span data-line="275">    <span class="k">def</span> <span class="nf">list_columns</span><span class="p">(</span>
+</span><span data-line="276">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="277">        <span class="n">column_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="278">        <span class="n">column_table_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="279">        <span class="n">column_object_type_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="280">        <span class="n">column_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="281">    <span class="p">):</span>
+</span><span data-line="282"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="283"><span class="sd">        List Columns.</span>
+</span><span data-line="284">
+</span><span data-line="285"><span class="sd">        Args:</span>
+</span><span data-line="286"><span class="sd">            column_schema_pattern:</span>
+</span><span data-line="287"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
+</span><span data-line="288"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="289"><span class="sd">            column_table_pattern:</span>
+</span><span data-line="290"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
+</span><span data-line="291"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="292"><span class="sd">            column_object_type_pattern:</span>
+</span><span data-line="293"><span class="sd">                Object type or LIKE-pattern to filter on.</span>
+</span><span data-line="294"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="295"><span class="sd">            column_name_pattern:</span>
+</span><span data-line="296"><span class="sd">                Column name or LIKE-pattern to filter on.</span>
+</span><span data-line="297"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="298">
+</span><span data-line="299"><span class="sd">        Returns:</span>
+</span><span data-line="300"><span class="sd">            List of columns from `EXA_ALL_COLUMNS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_columns.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="301">
+</span><span data-line="302"><span class="sd">        Note:</span>
+</span><span data-line="303"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
+</span><span data-line="304"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="305">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="306"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="307"><span class="sd">            SELECT *</span>
+</span><span data-line="308"><span class="sd">            FROM sys.exa_all_columns</span>
+</span><span data-line="309"><span class="sd">            WHERE column_schema LIKE {column_schema_pattern}</span>
+</span><span data-line="310"><span class="sd">                AND column_table LIKE {column_table_pattern}</span>
+</span><span data-line="311"><span class="sd">                AND column_object_type LIKE {column_object_type_pattern}</span>
+</span><span data-line="312"><span class="sd">                AND column_name LIKE {column_name_pattern}</span>
+</span><span data-line="313"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="314">            <span class="p">{</span>
+</span><span data-line="315">                <span class="s2">&quot;column_schema_pattern&quot;</span><span class="p">:</span> <span class="n">column_schema_pattern</span><span class="p">,</span>
+</span><span data-line="316">                <span class="s2">&quot;column_table_pattern&quot;</span><span class="p">:</span> <span class="n">column_table_pattern</span><span class="p">,</span>
+</span><span data-line="317">                <span class="s2">&quot;column_object_type_pattern&quot;</span><span class="p">:</span> <span class="n">column_object_type_pattern</span><span class="p">,</span>
+</span><span data-line="318">                <span class="s2">&quot;column_name_pattern&quot;</span><span class="p">:</span> <span class="n">column_name_pattern</span><span class="p">,</span>
+</span><span data-line="319">            <span class="p">},</span>
+</span><span data-line="320">        <span class="p">)</span>
+</span><span data-line="321">
+</span><span data-line="322">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
-</span><span data-line="277">
+</span><span data-line="323">
 <div class="viewcode-block" id="ExaMetaData.list_objects">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_objects">[docs]</a>
-</span><span data-line="278">    <span class="k">def</span> <span class="nf">list_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">object_type_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">owner_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">root_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="279"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="280"><span class="sd">        List Objects.</span>
-</span><span data-line="281">
-</span><span data-line="282"><span class="sd">        Args:</span>
-</span><span data-line="283"><span class="sd">            object_name_pattern:</span>
-</span><span data-line="284"><span class="sd">                Object name or LIKE-pattern to filter on.</span>
-</span><span data-line="285"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="286"><span class="sd">            object_type_pattern:</span>
-</span><span data-line="287"><span class="sd">                Object type or LIKE-pattern to filter on.</span>
-</span><span data-line="288"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="289"><span class="sd">            owner_pattern:</span>
-</span><span data-line="290"><span class="sd">                Owner name or LIKE-pattern to filter on.</span>
-</span><span data-line="291"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="292"><span class="sd">            root_name_pattern:</span>
-</span><span data-line="293"><span class="sd">                Root name or LIKE-pattern to filter on.j</span>
-</span><span data-line="294"><span class="sd">                It normally refers to schema name.</span>
-</span><span data-line="295"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="296">
-</span><span data-line="297"><span class="sd">        Returns:</span>
-</span><span data-line="298"><span class="sd">            List of objects from `EXA_ALL_OBJECTS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_objects.htm&gt;`_ system view matching LIKE-pattern.</span>
-</span><span data-line="299"><span class="sd">        Note:</span>
-</span><span data-line="300"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
-</span><span data-line="301"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="302">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="303"><span class="s2">            SELECT *</span>
-</span><span data-line="304"><span class="s2">            FROM sys.exa_all_objects</span>
-</span><span data-line="305"><span class="s2">            WHERE object_name LIKE </span><span class="si">{object_name_pattern}</span>
-</span><span data-line="306"><span class="s2">                AND object_type LIKE </span><span class="si">{object_type_pattern}</span>
-</span><span data-line="307"><span class="s2">                AND owner LIKE </span><span class="si">{owner_pattern}</span>
-</span><span data-line="308"><span class="s2">                AND root_name LIKE </span><span class="si">{root_name_pattern}</span>
-</span><span data-line="309"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="310">            <span class="s1">&#39;object_name_pattern&#39;</span><span class="p">:</span> <span class="n">object_name_pattern</span><span class="p">,</span>
-</span><span data-line="311">            <span class="s1">&#39;object_type_pattern&#39;</span><span class="p">:</span> <span class="n">object_type_pattern</span><span class="p">,</span>
-</span><span data-line="312">            <span class="s1">&#39;owner_pattern&#39;</span><span class="p">:</span> <span class="n">owner_pattern</span><span class="p">,</span>
-</span><span data-line="313">            <span class="s1">&#39;root_name_pattern&#39;</span><span class="p">:</span> <span class="n">root_name_pattern</span><span class="p">,</span>
-</span><span data-line="314">        <span class="p">})</span>
-</span><span data-line="315">
-</span><span data-line="316">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+</span><span data-line="324">    <span class="k">def</span> <span class="nf">list_objects</span><span class="p">(</span>
+</span><span data-line="325">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="326">        <span class="n">object_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="327">        <span class="n">object_type_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="328">        <span class="n">owner_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="329">        <span class="n">root_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="330">    <span class="p">):</span>
+</span><span data-line="331"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="332"><span class="sd">        List Objects.</span>
+</span><span data-line="333">
+</span><span data-line="334"><span class="sd">        Args:</span>
+</span><span data-line="335"><span class="sd">            object_name_pattern:</span>
+</span><span data-line="336"><span class="sd">                Object name or LIKE-pattern to filter on.</span>
+</span><span data-line="337"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="338"><span class="sd">            object_type_pattern:</span>
+</span><span data-line="339"><span class="sd">                Object type or LIKE-pattern to filter on.</span>
+</span><span data-line="340"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="341"><span class="sd">            owner_pattern:</span>
+</span><span data-line="342"><span class="sd">                Owner name or LIKE-pattern to filter on.</span>
+</span><span data-line="343"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="344"><span class="sd">            root_name_pattern:</span>
+</span><span data-line="345"><span class="sd">                Root name or LIKE-pattern to filter on.j</span>
+</span><span data-line="346"><span class="sd">                It normally refers to schema name.</span>
+</span><span data-line="347"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="348">
+</span><span data-line="349"><span class="sd">        Returns:</span>
+</span><span data-line="350"><span class="sd">            List of objects from `EXA_ALL_OBJECTS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_objects.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="351"><span class="sd">        Note:</span>
+</span><span data-line="352"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
+</span><span data-line="353"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="354">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="355"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="356"><span class="sd">            SELECT *</span>
+</span><span data-line="357"><span class="sd">            FROM sys.exa_all_objects</span>
+</span><span data-line="358"><span class="sd">            WHERE object_name LIKE {object_name_pattern}</span>
+</span><span data-line="359"><span class="sd">                AND object_type LIKE {object_type_pattern}</span>
+</span><span data-line="360"><span class="sd">                AND owner LIKE {owner_pattern}</span>
+</span><span data-line="361"><span class="sd">                AND root_name LIKE {root_name_pattern}</span>
+</span><span data-line="362"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="363">            <span class="p">{</span>
+</span><span data-line="364">                <span class="s2">&quot;object_name_pattern&quot;</span><span class="p">:</span> <span class="n">object_name_pattern</span><span class="p">,</span>
+</span><span data-line="365">                <span class="s2">&quot;object_type_pattern&quot;</span><span class="p">:</span> <span class="n">object_type_pattern</span><span class="p">,</span>
+</span><span data-line="366">                <span class="s2">&quot;owner_pattern&quot;</span><span class="p">:</span> <span class="n">owner_pattern</span><span class="p">,</span>
+</span><span data-line="367">                <span class="s2">&quot;root_name_pattern&quot;</span><span class="p">:</span> <span class="n">root_name_pattern</span><span class="p">,</span>
+</span><span data-line="368">            <span class="p">},</span>
+</span><span data-line="369">        <span class="p">)</span>
+</span><span data-line="370">
+</span><span data-line="371">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
-</span><span data-line="317">
+</span><span data-line="372">
 <div class="viewcode-block" id="ExaMetaData.list_object_sizes">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_object_sizes">[docs]</a>
-</span><span data-line="318">    <span class="k">def</span> <span class="nf">list_object_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">object_type_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">owner_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">root_name_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="319"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="320"><span class="sd">        List Objects with their respective size.</span>
-</span><span data-line="321">
-</span><span data-line="322"><span class="sd">        Args:</span>
-</span><span data-line="323"><span class="sd">            object_name_pattern:</span>
-</span><span data-line="324"><span class="sd">                Object name or LIKE-pattern to filter on.</span>
-</span><span data-line="325"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="326"><span class="sd">            object_type_pattern:</span>
-</span><span data-line="327"><span class="sd">                Object type or LIKE-pattern to filter on.</span>
-</span><span data-line="328"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="329"><span class="sd">            owner_pattern:</span>
-</span><span data-line="330"><span class="sd">                Owner name or LIKE-pattern to filter on.</span>
-</span><span data-line="331"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="332"><span class="sd">            root_name_pattern:</span>
-</span><span data-line="333"><span class="sd">                Root name or LIKE-pattern to filter on.j</span>
-</span><span data-line="334"><span class="sd">                It normally refers to schema name.</span>
-</span><span data-line="335"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="336">
-</span><span data-line="337"><span class="sd">        Returns:</span>
-</span><span data-line="338"><span class="sd">            List of objects with sizes from `EXA_ALL_OBJECT_SIZES &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_object_sizes.htm&gt;`_ system view matching LIKE-pattern.</span>
-</span><span data-line="339"><span class="sd">        Note:</span>
-</span><span data-line="340"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
-</span><span data-line="341"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="342">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="343"><span class="s2">            SELECT *</span>
-</span><span data-line="344"><span class="s2">            FROM sys.exa_all_object_sizes</span>
-</span><span data-line="345"><span class="s2">            WHERE object_name LIKE </span><span class="si">{object_name_pattern}</span>
-</span><span data-line="346"><span class="s2">                AND object_type LIKE </span><span class="si">{object_type_pattern}</span>
-</span><span data-line="347"><span class="s2">                AND owner LIKE </span><span class="si">{owner_pattern}</span>
-</span><span data-line="348"><span class="s2">                AND root_name LIKE </span><span class="si">{root_name_pattern}</span>
-</span><span data-line="349"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="350">            <span class="s1">&#39;object_name_pattern&#39;</span><span class="p">:</span> <span class="n">object_name_pattern</span><span class="p">,</span>
-</span><span data-line="351">            <span class="s1">&#39;object_type_pattern&#39;</span><span class="p">:</span> <span class="n">object_type_pattern</span><span class="p">,</span>
-</span><span data-line="352">            <span class="s1">&#39;owner_pattern&#39;</span><span class="p">:</span> <span class="n">owner_pattern</span><span class="p">,</span>
-</span><span data-line="353">            <span class="s1">&#39;root_name_pattern&#39;</span><span class="p">:</span> <span class="n">root_name_pattern</span><span class="p">,</span>
-</span><span data-line="354">        <span class="p">})</span>
-</span><span data-line="355">
-</span><span data-line="356">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
-
-</span><span data-line="357">
-<div class="viewcode-block" id="ExaMetaData.list_indices">
-<a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_indices">[docs]</a>
-</span><span data-line="358">    <span class="k">def</span> <span class="nf">list_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_schema_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">index_table_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">index_owner_pattern</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">):</span>
-</span><span data-line="359"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="360"><span class="sd">        List indicies.</span>
-</span><span data-line="361">
-</span><span data-line="362"><span class="sd">        Args:</span>
-</span><span data-line="363"><span class="sd">            index_schema_pattern:</span>
-</span><span data-line="364"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
-</span><span data-line="365"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="366"><span class="sd">            index_table_pattern:</span>
-</span><span data-line="367"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
-</span><span data-line="368"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="369"><span class="sd">            index_owner_pattern:</span>
-</span><span data-line="370"><span class="sd">                Owner name or LIKE-pattern to filter on.</span>
-</span><span data-line="371"><span class="sd">                (default: ``&#39;%&#39;``)</span>
-</span><span data-line="372">
-</span><span data-line="373"><span class="sd">        Returns:</span>
-</span><span data-line="374"><span class="sd">            List of indices with sizes from `EXA_ALL_INDICES &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_indices.htm&gt;`_ system view matching LIKE-pattern.</span>
-</span><span data-line="375">
-</span><span data-line="376"><span class="sd">        Note:</span>
-</span><span data-line="377"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
-</span><span data-line="378"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="379">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="380"><span class="s2">            SELECT *</span>
-</span><span data-line="381"><span class="s2">            FROM sys.exa_all_indices</span>
-</span><span data-line="382"><span class="s2">            WHERE index_schema LIKE </span><span class="si">{index_schema_pattern}</span>
-</span><span data-line="383"><span class="s2">                AND index_table LIKE </span><span class="si">{index_table_pattern}</span>
-</span><span data-line="384"><span class="s2">                AND index_owner LIKE </span><span class="si">{index_owner_pattern}</span>
-</span><span data-line="385"><span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="p">{</span>
-</span><span data-line="386">            <span class="s1">&#39;index_schema_pattern&#39;</span><span class="p">:</span> <span class="n">index_schema_pattern</span><span class="p">,</span>
-</span><span data-line="387">            <span class="s1">&#39;index_table_pattern&#39;</span><span class="p">:</span> <span class="n">index_table_pattern</span><span class="p">,</span>
-</span><span data-line="388">            <span class="s1">&#39;index_owner_pattern&#39;</span><span class="p">:</span> <span class="n">index_owner_pattern</span><span class="p">,</span>
-</span><span data-line="389">        <span class="p">})</span>
-</span><span data-line="390">
-</span><span data-line="391">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
-
-</span><span data-line="392">
-<div class="viewcode-block" id="ExaMetaData.list_sql_keywords">
-<a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_sql_keywords">[docs]</a>
-</span><span data-line="393">    <span class="k">def</span> <span class="nf">list_sql_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="394"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="395"><span class="sd">        Get reserved SQL keywords which cannot be used as identifiers without double-quote escaping</span>
-</span><span data-line="396">
-</span><span data-line="397"><span class="sd">        Returns:</span>
-</span><span data-line="398"><span class="sd">            List of SQL keywords from `EXA_SQL_KEYWORDS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_sql_keywords.htm&gt;`_ system view.</span>
-</span><span data-line="399">
-</span><span data-line="400"><span class="sd">        Warning:</span>
-</span><span data-line="401"><span class="sd">            Never hardcode this list! It might change with next Exasol server version without warning</span>
-</span><span data-line="402"><span class="sd">        Note:</span>
-</span><span data-line="403"><span class="sd">            These keywords cannot be used as identifiers without double quotes.</span>
-</span><span data-line="404"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="405">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span><span class="p">:</span>
-</span><span data-line="406">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
-</span><span data-line="407">                <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span><span class="s1">&#39;getKeywords&#39;</span><span class="p">)</span>
-</span><span data-line="408">
-</span><span data-line="409">                <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;KEYWORD&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;RESERVED&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span>
-</span><span data-line="410">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="411">                <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span data-line="412"><span class="s2">                    SELECT keyword</span>
-</span><span data-line="413"><span class="s2">                    FROM EXA_SQL_KEYWORDS</span>
-</span><span data-line="414"><span class="s2">                    WHERE reserved IS TRUE</span>
-</span><span data-line="415"><span class="s2">                    ORDER BY keyword</span>
-</span><span data-line="416"><span class="s2">                &quot;&quot;&quot;</span><span class="p">)</span>
-</span><span data-line="417">
-</span><span data-line="418">                <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchcol</span><span class="p">()</span>
+</span><span data-line="373">    <span class="k">def</span> <span class="nf">list_object_sizes</span><span class="p">(</span>
+</span><span data-line="374">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="375">        <span class="n">object_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="376">        <span class="n">object_type_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="377">        <span class="n">owner_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="378">        <span class="n">root_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span data-line="379">    <span class="p">):</span>
+</span><span data-line="380"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="381"><span class="sd">        List Objects with their respective size.</span>
+</span><span data-line="382">
+</span><span data-line="383"><span class="sd">        Args:</span>
+</span><span data-line="384"><span class="sd">            object_name_pattern:</span>
+</span><span data-line="385"><span class="sd">                Object name or LIKE-pattern to filter on.</span>
+</span><span data-line="386"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="387"><span class="sd">            object_type_pattern:</span>
+</span><span data-line="388"><span class="sd">                Object type or LIKE-pattern to filter on.</span>
+</span><span data-line="389"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="390"><span class="sd">            owner_pattern:</span>
+</span><span data-line="391"><span class="sd">                Owner name or LIKE-pattern to filter on.</span>
+</span><span data-line="392"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="393"><span class="sd">            root_name_pattern:</span>
+</span><span data-line="394"><span class="sd">                Root name or LIKE-pattern to filter on.j</span>
+</span><span data-line="395"><span class="sd">                It normally refers to schema name.</span>
+</span><span data-line="396"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="397">
+</span><span data-line="398"><span class="sd">        Returns:</span>
+</span><span data-line="399"><span class="sd">            List of objects with sizes from `EXA_ALL_OBJECT_SIZES &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_object_sizes.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="400"><span class="sd">        Note:</span>
+</span><span data-line="401"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
+</span><span data-line="402"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="403">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="404"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="405"><span class="sd">            SELECT *</span>
+</span><span data-line="406"><span class="sd">            FROM sys.exa_all_object_sizes</span>
+</span><span data-line="407"><span class="sd">            WHERE object_name LIKE {object_name_pattern}</span>
+</span><span data-line="408"><span class="sd">                AND object_type LIKE {object_type_pattern}</span>
+</span><span data-line="409"><span class="sd">                AND owner LIKE {owner_pattern}</span>
+</span><span data-line="410"><span class="sd">                AND root_name LIKE {root_name_pattern}</span>
+</span><span data-line="411"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="412">            <span class="p">{</span>
+</span><span data-line="413">                <span class="s2">&quot;object_name_pattern&quot;</span><span class="p">:</span> <span class="n">object_name_pattern</span><span class="p">,</span>
+</span><span data-line="414">                <span class="s2">&quot;object_type_pattern&quot;</span><span class="p">:</span> <span class="n">object_type_pattern</span><span class="p">,</span>
+</span><span data-line="415">                <span class="s2">&quot;owner_pattern&quot;</span><span class="p">:</span> <span class="n">owner_pattern</span><span class="p">,</span>
+</span><span data-line="416">                <span class="s2">&quot;root_name_pattern&quot;</span><span class="p">:</span> <span class="n">root_name_pattern</span><span class="p">,</span>
+</span><span data-line="417">            <span class="p">},</span>
+</span><span data-line="418">        <span class="p">)</span>
 </span><span data-line="419">
-</span><span data-line="420">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span></div>
+</span><span data-line="420">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
 </span><span data-line="421">
+<div class="viewcode-block" id="ExaMetaData.list_indices">
+<a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_indices">[docs]</a>
+</span><span data-line="422">    <span class="k">def</span> <span class="nf">list_indices</span><span class="p">(</span>
+</span><span data-line="423">        <span class="bp">self</span><span class="p">,</span> <span class="n">index_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">index_table_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">index_owner_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span>
+</span><span data-line="424">    <span class="p">):</span>
+</span><span data-line="425"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="426"><span class="sd">        List indicies.</span>
+</span><span data-line="427">
+</span><span data-line="428"><span class="sd">        Args:</span>
+</span><span data-line="429"><span class="sd">            index_schema_pattern:</span>
+</span><span data-line="430"><span class="sd">                Schema name or LIKE-pattern to filter on.</span>
+</span><span data-line="431"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="432"><span class="sd">            index_table_pattern:</span>
+</span><span data-line="433"><span class="sd">                Table name or LIKE-pattern to filter on.</span>
+</span><span data-line="434"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="435"><span class="sd">            index_owner_pattern:</span>
+</span><span data-line="436"><span class="sd">                Owner name or LIKE-pattern to filter on.</span>
+</span><span data-line="437"><span class="sd">                (default: ``&#39;%&#39;``)</span>
+</span><span data-line="438">
+</span><span data-line="439"><span class="sd">        Returns:</span>
+</span><span data-line="440"><span class="sd">            List of indices with sizes from `EXA_ALL_INDICES &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_all_indices.htm&gt;`_ system view matching LIKE-pattern.</span>
+</span><span data-line="441">
+</span><span data-line="442"><span class="sd">        Note:</span>
+</span><span data-line="443"><span class="sd">            Patterns are case-sensitive. You may escape LIKE-patterns.</span>
+</span><span data-line="444"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="445">        <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="446"><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="447"><span class="sd">            SELECT *</span>
+</span><span data-line="448"><span class="sd">            FROM sys.exa_all_indices</span>
+</span><span data-line="449"><span class="sd">            WHERE index_schema LIKE {index_schema_pattern}</span>
+</span><span data-line="450"><span class="sd">                AND index_table LIKE {index_table_pattern}</span>
+</span><span data-line="451"><span class="sd">                AND index_owner LIKE {index_owner_pattern}</span>
+</span><span data-line="452"><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+</span><span data-line="453">            <span class="p">{</span>
+</span><span data-line="454">                <span class="s2">&quot;index_schema_pattern&quot;</span><span class="p">:</span> <span class="n">index_schema_pattern</span><span class="p">,</span>
+</span><span data-line="455">                <span class="s2">&quot;index_table_pattern&quot;</span><span class="p">:</span> <span class="n">index_table_pattern</span><span class="p">,</span>
+</span><span data-line="456">                <span class="s2">&quot;index_owner_pattern&quot;</span><span class="p">:</span> <span class="n">index_owner_pattern</span><span class="p">,</span>
+</span><span data-line="457">            <span class="p">},</span>
+</span><span data-line="458">        <span class="p">)</span>
+</span><span data-line="459">
+</span><span data-line="460">        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+</span><span data-line="461">
+<div class="viewcode-block" id="ExaMetaData.list_sql_keywords">
+<a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_sql_keywords">[docs]</a>
+</span><span data-line="462">    <span class="k">def</span> <span class="nf">list_sql_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="463"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="464"><span class="sd">        Get reserved SQL keywords which cannot be used as identifiers without double-quote escaping</span>
+</span><span data-line="465">
+</span><span data-line="466"><span class="sd">        Returns:</span>
+</span><span data-line="467"><span class="sd">            List of SQL keywords from `EXA_SQL_KEYWORDS &lt;https://docs.exasol.com/db/latest/sql_references/system_tables/metadata/exa_sql_keywords.htm&gt;`_ system view.</span>
+</span><span data-line="468">
+</span><span data-line="469"><span class="sd">        Warning:</span>
+</span><span data-line="470"><span class="sd">            Never hardcode this list! It might change with next Exasol server version without warning</span>
+</span><span data-line="471"><span class="sd">        Note:</span>
+</span><span data-line="472"><span class="sd">            These keywords cannot be used as identifiers without double quotes.</span>
+</span><span data-line="473"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="474">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span><span class="p">:</span>
+</span><span data-line="475">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
+</span><span data-line="476">                <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_meta_nosql</span><span class="p">(</span><span class="s2">&quot;getKeywords&quot;</span><span class="p">)</span>
+</span><span data-line="477">
+</span><span data-line="478">                <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="479">                    <span class="n">r</span><span class="p">[</span><span class="s2">&quot;KEYWORD&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;RESERVED&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+</span><span data-line="480">                <span class="p">]</span>
+</span><span data-line="481">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="482">                <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_snapshot</span><span class="p">(</span>
+</span><span data-line="483"><span class="w">                    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="484"><span class="sd">                    SELECT keyword</span>
+</span><span data-line="485"><span class="sd">                    FROM EXA_SQL_KEYWORDS</span>
+</span><span data-line="486"><span class="sd">                    WHERE reserved IS TRUE</span>
+</span><span data-line="487"><span class="sd">                    ORDER BY keyword</span>
+</span><span data-line="488"><span class="sd">                &quot;&quot;&quot;</span>
+</span><span data-line="489">                <span class="p">)</span>
+</span><span data-line="490">
+</span><span data-line="491">                <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">fetchcol</span><span class="p">()</span>
+</span><span data-line="492">
+</span><span data-line="493">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span></div>
+
+</span><span data-line="494">
 <div class="viewcode-block" id="ExaMetaData.execute_snapshot">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.execute_snapshot">[docs]</a>
-</span><span data-line="422">    <span class="k">def</span> <span class="nf">execute_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="423"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="424"><span class="sd">        Execute query in snapshot transaction mode using SQL hint</span>
-</span><span data-line="425">
-</span><span data-line="426"><span class="sd">        Args:</span>
-</span><span data-line="427"><span class="sd">            query:</span>
-</span><span data-line="428"><span class="sd">                SQL query text, possibly with placeholders.</span>
-</span><span data-line="429"><span class="sd">            query_params:</span>
-</span><span data-line="430"><span class="sd">                Values for placeholders.</span>
-</span><span data-line="431"><span class="sd">        Returns:</span>
-</span><span data-line="432"><span class="sd">            :class:`ExaStatement`</span>
-</span><span data-line="433">
-</span><span data-line="434"><span class="sd">        Warning:</span>
-</span><span data-line="435"><span class="sd">            Please do not try to query normal tables with this method. It will fail during creation of indices or statistics objects.</span>
-</span><span data-line="436">
-</span><span data-line="437"><span class="sd">        Note:</span>
-</span><span data-line="438"><span class="sd">            ``fetch_dict=Tru`` is enforced to prevent users from relying on order of columns in system views</span>
-</span><span data-line="439"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="440">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="441">            <span class="s1">&#39;fetch_dict&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="442">        <span class="p">}</span>
-</span><span data-line="443">
-</span><span data-line="444">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshot_execution_hint</span><span class="si">}{</span><span class="n">query</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
+</span><span data-line="495">    <span class="k">def</span> <span class="nf">execute_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="496"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="497"><span class="sd">        Execute query in snapshot transaction mode using SQL hint</span>
+</span><span data-line="498">
+</span><span data-line="499"><span class="sd">        Args:</span>
+</span><span data-line="500"><span class="sd">            query:</span>
+</span><span data-line="501"><span class="sd">                SQL query text, possibly with placeholders.</span>
+</span><span data-line="502"><span class="sd">            query_params:</span>
+</span><span data-line="503"><span class="sd">                Values for placeholders.</span>
+</span><span data-line="504"><span class="sd">        Returns:</span>
+</span><span data-line="505"><span class="sd">            :class:`ExaStatement`</span>
+</span><span data-line="506">
+</span><span data-line="507"><span class="sd">        Warning:</span>
+</span><span data-line="508"><span class="sd">            Please do not try to query normal tables with this method. It will fail during creation of indices or statistics objects.</span>
+</span><span data-line="509">
+</span><span data-line="510"><span class="sd">        Note:</span>
+</span><span data-line="511"><span class="sd">            ``fetch_dict=Tru`` is enforced to prevent users from relying on order of columns in system views</span>
+</span><span data-line="512"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="513">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="514">            <span class="s2">&quot;fetch_dict&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="515">        <span class="p">}</span>
+</span><span data-line="516">
+</span><span data-line="517">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span>
+</span><span data-line="518">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="519">            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshot_execution_hint</span><span class="si">}{</span><span class="n">query</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span data-line="520">            <span class="n">query_params</span><span class="p">,</span>
+</span><span data-line="521">            <span class="o">**</span><span class="n">options</span><span class="p">,</span>
+</span><span data-line="522">        <span class="p">)</span></div>
 
-</span><span data-line="445">
+</span><span data-line="523">
 <div class="viewcode-block" id="ExaMetaData.execute_meta_nosql">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.execute_meta_nosql">[docs]</a>
-</span><span data-line="446">    <span class="k">def</span> <span class="nf">execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_command</span><span class="p">,</span> <span class="n">meta_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="447"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="448"><span class="sd">        Execute no SQL meta data command introduced in Exasol 7.0+</span>
-</span><span data-line="449">
-</span><span data-line="450"><span class="sd">        Args:</span>
-</span><span data-line="451"><span class="sd">            meta_command:</span>
-</span><span data-line="452"><span class="sd">                Metadata command.</span>
-</span><span data-line="453"><span class="sd">            meta_params:</span>
-</span><span data-line="454"><span class="sd">                Parameters for metadata command.</span>
-</span><span data-line="455">
-</span><span data-line="456"><span class="sd">        Returns:</span>
-</span><span data-line="457"><span class="sd">            :class:`ExaStatement`</span>
-</span><span data-line="458">
-</span><span data-line="459"><span class="sd">        Note:</span>
-</span><span data-line="460"><span class="sd">            This feature requires WebSocket protocol v2 or higher</span>
-</span><span data-line="461">
-</span><span data-line="462"><span class="sd">            List of available commands can be found `here &lt;https://github.com/exasol/websocket-api/blob/master/docs/WebsocketAPIV2.md#metadata-related-commands&gt;`_.</span>
-</span><span data-line="463"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="464">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
-</span><span data-line="465">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s1">&#39;Protocol version 2 is required to execute nosql meta data commands&#39;</span><span class="p">)</span>
-</span><span data-line="466">
-</span><span data-line="467">        <span class="c1"># Security check, prevents execution of dangerous commands if meta_command argument is dynamic</span>
-</span><span data-line="468">        <span class="k">if</span> <span class="n">meta_command</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;get&#39;</span><span class="p">:</span>
-</span><span data-line="469">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s1">&#39;Meta command name should start with prefix </span><span class="se">\&#39;</span><span class="s1">get*</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span data-line="470">
-</span><span data-line="471">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="472">            <span class="s1">&#39;fetch_dict&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="473">        <span class="p">}</span>
-</span><span data-line="474">
-</span><span data-line="475">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">meta_command</span><span class="p">,</span> <span class="n">meta_params</span><span class="p">,</span> <span class="n">meta_nosql</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
+</span><span data-line="524">    <span class="k">def</span> <span class="nf">execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_command</span><span class="p">,</span> <span class="n">meta_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="525"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="526"><span class="sd">        Execute no SQL meta data command introduced in Exasol 7.0+</span>
+</span><span data-line="527">
+</span><span data-line="528"><span class="sd">        Args:</span>
+</span><span data-line="529"><span class="sd">            meta_command:</span>
+</span><span data-line="530"><span class="sd">                Metadata command.</span>
+</span><span data-line="531"><span class="sd">            meta_params:</span>
+</span><span data-line="532"><span class="sd">                Parameters for metadata command.</span>
+</span><span data-line="533">
+</span><span data-line="534"><span class="sd">        Returns:</span>
+</span><span data-line="535"><span class="sd">            :class:`ExaStatement`</span>
+</span><span data-line="536">
+</span><span data-line="537"><span class="sd">        Note:</span>
+</span><span data-line="538"><span class="sd">            This feature requires WebSocket protocol v2 or higher</span>
+</span><span data-line="539">
+</span><span data-line="540"><span class="sd">            List of available commands can be found `here &lt;https://github.com/exasol/websocket-api/blob/master/docs/WebsocketAPIV2.md#metadata-related-commands&gt;`_.</span>
+</span><span data-line="541"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="542">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">protocol_version</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">constant</span><span class="o">.</span><span class="n">PROTOCOL_V2</span><span class="p">:</span>
+</span><span data-line="543">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="544">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="545">                <span class="s2">&quot;Protocol version 2 is required to execute nosql meta data commands&quot;</span><span class="p">,</span>
+</span><span data-line="546">            <span class="p">)</span>
+</span><span data-line="547">
+</span><span data-line="548">        <span class="c1"># Security check, prevents execution of dangerous commands if meta_command argument is dynamic</span>
+</span><span data-line="549">        <span class="k">if</span> <span class="n">meta_command</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;get&quot;</span><span class="p">:</span>
+</span><span data-line="550">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="551">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s2">&quot;Meta command name should start with prefix &#39;get*&#39;&quot;</span>
+</span><span data-line="552">            <span class="p">)</span>
+</span><span data-line="553">
+</span><span data-line="554">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="555">            <span class="s2">&quot;fetch_dict&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="556">        <span class="p">}</span>
+</span><span data-line="557">
+</span><span data-line="558">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cls_statement</span><span class="p">(</span>
+</span><span data-line="559">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">meta_command</span><span class="p">,</span> <span class="n">meta_params</span><span class="p">,</span> <span class="n">meta_nosql</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
+</span><span data-line="560">        <span class="p">)</span></div>
 
-</span><span data-line="476">
-</span><span data-line="477">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="478">        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+</span><span data-line="561">
+</span><span data-line="562">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="563">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

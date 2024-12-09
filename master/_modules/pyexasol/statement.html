@@ -105,16 +105,16 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.statement</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">itertools</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">collections</span>
+<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">collections</span>
+</span><span data-line="2"><span class="kn">import</span> <span class="nn">itertools</span>
 </span><span data-line="3">
-</span><span data-line="4"><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ExaRuntimeError</span>
-</span><span data-line="5"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constant</span>
+</span><span data-line="4"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constant</span>
+</span><span data-line="5"><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ExaRuntimeError</span>
 </span><span data-line="6">
 </span><span data-line="7">
 <div class="viewcode-block" id="ExaStatement">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement">[docs]</a>
-</span><span data-line="8"><span class="k">class</span> <span class="nc">ExaStatement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span data-line="8"><span class="k">class</span> <span class="nc">ExaStatement</span><span class="p">:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="10"><span class="sd">    This class executes and helps to fetch result set of single Exasol SQL statement.</span>
 </span><span data-line="11">
@@ -122,7 +122,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="13"><span class="sd">        Unlike typical `Cursor` object, `ExaStatement` is not reusable.</span>
 </span><span data-line="14">
 </span><span data-line="15"><span class="sd">    Note:</span>
-</span><span data-line="16"><span class="sd">        :class:`pyexasol.ExaStatement` may fetch result set rows as ``tuples`` (default) </span>
+</span><span data-line="16"><span class="sd">        :class:`pyexasol.ExaStatement` may fetch result set rows as ``tuples`` (default)</span>
 </span><span data-line="17"><span class="sd">        or as ``dict`` (set `fetch_dict=True` in connection options).</span>
 </span><span data-line="18">
 </span><span data-line="19"><span class="sd">        :class:`pyexasol.ExaStatement` may use custom data-type mapper during fetching</span>
@@ -138,443 +138,496 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="29"><span class="sd">                Execution time of SQL statement. It is measured by wall-clock time</span>
 </span><span data-line="30"><span class="sd">                of WebSocket request, so real execution time is a bit faster.</span>
 </span><span data-line="31"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="32">
 <div class="viewcode-block" id="ExaStatement.__init__">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.__init__">[docs]</a>
-</span><span data-line="32">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prepare</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">meta_nosql</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
-</span><span data-line="33"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="34"><span class="sd">        Args:</span>
-</span><span data-line="35"><span class="sd">            connection:</span>
-</span><span data-line="36"><span class="sd">                -</span>
-</span><span data-line="37"><span class="sd">            query:</span>
-</span><span data-line="38"><span class="sd">                -</span>
-</span><span data-line="39"><span class="sd">            query_params:</span>
-</span><span data-line="40"><span class="sd">                -</span>
-</span><span data-line="41"><span class="sd">            prepare:</span>
-</span><span data-line="42"><span class="sd">                -</span>
-</span><span data-line="43"><span class="sd">            meta_nosql:</span>
-</span><span data-line="44"><span class="sd">                -</span>
-</span><span data-line="45"><span class="sd">            options:</span>
-</span><span data-line="46"><span class="sd">                additonal kwargs</span>
-</span><span data-line="47"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="48">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
-</span><span data-line="49">
-</span><span data-line="50">        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span> <span class="k">if</span> <span class="n">meta_nosql</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span>
-</span><span data-line="51">        <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="o">=</span> <span class="n">query_params</span>
-</span><span data-line="52">
-</span><span data-line="53">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fetch_dict&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;fetch_dict&#39;</span><span class="p">])</span>
-</span><span data-line="54">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_mapper</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fetch_mapper&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;fetch_mapper&#39;</span><span class="p">])</span>
-</span><span data-line="55">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_size_bytes</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fetch_size_bytes&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;fetch_size_bytes&#39;</span><span class="p">])</span>
-</span><span data-line="56">        <span class="bp">self</span><span class="o">.</span><span class="n">lower_ident</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;lower_ident&#39;</span><span class="p">])</span>
-</span><span data-line="57">
-</span><span data-line="58">        <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">()</span>
-</span><span data-line="59">        <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="60">        <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="33">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span data-line="34">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="35">        <span class="n">connection</span><span class="p">,</span>
+</span><span data-line="36">        <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="37">        <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="38">        <span class="n">prepare</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span data-line="39">        <span class="n">meta_nosql</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span data-line="40">        <span class="o">**</span><span class="n">options</span><span class="p">,</span>
+</span><span data-line="41">    <span class="p">):</span>
+</span><span data-line="42"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="43"><span class="sd">        Args:</span>
+</span><span data-line="44"><span class="sd">            connection:</span>
+</span><span data-line="45"><span class="sd">                -</span>
+</span><span data-line="46"><span class="sd">            query:</span>
+</span><span data-line="47"><span class="sd">                -</span>
+</span><span data-line="48"><span class="sd">            query_params:</span>
+</span><span data-line="49"><span class="sd">                -</span>
+</span><span data-line="50"><span class="sd">            prepare:</span>
+</span><span data-line="51"><span class="sd">                -</span>
+</span><span data-line="52"><span class="sd">            meta_nosql:</span>
+</span><span data-line="53"><span class="sd">                -</span>
+</span><span data-line="54"><span class="sd">            options:</span>
+</span><span data-line="55"><span class="sd">                additonal kwargs</span>
+</span><span data-line="56"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="57">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
+</span><span data-line="58">
+</span><span data-line="59">        <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span> <span class="k">if</span> <span class="n">meta_nosql</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">)</span>
+</span><span data-line="60">        <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="o">=</span> <span class="n">query_params</span>
 </span><span data-line="61">
-</span><span data-line="62">        <span class="bp">self</span><span class="o">.</span><span class="n">num_columns</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="63">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="64">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="65">
-</span><span data-line="66">        <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="67">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="68">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="69">
-</span><span data-line="70">        <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="71">        <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="72">        <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="73">        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="62">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span data-line="63">            <span class="s2">&quot;fetch_dict&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;fetch_dict&quot;</span><span class="p">]</span>
+</span><span data-line="64">        <span class="p">)</span>
+</span><span data-line="65">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_mapper</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span data-line="66">            <span class="s2">&quot;fetch_mapper&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;fetch_mapper&quot;</span><span class="p">]</span>
+</span><span data-line="67">        <span class="p">)</span>
+</span><span data-line="68">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_size_bytes</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span data-line="69">            <span class="s2">&quot;fetch_size_bytes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;fetch_size_bytes&quot;</span><span class="p">]</span>
+</span><span data-line="70">        <span class="p">)</span>
+</span><span data-line="71">        <span class="bp">self</span><span class="o">.</span><span class="n">lower_ident</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span data-line="72">            <span class="s2">&quot;lower_ident&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;lower_ident&quot;</span><span class="p">]</span>
+</span><span data-line="73">        <span class="p">)</span>
 </span><span data-line="74">
-</span><span data-line="75">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span><span class="p">:</span>
-</span><span data-line="76">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s2">&quot;Exasol connection was closed&quot;</span><span class="p">)</span>
-</span><span data-line="77">
-</span><span data-line="78">        <span class="c1"># Always set last_stmt in connection object regardless of how statement object was created</span>
-</span><span data-line="79">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">last_stmt</span> <span class="o">=</span> <span class="bp">self</span>
-</span><span data-line="80">
-</span><span data-line="81">        <span class="c1"># This index may not match STMT_ID in system tables due to automatically executed queries (e.g. autocommit)</span>
-</span><span data-line="82">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">stmt_count</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="83">        <span class="bp">self</span><span class="o">.</span><span class="n">stmt_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">stmt_count</span>
-</span><span data-line="84">
-</span><span data-line="85">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="86">        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="87">
-</span><span data-line="88">        <span class="k">if</span> <span class="n">prepare</span><span class="p">:</span>
-</span><span data-line="89">            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
-</span><span data-line="90">        <span class="k">elif</span> <span class="n">meta_nosql</span><span class="p">:</span>
-</span><span data-line="91">            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_meta_nosql</span><span class="p">()</span>
-</span><span data-line="92">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="93">            <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">()</span></div>
-
+</span><span data-line="75">        <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">()</span>
+</span><span data-line="76">        <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="77">        <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="78">
+</span><span data-line="79">        <span class="bp">self</span><span class="o">.</span><span class="n">num_columns</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="80">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="81">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="82">
+</span><span data-line="83">        <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="84">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="85">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="86">
+</span><span data-line="87">        <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="88">        <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="89">        <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="90">        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="91">
+</span><span data-line="92">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span><span class="p">:</span>
+</span><span data-line="93">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s2">&quot;Exasol connection was closed&quot;</span><span class="p">)</span>
 </span><span data-line="94">
+</span><span data-line="95">        <span class="c1"># Always set last_stmt in connection object regardless of how statement object was created</span>
+</span><span data-line="96">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">last_stmt</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span data-line="97">
+</span><span data-line="98">        <span class="c1"># This index may not match STMT_ID in system tables due to automatically executed queries (e.g. autocommit)</span>
+</span><span data-line="99">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">stmt_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="100">        <span class="bp">self</span><span class="o">.</span><span class="n">stmt_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">stmt_count</span>
+</span><span data-line="101">
+</span><span data-line="102">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="103">        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="104">
+</span><span data-line="105">        <span class="k">if</span> <span class="n">prepare</span><span class="p">:</span>
+</span><span data-line="106">            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
+</span><span data-line="107">        <span class="k">elif</span> <span class="n">meta_nosql</span><span class="p">:</span>
+</span><span data-line="108">            <span class="bp">self</span><span class="o">.</span><span class="n">_execute_meta_nosql</span><span class="p">()</span>
+</span><span data-line="109">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="110">            <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">()</span></div>
+
+</span><span data-line="111">
 <div class="viewcode-block" id="ExaStatement.__iter__">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.__iter__">[docs]</a>
-</span><span data-line="95">    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="96"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="97"><span class="sd">        The best way to fetch result set of statement is to use iterator:</span>
-</span><span data-line="98">
-</span><span data-line="99"><span class="sd">        Yields:</span>
-</span><span data-line="100"><span class="sd">            ``tuple`` or ``dict`` depending on ``fetch_dict`` connection option.</span>
-</span><span data-line="101">
-</span><span data-line="102"><span class="sd">        Examples:</span>
-</span><span data-line="103">
-</span><span data-line="104"><span class="sd">            &gt;&gt;&gt; st = pyexasol.execute(&#39;SELECT * FROM table&#39;)</span>
-</span><span data-line="105"><span class="sd">            ... for row in st:</span>
-</span><span data-line="106"><span class="sd">            ...     print(row)</span>
-</span><span data-line="107"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="108">        <span class="k">return</span> <span class="bp">self</span></div>
-
-</span><span data-line="109">
-</span><span data-line="110">    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="111">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span><span class="p">:</span>
-</span><span data-line="112">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">!=</span> <span class="s1">&#39;resultSet&#39;</span><span class="p">:</span>
-</span><span data-line="113">                <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s1">&#39;Attempt to fetch from statement without result set&#39;</span><span class="p">)</span>
-</span><span data-line="114">
-</span><span data-line="115">            <span class="bp">self</span><span class="o">.</span><span class="n">_close_result_set_handle</span><span class="p">()</span>
-</span><span data-line="116">            <span class="k">raise</span> <span class="ne">StopIteration</span>
-</span><span data-line="117">
-</span><span data-line="118">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span><span class="p">:</span>
-</span><span data-line="119">            <span class="bp">self</span><span class="o">.</span><span class="n">_next_chunk</span><span class="p">()</span>
+</span><span data-line="112">    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="113"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="114"><span class="sd">        The best way to fetch result set of statement is to use iterator:</span>
+</span><span data-line="115">
+</span><span data-line="116"><span class="sd">        Yields:</span>
+</span><span data-line="117"><span class="sd">            ``tuple`` or ``dict`` depending on ``fetch_dict`` connection option.</span>
+</span><span data-line="118">
+</span><span data-line="119"><span class="sd">        Examples:</span>
 </span><span data-line="120">
-</span><span data-line="121">        <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span><span class="p">)</span>
-</span><span data-line="122">
-</span><span data-line="123">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_mapper</span><span class="p">:</span>
-</span><span data-line="124">            <span class="n">row</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fetch_mapper</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span><span class="p">))</span>
-</span><span data-line="125">
-</span><span data-line="126">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span><span class="p">:</span>
-</span><span data-line="127">            <span class="n">row</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span>
-</span><span data-line="128">
-</span><span data-line="129">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="130">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="131">
-</span><span data-line="132">        <span class="k">return</span> <span class="n">row</span>
-</span><span data-line="133">
+</span><span data-line="121"><span class="sd">            &gt;&gt;&gt; st = pyexasol.execute(&#39;SELECT * FROM table&#39;)</span>
+</span><span data-line="122"><span class="sd">            ... for row in st:</span>
+</span><span data-line="123"><span class="sd">            ...     print(row)</span>
+</span><span data-line="124"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="125">        <span class="k">return</span> <span class="bp">self</span></div>
+
+</span><span data-line="126">
+</span><span data-line="127">    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="128">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span><span class="p">:</span>
+</span><span data-line="129">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">!=</span> <span class="s2">&quot;resultSet&quot;</span><span class="p">:</span>
+</span><span data-line="130">                <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="131">                    <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="132">                    <span class="s2">&quot;Attempt to fetch from statement without result set&quot;</span><span class="p">,</span>
+</span><span data-line="133">                <span class="p">)</span>
+</span><span data-line="134">
+</span><span data-line="135">            <span class="bp">self</span><span class="o">.</span><span class="n">_close_result_set_handle</span><span class="p">()</span>
+</span><span data-line="136">            <span class="k">raise</span> <span class="ne">StopIteration</span>
+</span><span data-line="137">
+</span><span data-line="138">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span><span class="p">:</span>
+</span><span data-line="139">            <span class="bp">self</span><span class="o">.</span><span class="n">_next_chunk</span><span class="p">()</span>
+</span><span data-line="140">
+</span><span data-line="141">        <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span><span class="p">)</span>
+</span><span data-line="142">
+</span><span data-line="143">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_mapper</span><span class="p">:</span>
+</span><span data-line="144">            <span class="n">row</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fetch_mapper</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span><span class="p">))</span>
+</span><span data-line="145">
+</span><span data-line="146">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span><span class="p">:</span>
+</span><span data-line="147">            <span class="n">row</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span>
+</span><span data-line="148">
+</span><span data-line="149">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="150">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="151">
+</span><span data-line="152">        <span class="k">return</span> <span class="n">row</span>
+</span><span data-line="153">
 <div class="viewcode-block" id="ExaStatement.fetchone">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchone">[docs]</a>
-</span><span data-line="134">    <span class="k">def</span> <span class="nf">fetchone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="135"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="136"><span class="sd">        Fetches one row of data.</span>
-</span><span data-line="137">
-</span><span data-line="138"><span class="sd">        Returns:</span>
-</span><span data-line="139"><span class="sd">            ``tuple`` or ``dict``.</span>
-</span><span data-line="140"><span class="sd">            ``None`` if all rows were fetched.</span>
-</span><span data-line="141"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="142">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="143">            <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span data-line="144">        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-</span><span data-line="145">            <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="146">
-</span><span data-line="147">        <span class="k">return</span> <span class="n">row</span></div>
+</span><span data-line="154">    <span class="k">def</span> <span class="nf">fetchone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="155"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="156"><span class="sd">        Fetches one row of data.</span>
+</span><span data-line="157">
+</span><span data-line="158"><span class="sd">        Returns:</span>
+</span><span data-line="159"><span class="sd">            ``tuple`` or ``dict``.</span>
+</span><span data-line="160"><span class="sd">            ``None`` if all rows were fetched.</span>
+</span><span data-line="161"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="162">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="163">            <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span data-line="164">        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+</span><span data-line="165">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="166">
+</span><span data-line="167">        <span class="k">return</span> <span class="n">row</span></div>
 
-</span><span data-line="148">
+</span><span data-line="168">
 <div class="viewcode-block" id="ExaStatement.fetchmany">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchmany">[docs]</a>
-</span><span data-line="149">    <span class="k">def</span> <span class="nf">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">constant</span><span class="o">.</span><span class="n">DEFAULT_FETCHMANY_SIZE</span><span class="p">):</span>
-</span><span data-line="150"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="151"><span class="sd">        Fetch multiple rows.</span>
-</span><span data-line="152">
-</span><span data-line="153"><span class="sd">        Args:</span>
-</span><span data-line="154"><span class="sd">            size:</span>
-</span><span data-line="155"><span class="sd">                Set the specific number of rows to fetch (Default: ``10000``)</span>
-</span><span data-line="156">
-</span><span data-line="157"><span class="sd">        Returns:</span>
-</span><span data-line="158"><span class="sd">            ``list`` of ``tuples`` or ``list`` of ``dict``.</span>
-</span><span data-line="159"><span class="sd">            Empty `list` if all rows were fetched previously.</span>
-</span><span data-line="160"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="161">        <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)]</span></div>
+</span><span data-line="169">    <span class="k">def</span> <span class="nf">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">constant</span><span class="o">.</span><span class="n">DEFAULT_FETCHMANY_SIZE</span><span class="p">):</span>
+</span><span data-line="170"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="171"><span class="sd">        Fetch multiple rows.</span>
+</span><span data-line="172">
+</span><span data-line="173"><span class="sd">        Args:</span>
+</span><span data-line="174"><span class="sd">            size:</span>
+</span><span data-line="175"><span class="sd">                Set the specific number of rows to fetch (Default: ``10000``)</span>
+</span><span data-line="176">
+</span><span data-line="177"><span class="sd">        Returns:</span>
+</span><span data-line="178"><span class="sd">            ``list`` of ``tuples`` or ``list`` of ``dict``.</span>
+</span><span data-line="179"><span class="sd">            Empty `list` if all rows were fetched previously.</span>
+</span><span data-line="180"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="181">        <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)]</span></div>
 
-</span><span data-line="162">
+</span><span data-line="182">
 <div class="viewcode-block" id="ExaStatement.fetchall">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchall">[docs]</a>
-</span><span data-line="163">    <span class="k">def</span> <span class="nf">fetchall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="164"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="165"><span class="sd">        Fetches all remaining rows.</span>
-</span><span data-line="166">
-</span><span data-line="167"><span class="sd">        Returns:</span>
-</span><span data-line="168"><span class="sd">            ``list`` of ``tuples`` or ``list`` of ``dict``.</span>
-</span><span data-line="169"><span class="sd">            Empty ``list`` if all rows were fetched previously.</span>
-</span><span data-line="170">
-</span><span data-line="171"><span class="sd">        Warning:</span>
-</span><span data-line="172"><span class="sd">            This function may exhaust available memory.</span>
-</span><span data-line="173"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="174">        <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+</span><span data-line="183">    <span class="k">def</span> <span class="nf">fetchall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="184"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="185"><span class="sd">        Fetches all remaining rows.</span>
+</span><span data-line="186">
+</span><span data-line="187"><span class="sd">        Returns:</span>
+</span><span data-line="188"><span class="sd">            ``list`` of ``tuples`` or ``list`` of ``dict``.</span>
+</span><span data-line="189"><span class="sd">            Empty ``list`` if all rows were fetched previously.</span>
+</span><span data-line="190">
+</span><span data-line="191"><span class="sd">        Warning:</span>
+</span><span data-line="192"><span class="sd">            This function may exhaust available memory.</span>
+</span><span data-line="193"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="194">        <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
 
-</span><span data-line="175">
+</span><span data-line="195">
 <div class="viewcode-block" id="ExaStatement.fetchcol">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchcol">[docs]</a>
-</span><span data-line="176">    <span class="k">def</span> <span class="nf">fetchcol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="177"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="178"><span class="sd">        Fetches all values from the first column.</span>
-</span><span data-line="179">
-</span><span data-line="180"><span class="sd">        Returns:</span>
-</span><span data-line="181"><span class="sd">            ``list`` of values.</span>
-</span><span data-line="182"><span class="sd">            Empty ``list`` if all rows were fetched previously.</span>
-</span><span data-line="183"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="184">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="185">        <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+</span><span data-line="196">    <span class="k">def</span> <span class="nf">fetchcol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="197"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="198"><span class="sd">        Fetches all values from the first column.</span>
+</span><span data-line="199">
+</span><span data-line="200"><span class="sd">        Returns:</span>
+</span><span data-line="201"><span class="sd">            ``list`` of values.</span>
+</span><span data-line="202"><span class="sd">            Empty ``list`` if all rows were fetched previously.</span>
+</span><span data-line="203"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="204">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="205">        <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
 
-</span><span data-line="186">
+</span><span data-line="206">
 <div class="viewcode-block" id="ExaStatement.fetchval">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchval">[docs]</a>
-</span><span data-line="187">    <span class="k">def</span> <span class="nf">fetchval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="188"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="189"><span class="sd">        Fetches first column of first row. </span>
-</span><span data-line="190">
-</span><span data-line="191">
-</span><span data-line="192"><span class="sd">        Returns:</span>
-</span><span data-line="193"><span class="sd">            Value, ``None`` if all rows were fetched previously.</span>
-</span><span data-line="194">
-</span><span data-line="195"><span class="sd">        Tip:</span>
-</span><span data-line="196"><span class="sd">            This may be useful for queries returning single value like</span>
-</span><span data-line="197"><span class="sd">            ``SELECT count(*) FROM table``.</span>
-</span><span data-line="198"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="199">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="200">
-</span><span data-line="201">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="202">            <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span data-line="203">        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-</span><span data-line="204">            <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="205">
-</span><span data-line="206">        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-
-</span><span data-line="207">
-<div class="viewcode-block" id="ExaStatement.rowcount">
-<a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.rowcount">[docs]</a>
-</span><span data-line="208">    <span class="k">def</span> <span class="nf">rowcount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="209"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="210"><span class="sd">        Number of selected/processed rows.</span>
+</span><span data-line="207">    <span class="k">def</span> <span class="nf">fetchval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="208"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="209"><span class="sd">        Fetches first column of first row.</span>
+</span><span data-line="210">
 </span><span data-line="211">
 </span><span data-line="212"><span class="sd">        Returns:</span>
-</span><span data-line="213"><span class="sd">            Total amount of selected rows for statements with result set (``num_rows``).</span>
-</span><span data-line="214"><span class="sd">            Total amount of processed rows for DML queries (``row_count``).</span>
-</span><span data-line="215"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="216">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">==</span> <span class="s1">&#39;resultSet&#39;</span><span class="p">:</span>
-</span><span data-line="217">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span>
-</span><span data-line="218">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="219">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span></div>
-
+</span><span data-line="213"><span class="sd">            Value, ``None`` if all rows were fetched previously.</span>
+</span><span data-line="214">
+</span><span data-line="215"><span class="sd">        Tip:</span>
+</span><span data-line="216"><span class="sd">            This may be useful for queries returning single value like</span>
+</span><span data-line="217"><span class="sd">            ``SELECT count(*) FROM table``.</span>
+</span><span data-line="218"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="219">        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_dict</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span data-line="220">
+</span><span data-line="221">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="222">            <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span data-line="223">        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+</span><span data-line="224">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="225">
+</span><span data-line="226">        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+</span><span data-line="227">
+<div class="viewcode-block" id="ExaStatement.rowcount">
+<a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.rowcount">[docs]</a>
+</span><span data-line="228">    <span class="k">def</span> <span class="nf">rowcount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="229"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="230"><span class="sd">        Number of selected/processed rows.</span>
+</span><span data-line="231">
+</span><span data-line="232"><span class="sd">        Returns:</span>
+</span><span data-line="233"><span class="sd">            Total amount of selected rows for statements with result set (``num_rows``).</span>
+</span><span data-line="234"><span class="sd">            Total amount of processed rows for DML queries (``row_count``).</span>
+</span><span data-line="235"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="236">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">==</span> <span class="s2">&quot;resultSet&quot;</span><span class="p">:</span>
+</span><span data-line="237">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span>
+</span><span data-line="238">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="239">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span></div>
+
+</span><span data-line="240">
 <div class="viewcode-block" id="ExaStatement.columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.columns">[docs]</a>
-</span><span data-line="221">    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="222"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="223"><span class="sd">        Retrieves column information of returned data.</span>
-</span><span data-line="224">
-</span><span data-line="225"><span class="sd">        Returns:</span>
-</span><span data-line="226"><span class="sd">            A ``dict`` with keys as ``column names`` and values as ``dataType`` objects.</span>
-</span><span data-line="227">
-</span><span data-line="228"><span class="sd">        Notes:</span>
-</span><span data-line="229">
-</span><span data-line="230"><span class="sd">            The dict will containt the following data:</span>
-</span><span data-line="231">
-</span><span data-line="232"><span class="sd">            .. list-table:: </span>
-</span><span data-line="233"><span class="sd">               :header-rows: 1</span>
-</span><span data-line="234">
-</span><span data-line="235"><span class="sd">               * - Names</span>
-</span><span data-line="236"><span class="sd">                 - Type</span>
-</span><span data-line="237"><span class="sd">                 - Description</span>
-</span><span data-line="238"><span class="sd">               * - type</span>
-</span><span data-line="239"><span class="sd">                 - string</span>
-</span><span data-line="240"><span class="sd">                 - column data type</span>
-</span><span data-line="241"><span class="sd">               * - precision</span>
-</span><span data-line="242"><span class="sd">                 - number</span>
-</span><span data-line="243"><span class="sd">                 - (optional) column precision</span>
-</span><span data-line="244"><span class="sd">               * - scale</span>
-</span><span data-line="245"><span class="sd">                 - number</span>
-</span><span data-line="246"><span class="sd">                 - (optional) column scale</span>
-</span><span data-line="247"><span class="sd">               * - size</span>
-</span><span data-line="248"><span class="sd">                 - number</span>
-</span><span data-line="249"><span class="sd">                 - (optional) maximum size in bytes of a column value</span>
-</span><span data-line="250"><span class="sd">               * - characterSet</span>
-</span><span data-line="251"><span class="sd">                 - string</span>
-</span><span data-line="252"><span class="sd">                 - (optional) character encoding of a text column</span>
-</span><span data-line="253"><span class="sd">               * - withLocalTimeZone</span>
-</span><span data-line="254"><span class="sd">                 - true, false</span>
-</span><span data-line="255"><span class="sd">                 - (optional) specifies if a timestamp has a local time zone</span>
-</span><span data-line="256"><span class="sd">               * - fraction</span>
-</span><span data-line="257"><span class="sd">                 - number</span>
-</span><span data-line="258"><span class="sd">                 - (optional) fractional part of number</span>
-</span><span data-line="259"><span class="sd">               * - srid</span>
-</span><span data-line="260"><span class="sd">                 - number</span>
-</span><span data-line="261"><span class="sd">                 - (optional) spatial reference system identifier</span>
-</span><span data-line="262"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="263">        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span><span class="p">))</span></div>
+</span><span data-line="241">    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="242"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="243"><span class="sd">        Retrieves column information of returned data.</span>
+</span><span data-line="244">
+</span><span data-line="245"><span class="sd">        Returns:</span>
+</span><span data-line="246"><span class="sd">            A ``dict`` with keys as ``column names`` and values as ``dataType`` objects.</span>
+</span><span data-line="247">
+</span><span data-line="248"><span class="sd">        Notes:</span>
+</span><span data-line="249">
+</span><span data-line="250"><span class="sd">            The dict will containt the following data:</span>
+</span><span data-line="251">
+</span><span data-line="252"><span class="sd">            .. list-table::</span>
+</span><span data-line="253"><span class="sd">               :header-rows: 1</span>
+</span><span data-line="254">
+</span><span data-line="255"><span class="sd">               * - Names</span>
+</span><span data-line="256"><span class="sd">                 - Type</span>
+</span><span data-line="257"><span class="sd">                 - Description</span>
+</span><span data-line="258"><span class="sd">               * - type</span>
+</span><span data-line="259"><span class="sd">                 - string</span>
+</span><span data-line="260"><span class="sd">                 - column data type</span>
+</span><span data-line="261"><span class="sd">               * - precision</span>
+</span><span data-line="262"><span class="sd">                 - number</span>
+</span><span data-line="263"><span class="sd">                 - (optional) column precision</span>
+</span><span data-line="264"><span class="sd">               * - scale</span>
+</span><span data-line="265"><span class="sd">                 - number</span>
+</span><span data-line="266"><span class="sd">                 - (optional) column scale</span>
+</span><span data-line="267"><span class="sd">               * - size</span>
+</span><span data-line="268"><span class="sd">                 - number</span>
+</span><span data-line="269"><span class="sd">                 - (optional) maximum size in bytes of a column value</span>
+</span><span data-line="270"><span class="sd">               * - characterSet</span>
+</span><span data-line="271"><span class="sd">                 - string</span>
+</span><span data-line="272"><span class="sd">                 - (optional) character encoding of a text column</span>
+</span><span data-line="273"><span class="sd">               * - withLocalTimeZone</span>
+</span><span data-line="274"><span class="sd">                 - true, false</span>
+</span><span data-line="275"><span class="sd">                 - (optional) specifies if a timestamp has a local time zone</span>
+</span><span data-line="276"><span class="sd">               * - fraction</span>
+</span><span data-line="277"><span class="sd">                 - number</span>
+</span><span data-line="278"><span class="sd">                 - (optional) fractional part of number</span>
+</span><span data-line="279"><span class="sd">               * - srid</span>
+</span><span data-line="280"><span class="sd">                 - number</span>
+</span><span data-line="281"><span class="sd">                 - (optional) spatial reference system identifier</span>
+</span><span data-line="282"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="283">        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span><span class="p">))</span></div>
 
-</span><span data-line="264">
+</span><span data-line="284">
 <div class="viewcode-block" id="ExaStatement.column_names">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.column_names">[docs]</a>
-</span><span data-line="265">    <span class="k">def</span> <span class="nf">column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="266"><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of column names.&quot;&quot;&quot;</span>
-</span><span data-line="267">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span></div>
+</span><span data-line="285">    <span class="k">def</span> <span class="nf">column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="286"><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of column names.&quot;&quot;&quot;</span>
+</span><span data-line="287">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span></div>
 
-</span><span data-line="268">
+</span><span data-line="288">
 <div class="viewcode-block" id="ExaStatement.close">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.close">[docs]</a>
-</span><span data-line="269">    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="270"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="271"><span class="sd">        Closes result set handle if it was opened. </span>
-</span><span data-line="272">
-</span><span data-line="273"><span class="sd">        Warning:</span>
-</span><span data-line="274"><span class="sd">            You won&#39;t be able to fetch next chunk of large dataset</span>
-</span><span data-line="275"><span class="sd">            after calling this function, but no other side-effects.</span>
-</span><span data-line="276"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="277">        <span class="bp">self</span><span class="o">.</span><span class="n">_close_result_set_handle</span><span class="p">()</span>
-</span><span data-line="278">        <span class="bp">self</span><span class="o">.</span><span class="n">_close_statement_handle</span><span class="p">()</span>
-</span><span data-line="279">
-</span><span data-line="280">        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
-
-</span><span data-line="281">
-</span><span data-line="282">    <span class="k">def</span> <span class="nf">_close_result_set_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="283">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">:</span>
-</span><span data-line="284">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="285">                <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;closeResultSet&#39;</span><span class="p">,</span>
-</span><span data-line="286">                <span class="s1">&#39;resultSetHandles&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">]</span>
-</span><span data-line="287">            <span class="p">})</span>
-</span><span data-line="288">
-</span><span data-line="289">            <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="290">
-</span><span data-line="291">    <span class="k">def</span> <span class="nf">_close_statement_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="292">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">:</span>
-</span><span data-line="293">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="294">                <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;closePreparedStatement&#39;</span><span class="p">,</span>
-</span><span data-line="295">                <span class="s1">&#39;statementHandle&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">,</span>
-</span><span data-line="296">            <span class="p">})</span>
-</span><span data-line="297">
-</span><span data-line="298">            <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="289">    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="290"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="291"><span class="sd">        Closes result set handle if it was opened.</span>
+</span><span data-line="292">
+</span><span data-line="293"><span class="sd">        Warning:</span>
+</span><span data-line="294"><span class="sd">            You won&#39;t be able to fetch next chunk of large dataset</span>
+</span><span data-line="295"><span class="sd">            after calling this function, but no other side-effects.</span>
+</span><span data-line="296"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="297">        <span class="bp">self</span><span class="o">.</span><span class="n">_close_result_set_handle</span><span class="p">()</span>
+</span><span data-line="298">        <span class="bp">self</span><span class="o">.</span><span class="n">_close_statement_handle</span><span class="p">()</span>
 </span><span data-line="299">
-</span><span data-line="300">    <span class="k">def</span> <span class="nf">_format_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">):</span>
-</span><span data-line="301">        <span class="n">query</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-</span><span data-line="302">
-</span><span data-line="303">        <span class="k">if</span> <span class="n">query_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="304">            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">query_params</span><span class="p">)</span>
-</span><span data-line="305">
-</span><span data-line="306">        <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39; </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39; </span><span class="se">\n</span><span class="s1">;&#39;</span><span class="p">)</span>
-</span><span data-line="307">
-</span><span data-line="308">    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="309">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="310">            <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;execute&#39;</span><span class="p">,</span>
-</span><span data-line="311">            <span class="s1">&#39;sqlText&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-</span><span data-line="312">        <span class="p">})</span>
-</span><span data-line="313">
-</span><span data-line="314">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
-</span><span data-line="315">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-</span><span data-line="316">
-</span><span data-line="317">    <span class="k">def</span> <span class="nf">_execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="318">        <span class="n">meta_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
-</span><span data-line="319">
-</span><span data-line="320">        <span class="k">if</span> <span class="s1">&#39;command&#39;</span> <span class="ow">in</span> <span class="n">meta_params</span><span class="p">:</span>
-</span><span data-line="321">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s2">&quot;Key &#39;command&#39; is not allowed as a parameter for meta nosql request&quot;</span><span class="p">)</span>
-</span><span data-line="322">
-</span><span data-line="323">        <span class="k">if</span> <span class="s1">&#39;attributes&#39;</span> <span class="ow">in</span> <span class="n">meta_params</span><span class="p">:</span>
-</span><span data-line="324">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="s2">&quot;Key &#39;attributes&#39; is not allowed as a parameter for meta nosql request&quot;</span><span class="p">)</span>
-</span><span data-line="325">
-</span><span data-line="326">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="327">            <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-</span><span data-line="328">            <span class="o">**</span><span class="n">meta_params</span><span class="p">,</span>
-</span><span data-line="329">        <span class="p">})</span>
-</span><span data-line="330">
-</span><span data-line="331">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
-</span><span data-line="332">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-</span><span data-line="333">
-</span><span data-line="334">    <span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="335">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="336">            <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;createPreparedStatement&#39;</span><span class="p">,</span>
-</span><span data-line="337">            <span class="s1">&#39;sqlText&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-</span><span data-line="338">        <span class="p">})</span>
+</span><span data-line="300">        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+</span><span data-line="301">
+</span><span data-line="302">    <span class="k">def</span> <span class="nf">_close_result_set_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="303">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">:</span>
+</span><span data-line="304">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="305">                <span class="p">{</span>
+</span><span data-line="306">                    <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;closeResultSet&quot;</span><span class="p">,</span>
+</span><span data-line="307">                    <span class="s2">&quot;resultSetHandles&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">],</span>
+</span><span data-line="308">                <span class="p">}</span>
+</span><span data-line="309">            <span class="p">)</span>
+</span><span data-line="310">
+</span><span data-line="311">            <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="312">
+</span><span data-line="313">    <span class="k">def</span> <span class="nf">_close_statement_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="314">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">:</span>
+</span><span data-line="315">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="316">                <span class="p">{</span>
+</span><span data-line="317">                    <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;closePreparedStatement&quot;</span><span class="p">,</span>
+</span><span data-line="318">                    <span class="s2">&quot;statementHandle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">,</span>
+</span><span data-line="319">                <span class="p">}</span>
+</span><span data-line="320">            <span class="p">)</span>
+</span><span data-line="321">
+</span><span data-line="322">            <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="323">
+</span><span data-line="324">    <span class="k">def</span> <span class="nf">_format_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">):</span>
+</span><span data-line="325">        <span class="n">query</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</span><span data-line="326">
+</span><span data-line="327">        <span class="k">if</span> <span class="n">query_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="328">            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">query_params</span><span class="p">)</span>
+</span><span data-line="329">
+</span><span data-line="330">        <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2">;&quot;</span><span class="p">)</span>
+</span><span data-line="331">
+</span><span data-line="332">    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="333">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="334">            <span class="p">{</span>
+</span><span data-line="335">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;execute&quot;</span><span class="p">,</span>
+</span><span data-line="336">                <span class="s2">&quot;sqlText&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+</span><span data-line="337">            <span class="p">}</span>
+</span><span data-line="338">        <span class="p">)</span>
 </span><span data-line="339">
-</span><span data-line="340">        <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">][</span><span class="s1">&#39;statementHandle&#39;</span><span class="p">]</span>
-</span><span data-line="341">
-</span><span data-line="342">        <span class="k">if</span> <span class="s1">&#39;parameterData&#39;</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">]:</span>
-</span><span data-line="343">            <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">][</span><span class="s1">&#39;parameterData&#39;</span><span class="p">]</span>
-</span><span data-line="344">
-</span><span data-line="345">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-</span><span data-line="346">
+</span><span data-line="340">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
+</span><span data-line="341">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span data-line="342">
+</span><span data-line="343">    <span class="k">def</span> <span class="nf">_execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="344">        <span class="n">meta_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+</span><span data-line="345">
+</span><span data-line="346">        <span class="k">if</span> <span class="s2">&quot;command&quot;</span> <span class="ow">in</span> <span class="n">meta_params</span><span class="p">:</span>
+</span><span data-line="347">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="348">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="349">                <span class="s2">&quot;Key &#39;command&#39; is not allowed as a parameter for meta nosql request&quot;</span><span class="p">,</span>
+</span><span data-line="350">            <span class="p">)</span>
+</span><span data-line="351">
+</span><span data-line="352">        <span class="k">if</span> <span class="s2">&quot;attributes&quot;</span> <span class="ow">in</span> <span class="n">meta_params</span><span class="p">:</span>
+</span><span data-line="353">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="354">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="355">                <span class="s2">&quot;Key &#39;attributes&#39; is not allowed as a parameter for meta nosql request&quot;</span><span class="p">,</span>
+</span><span data-line="356">            <span class="p">)</span>
+</span><span data-line="357">
+</span><span data-line="358">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="359">            <span class="p">{</span>
+</span><span data-line="360">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+</span><span data-line="361">                <span class="o">**</span><span class="n">meta_params</span><span class="p">,</span>
+</span><span data-line="362">            <span class="p">}</span>
+</span><span data-line="363">        <span class="p">)</span>
+</span><span data-line="364">
+</span><span data-line="365">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
+</span><span data-line="366">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span data-line="367">
+</span><span data-line="368">    <span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="369">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="370">            <span class="p">{</span>
+</span><span data-line="371">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;createPreparedStatement&quot;</span><span class="p">,</span>
+</span><span data-line="372">                <span class="s2">&quot;sqlText&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+</span><span data-line="373">            <span class="p">}</span>
+</span><span data-line="374">        <span class="p">)</span>
+</span><span data-line="375">
+</span><span data-line="376">        <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;statementHandle&quot;</span><span class="p">]</span>
+</span><span data-line="377">
+</span><span data-line="378">        <span class="k">if</span> <span class="s2">&quot;parameterData&quot;</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">]:</span>
+</span><span data-line="379">            <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;parameterData&quot;</span><span class="p">]</span>
+</span><span data-line="380">
+</span><span data-line="381">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span data-line="382">
 <div class="viewcode-block" id="ExaStatement.execute_prepared">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.execute_prepared">[docs]</a>
-</span><span data-line="347">    <span class="k">def</span> <span class="nf">execute_prepared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="348">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="349">            <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;executePreparedStatement&#39;</span><span class="p">,</span>
-</span><span data-line="350">            <span class="s1">&#39;statementHandle&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">,</span>
-</span><span data-line="351">            <span class="s1">&#39;numColumns&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span><span class="p">[</span><span class="s1">&#39;numColumns&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-</span><span data-line="352">            <span class="s1">&#39;numRows&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-</span><span data-line="353">            <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="k">else</span> <span class="p">[],</span>
-</span><span data-line="354">            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">))</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="p">[],</span>
-</span><span data-line="355">        <span class="p">})</span>
-</span><span data-line="356">
-</span><span data-line="357">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
-</span><span data-line="358">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+</span><span data-line="383">    <span class="k">def</span> <span class="nf">execute_prepared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="384">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="385">            <span class="p">{</span>
+</span><span data-line="386">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;executePreparedStatement&quot;</span><span class="p">,</span>
+</span><span data-line="387">                <span class="s2">&quot;statementHandle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">,</span>
+</span><span data-line="388">                <span class="s2">&quot;numColumns&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="389">                    <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span><span class="p">[</span><span class="s2">&quot;numColumns&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="k">else</span> <span class="mi">0</span>
+</span><span data-line="390">                <span class="p">),</span>
+</span><span data-line="391">                <span class="s2">&quot;numRows&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+</span><span data-line="392">                <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="393">                    <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_data</span> <span class="k">else</span> <span class="p">[]</span>
+</span><span data-line="394">                <span class="p">),</span>
+</span><span data-line="395">                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">))</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="p">[],</span>
+</span><span data-line="396">            <span class="p">}</span>
+</span><span data-line="397">        <span class="p">)</span>
+</span><span data-line="398">
+</span><span data-line="399">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
+</span><span data-line="400">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
 
-</span><span data-line="359">
-</span><span data-line="360">    <span class="k">def</span> <span class="nf">_init_result_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ret</span><span class="p">):</span>
-</span><span data-line="361">        <span class="n">res</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="362">
-</span><span data-line="363">        <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultType&#39;</span><span class="p">]</span>
-</span><span data-line="364">
-</span><span data-line="365">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">==</span> <span class="s1">&#39;resultSet&#39;</span><span class="p">:</span>
-</span><span data-line="366">            <span class="k">if</span> <span class="s1">&#39;resultSetHandle&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">]:</span>
-</span><span data-line="367">                <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;resultSetHandle&#39;</span><span class="p">]</span>
-</span><span data-line="368">
-</span><span data-line="369">            <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">]:</span>
-</span><span data-line="370">                <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
-</span><span data-line="371">
-</span><span data-line="372">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower_ident</span><span class="p">:</span>
-</span><span data-line="373">                <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">]]</span>
-</span><span data-line="374">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="375">                <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">]]</span>
-</span><span data-line="376">
-</span><span data-line="377">            <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;dataType&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">]]</span>
-</span><span data-line="378">
-</span><span data-line="379">            <span class="bp">self</span><span class="o">.</span><span class="n">num_columns</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;numColumns&#39;</span><span class="p">]</span>
-</span><span data-line="380">            <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;numRows&#39;</span><span class="p">]</span>
-</span><span data-line="381">            <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;resultSet&#39;</span><span class="p">][</span><span class="s1">&#39;numRowsInMessage&#39;</span><span class="p">]</span>
-</span><span data-line="382">
-</span><span data-line="383">            <span class="bp">self</span><span class="o">.</span><span class="n">_check_duplicate_col_names</span><span class="p">()</span>
-</span><span data-line="384">        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">==</span> <span class="s1">&#39;rowCount&#39;</span><span class="p">:</span>
-</span><span data-line="385">            <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;rowCount&#39;</span><span class="p">]</span>
-</span><span data-line="386">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="387">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Unknown resultType: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span data-line="388">
-</span><span data-line="389">    <span class="k">def</span> <span class="nf">_next_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="390">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">({</span>
-</span><span data-line="391">            <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;fetch&#39;</span><span class="p">,</span>
-</span><span data-line="392">            <span class="s1">&#39;resultSetHandle&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">,</span>
-</span><span data-line="393">            <span class="s1">&#39;startPosition&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span><span class="p">,</span>
-</span><span data-line="394">            <span class="s1">&#39;numBytes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_size_bytes</span><span class="p">,</span>
-</span><span data-line="395">        <span class="p">})</span>
-</span><span data-line="396">
-</span><span data-line="397">        <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">]:</span>
-</span><span data-line="398">            <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
-</span><span data-line="399">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="400">            <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">()</span>
 </span><span data-line="401">
-</span><span data-line="402">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;responseData&#39;</span><span class="p">][</span><span class="s1">&#39;numRows&#39;</span><span class="p">]</span>
-</span><span data-line="403">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="402">    <span class="k">def</span> <span class="nf">_init_result_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ret</span><span class="p">):</span>
+</span><span data-line="403">        <span class="n">res</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span data-line="404">
-</span><span data-line="405">    <span class="k">def</span> <span class="nf">_check_duplicate_col_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="406"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="407"><span class="sd">        Exasol allows duplicate names in result sets, but it leads to various problems related to dictionaries</span>
-</span><span data-line="408"><span class="sd">        PyEXASOL adds additional check to prevent such problems and to allow safe .columns() and fetch_dict=True</span>
-</span><span data-line="409"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="410">        <span class="n">duplicate_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
-</span><span data-line="411">
-</span><span data-line="412">        <span class="k">if</span> <span class="n">duplicate_col_names</span><span class="p">:</span>
-</span><span data-line="413">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Duplicate column names in result set: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">duplicate_col_names</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span data-line="414">
-</span><span data-line="415">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="416">        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s1"> stmt_idx=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stmt_idx</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
-</span><span data-line="417">
-</span><span data-line="418">    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="419">        <span class="k">return</span> <span class="bp">self</span>
+</span><span data-line="405">        <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultType&quot;</span><span class="p">]</span>
+</span><span data-line="406">
+</span><span data-line="407">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">==</span> <span class="s2">&quot;resultSet&quot;</span><span class="p">:</span>
+</span><span data-line="408">            <span class="k">if</span> <span class="s2">&quot;resultSetHandle&quot;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">]:</span>
+</span><span data-line="409">                <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;resultSetHandle&quot;</span><span class="p">]</span>
+</span><span data-line="410">
+</span><span data-line="411">            <span class="k">if</span> <span class="s2">&quot;data&quot;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">]:</span>
+</span><span data-line="412">                <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+</span><span data-line="413">
+</span><span data-line="414">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower_ident</span><span class="p">:</span>
+</span><span data-line="415">                <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="416">                    <span class="n">c</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+</span><span data-line="417">                <span class="p">]</span>
+</span><span data-line="418">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="419">                <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;columns&quot;</span><span class="p">]]</span>
 </span><span data-line="420">
-</span><span data-line="421">    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
-</span><span data-line="422">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="423">
-</span><span data-line="424">    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="425"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="426"><span class="sd">        close() is being called automatically in order to close handles which</span>
-</span><span data-line="427"><span class="sd">        might be still opened on Exasol server side</span>
-</span><span data-line="428"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="429">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="430">            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="431">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span data-line="432">            <span class="k">pass</span></div>
+</span><span data-line="421">            <span class="bp">self</span><span class="o">.</span><span class="n">col_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;dataType&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;columns&quot;</span><span class="p">]]</span>
+</span><span data-line="422">
+</span><span data-line="423">            <span class="bp">self</span><span class="o">.</span><span class="n">num_columns</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;numColumns&quot;</span><span class="p">]</span>
+</span><span data-line="424">            <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;numRows&quot;</span><span class="p">]</span>
+</span><span data-line="425">            <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultSet&quot;</span><span class="p">][</span><span class="s2">&quot;numRowsInMessage&quot;</span><span class="p">]</span>
+</span><span data-line="426">
+</span><span data-line="427">            <span class="bp">self</span><span class="o">.</span><span class="n">_check_duplicate_col_names</span><span class="p">()</span>
+</span><span data-line="428">        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">==</span> <span class="s2">&quot;rowCount&quot;</span><span class="p">:</span>
+</span><span data-line="429">            <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;rowCount&quot;</span><span class="p">]</span>
+</span><span data-line="430">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="431">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="432">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unknown resultType: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_type</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span data-line="433">            <span class="p">)</span>
+</span><span data-line="434">
+</span><span data-line="435">    <span class="k">def</span> <span class="nf">_next_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="436">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
+</span><span data-line="437">            <span class="p">{</span>
+</span><span data-line="438">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+</span><span data-line="439">                <span class="s2">&quot;resultSetHandle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">,</span>
+</span><span data-line="440">                <span class="s2">&quot;startPosition&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span><span class="p">,</span>
+</span><span data-line="441">                <span class="s2">&quot;numBytes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_size_bytes</span><span class="p">,</span>
+</span><span data-line="442">            <span class="p">}</span>
+</span><span data-line="443">        <span class="p">)</span>
+</span><span data-line="444">
+</span><span data-line="445">        <span class="k">if</span> <span class="s2">&quot;data&quot;</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">]:</span>
+</span><span data-line="446">            <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+</span><span data-line="447">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="448">            <span class="bp">self</span><span class="o">.</span><span class="n">data_zip</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">()</span>
+</span><span data-line="449">
+</span><span data-line="450">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;numRows&quot;</span><span class="p">]</span>
+</span><span data-line="451">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="452">
+</span><span data-line="453">    <span class="k">def</span> <span class="nf">_check_duplicate_col_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="454"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="455"><span class="sd">        Exasol allows duplicate names in result sets, but it leads to various problems related to dictionaries</span>
+</span><span data-line="456"><span class="sd">        PyEXASOL adds additional check to prevent such problems and to allow safe .columns() and fetch_dict=True</span>
+</span><span data-line="457"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="458">        <span class="n">duplicate_col_names</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="459">            <span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">1</span>
+</span><span data-line="460">        <span class="p">]</span>
+</span><span data-line="461">
+</span><span data-line="462">        <span class="k">if</span> <span class="n">duplicate_col_names</span><span class="p">:</span>
+</span><span data-line="463">            <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
+</span><span data-line="464">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span>
+</span><span data-line="465">                <span class="sa">f</span><span class="s1">&#39;Duplicate column names in result set: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">duplicate_col_names</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span data-line="466">            <span class="p">)</span>
+</span><span data-line="467">
+</span><span data-line="468">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="469">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2"> stmt_idx=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stmt_idx</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+</span><span data-line="470">
+</span><span data-line="471">    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="472">        <span class="k">return</span> <span class="bp">self</span>
+</span><span data-line="473">
+</span><span data-line="474">    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+</span><span data-line="475">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="476">
+</span><span data-line="477">    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="478"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="479"><span class="sd">        close() is being called automatically in order to close handles which</span>
+</span><span data-line="480"><span class="sd">        might be still opened on Exasol server side</span>
+</span><span data-line="481"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="482">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="483">            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="484">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span data-line="485">            <span class="k">pass</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
