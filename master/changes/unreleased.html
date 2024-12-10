@@ -27,7 +27,14 @@
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
-</form><div class="sy-head-socials">
+</form><div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">master</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices"><ul><li><a href="unreleased.html">master</a></li></ul></div>
+  </div><div class="sy-head-socials">
   <a href="https://github.com/exasol/pyexasol" aria-label="GitHub">
     <iconify-icon icon="simple-icons:github"></iconify-icon>
   </a></div></div>
@@ -124,6 +131,7 @@ data-aria-dark="Switch to auto color mode">
 <section id="internal">
 <h2>🔩 Internal<a class="headerlink" href="#internal" title="Link to this heading">¶</a></h2>
 <ul>
+<li><p>Add missing plugin for multiversion documentation</p></li>
 <li><p>Add support for publishing documentation to gh pages</p></li>
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">.git-blame-ignore-revs</span></code> file to workspace</p>
 <p>Note: please make sure to adjust yor git config accordingly (if not done yet)</p>
