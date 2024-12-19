@@ -77,7 +77,22 @@ data-aria-dark="Switch to auto color mode">
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#initial-setup">Initial Setup</a></li>
-<li><a class="reference internal" href="#running-integration-tests">Running Integration Tests</a></li>
+<li><a class="reference internal" href="#running-tests">Running tests</a><ul>
+<li><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+<li><a class="reference internal" href="#integration-tests">Integration Tests</a></li>
+<li><a class="reference internal" href="#db">DB</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-release">Creating a Release</a><ul>
+<li><a class="reference internal" href="#prepare-the-release">Prepare the Release</a></li>
+<li><a class="reference internal" href="#triggering-the-release">Triggering the Release</a></li>
+<li><a class="reference internal" href="#what-to-do-if-the-release-failed">What to do if the release failed?</a><ul>
+<li><a class="reference internal" href="#the-release-failed-during-pre-release-checks">The release failed during pre-release checks</a></li>
+<li><a class="reference internal" href="#one-of-the-release-steps-failed-partial-release">One of the release steps failed (Partial Release)</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -109,25 +124,121 @@ data-aria-dark="Switch to auto color mode">
         <article class="yue" role="main">
           <section id="svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-tools-viewbox-0-0-16-16-aria-hidden-true-path-d-m5-433-2-304a4-492-4-492-0-0-0-3-5-6c0-1-598-832-3-002-2-09-3-802-518-328-929-923-902-1-64v-008l-164-3-337a-75-75-0-1-1-1-498-073l-163-3-33c-002-085-05-216-207-316a5-996-5-996-0-0-1-2-6a5-993-5-993-0-0-1-2-567-4-92-1-482-1-482-0-0-1-1-673-04c-462-296-76-827-76-1-423v2-82c0-082-041-16-11-206l-75-51a-25-25-0-0-0-28-0l-75-51a-249-249-0-0-0-9-5-282v2-463c0-596-298-1-127-76-1-423a1-482-1-482-0-0-1-1-673-04a5-993-5-993-0-0-1-14-6a5-996-5-996-0-0-1-2-786-5-068c-157-1-209-23-207-315l-163-3-33a-752-752-0-0-1-1-094-714-75-75-0-0-1-404-64l-164-3-345c-027-717-384-1-312-902-1-64a4-495-4-495-0-0-0-12-5-6a4-492-4-492-0-0-0-1-933-3-696c-024-017-067-067-067-16v2-818a1-75-1-75-0-0-1-767-1-448l-75-51a1-75-1-75-0-0-1-1-966-0l-75-51a1-75-1-75-0-0-1-5-5-5-282v2-463c0-092-043-142-067-159z-path-svg-developer-guide">
 <span id="developer-guide"></span><h1><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide<a class="headerlink" href="#svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-tools-viewbox-0-0-16-16-aria-hidden-true-path-d-m5-433-2-304a4-492-4-492-0-0-0-3-5-6c0-1-598-832-3-002-2-09-3-802-518-328-929-923-902-1-64v-008l-164-3-337a-75-75-0-1-1-1-498-073l-163-3-33c-002-085-05-216-207-316a5-996-5-996-0-0-1-2-6a5-993-5-993-0-0-1-2-567-4-92-1-482-1-482-0-0-1-1-673-04c-462-296-76-827-76-1-423v2-82c0-082-041-16-11-206l-75-51a-25-25-0-0-0-28-0l-75-51a-249-249-0-0-0-9-5-282v2-463c0-596-298-1-127-76-1-423a1-482-1-482-0-0-1-1-673-04a5-993-5-993-0-0-1-14-6a5-996-5-996-0-0-1-2-786-5-068c-157-1-209-23-207-315l-163-3-33a-752-752-0-0-1-1-094-714-75-75-0-0-1-404-64l-164-3-345c-027-717-384-1-312-902-1-64a4-495-4-495-0-0-0-12-5-6a4-492-4-492-0-0-0-1-933-3-696c-024-017-067-067-067-16v2-818a1-75-1-75-0-0-1-767-1-448l-75-51a1-75-1-75-0-0-1-1-966-0l-75-51a1-75-1-75-0-0-1-5-5-5-282v2-463c0-092-043-142-067-159z-path-svg-developer-guide" title="Link to this heading">¶</a></h1>
-<p>This guide explains how to develop <cite>pyexasol</cite> and run tests.</p>
+<p>This guide explains how to develop <code class="docutils literal notranslate"><span class="pre">pyexasol</span></code> and run tests.</p>
 <section id="initial-setup">
 <h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Link to this heading">¶</a></h2>
 <p>Create a virtual environment and install dependencies:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">poetry</span> <span class="n">install</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">extras</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>install<span class="w"> </span>--all-extras
 </span></pre></div>
 </div>
-<p>Run the following to enter the virtual environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">poetry</span> <span class="n">shell</span>
+<p>Run the following command to enter the virtual environment:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>shell
+</span></pre></div>
+</div>
+<p>Once you have set up all dependencies and activated the poetry shell, all further tasks for development should be available via the task runner <code class="docutils literal notranslate"><span class="pre">nox</span></code>. To see all available tasks, run the following command: <code class="docutils literal notranslate"><span class="pre">nox</span> <span class="pre">--list</span></code>.</p>
+<p>To execute a specific task, run <code class="docutils literal notranslate"><span class="pre">nox</span> <span class="pre">-s</span> <span class="pre">&lt;taskname&gt;</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">nox</span> <span class="pre">-s</span> <span class="pre">test:unit</span></code>.</p>
+</section>
+<section id="running-tests">
+<h2>Running tests<a class="headerlink" href="#running-tests" title="Link to this heading">¶</a></h2>
+<section id="unit-tests">
+<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Link to this heading">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-s<span class="w"> </span>test:unit
+</span></pre></div>
+</div>
+<p>If you want to forward additional arguments to pytest, you need to pass <code class="docutils literal notranslate"><span class="pre">--</span></code> to indicate the end of the argument vector for the nox command. For example:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-s<span class="w"> </span>test::unit<span class="w"> </span>--<span class="w"> </span>-k<span class="w"> </span>meta
 </span></pre></div>
 </div>
 </section>
-<section id="running-integration-tests">
-<h2>Running Integration Tests<a class="headerlink" href="#running-integration-tests" title="Link to this heading">¶</a></h2>
-<p>To run integration tests first start a local database:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">nox</span> <span class="o">-</span><span class="n">s</span> <span class="n">db</span><span class="o">-</span><span class="n">start</span>
+<section id="integration-tests">
+<h3>Integration Tests<a class="headerlink" href="#integration-tests" title="Link to this heading">¶</a></h3>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>As a Docker container with a test databases needs to be started for the integration tests, it may take a bit before the tests themselves start executing. After the tests have been run, the database will be shut down again.</p>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-s<span class="w"> </span>test:integration
 </span></pre></div>
 </div>
-<p>Then you can run tests as usual with <cite>pytest</cite>.</p>
+<p>Passing additional arguments to pytest works the same as for the unit tests.</p>
+</section>
+<section id="db">
+<h3>DB<a class="headerlink" href="#db" title="Link to this heading">¶</a></h3>
+<p>If you manually run some tests or want to try something out, you can start and stop the database manually using <code class="docutils literal notranslate"><span class="pre">nox</span> <span class="pre">-s</span> <span class="pre">db:start</span></code> and <code class="docutils literal notranslate"><span class="pre">nox</span> <span class="pre">-s</span> <span class="pre">db:stop</span></code>.</p>
+</section>
+</section>
+<section id="creating-a-release">
+<h2>Creating a Release<a class="headerlink" href="#creating-a-release" title="Link to this heading">¶</a></h2>
+<section id="prepare-the-release">
+<h3>Prepare the Release<a class="headerlink" href="#prepare-the-release" title="Link to this heading">¶</a></h3>
+<p>To prepare for a release, a pull request with the following parameters needs to be created:</p>
+<ul class="simple">
+<li><p>Updated version numbers</p></li>
+<li><p>Updated the changelog</p></li>
+</ul>
+<p>This can be achieved by running the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-s<span class="w"> </span>release:prepare<span class="w"> </span>--<span class="w"> </span>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;
+</span></pre></div>
+</div>
+<p>Replace <cite>&lt;major&gt;</cite>, <cite>&lt;minor&gt;</cite>, and <cite>&lt;patch&gt;</cite> with the appropriate version numbers.
+Once the PR is successfully merged, the release can be triggered (see next section).</p>
+</section>
+<section id="triggering-the-release">
+<h3>Triggering the Release<a class="headerlink" href="#triggering-the-release" title="Link to this heading">¶</a></h3>
+<p>To trigger a release, a new tag must be pushed to GitHub. For further details, see <cite>.github/workflows/ci-cd.yml</cite>.</p>
+<ol class="arabic">
+<li><p>Create a local tag with the appropriate version number:</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">git<span class="w"> </span>tag<span class="w"> </span>x.y.z
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Push the tag to GitHub:</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>x.y.z
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="what-to-do-if-the-release-failed">
+<h3>What to do if the release failed?<a class="headerlink" href="#what-to-do-if-the-release-failed" title="Link to this heading">¶</a></h3>
+<section id="the-release-failed-during-pre-release-checks">
+<h4>The release failed during pre-release checks<a class="headerlink" href="#the-release-failed-during-pre-release-checks" title="Link to this heading">¶</a></h4>
+<ol class="arabic">
+<li><p>Delete the local tag</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">git<span class="w"> </span>tag<span class="w"> </span>-d<span class="w"> </span>x.y.z
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Delete the remote tag</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">git<span class="w"> </span>push<span class="w"> </span>--delete<span class="w"> </span>origin<span class="w"> </span>x.y.z
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Fix the issue(s) which lead to the failing checks</p></li>
+<li><p>Start the release process from the beginning</p></li>
+</ol>
+</section>
+<section id="one-of-the-release-steps-failed-partial-release">
+<h4>One of the release steps failed (Partial Release)<a class="headerlink" href="#one-of-the-release-steps-failed-partial-release" title="Link to this heading">¶</a></h4>
+<ol class="arabic simple">
+<li><p>Check the Github action/workflow to see which steps failed</p></li>
+<li><p>Finish or redo the failed release steps manually</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Example</p>
+<p><strong>Scenario</strong>: Publishing of the release on Github was successfully but during the PyPi release, the upload step got interrupted.</p>
+<p><strong>Solution</strong>: Manually push the package to PyPi</p>
+</div>
+</section>
+</section>
 </section>
 </section>
 
