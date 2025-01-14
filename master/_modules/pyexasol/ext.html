@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -116,12 +116,12 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="2"><span class="sd">Extension with Exasol-specific helper functions</span>
 </span><span data-line="3"><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="4">
-</span><span data-line="5"><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ExaRuntimeError</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaRuntimeError</span>
 </span><span data-line="6">
 </span><span data-line="7">
 <div class="viewcode-block" id="ExaExtension">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension">[docs]</a>
-</span><span data-line="8"><span class="k">class</span> <span class="nc">ExaExtension</span><span class="p">:</span>
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">ExaExtension</span><span class="p">:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="10"><span class="sd">    This class extends the functionality of a simple SQL driver to address common Exasol-related problems.</span>
 </span><span data-line="11">
@@ -133,13 +133,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="17"><span class="sd">        ... print(C.ext.get_disk_space_usage())</span>
 </span><span data-line="18"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="19">
-</span><span data-line="20">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+</span><span data-line="20">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
 </span><span data-line="21">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
 </span><span data-line="22">        <span class="bp">self</span><span class="o">.</span><span class="n">reserved_words</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="23">
 <div class="viewcode-block" id="ExaExtension.get_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_columns">[docs]</a>
-</span><span data-line="24">    <span class="k">def</span> <span class="nf">get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
+</span><span data-line="24">    <span class="k">def</span><span class="w"> </span><span class="nf">get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
 </span><span data-line="25"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="26"><span class="sd">        Get information about columns of table or view.</span>
 </span><span data-line="27">
@@ -155,7 +155,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="36">
 <div class="viewcode-block" id="ExaExtension.get_columns_sql">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_columns_sql">[docs]</a>
-</span><span data-line="37">    <span class="k">def</span> <span class="nf">get_columns_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="37">    <span class="k">def</span><span class="w"> </span><span class="nf">get_columns_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="38"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="39"><span class="sd">        Get columns of SQL query without executing it.</span>
 </span><span data-line="40">
@@ -179,7 +179,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="57">
 <div class="viewcode-block" id="ExaExtension.insert_multi">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.insert_multi">[docs]</a>
-</span><span data-line="58">    <span class="k">def</span> <span class="nf">insert_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="58">    <span class="k">def</span><span class="w"> </span><span class="nf">insert_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="59"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="60"><span class="sd">        Insert a samll number of rows into a table using a prepared statement.</span>
 </span><span data-line="61">
@@ -237,7 +237,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="112">
 <div class="viewcode-block" id="ExaExtension.get_sys_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_columns">[docs]</a>
-</span><span data-line="113">    <span class="k">def</span> <span class="nf">get_sys_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
+</span><span data-line="113">    <span class="k">def</span><span class="w"> </span><span class="nf">get_sys_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">):</span>
 </span><span data-line="114"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="115"><span class="sd">        Get information about columns of table or view (SYS format)</span>
 </span><span data-line="116">
@@ -290,7 +290,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="162">
 <div class="viewcode-block" id="ExaExtension.get_sys_tables">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_tables">[docs]</a>
-</span><span data-line="163">    <span class="k">def</span> <span class="nf">get_sys_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span data-line="163">    <span class="k">def</span><span class="w"> </span><span class="nf">get_sys_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 </span><span data-line="164"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="165"><span class="sd">        Get information about tables in selected schema(SYS format)</span>
 </span><span data-line="166">
@@ -350,7 +350,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="219">
 <div class="viewcode-block" id="ExaExtension.get_sys_views">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_views">[docs]</a>
-</span><span data-line="220">    <span class="k">def</span> <span class="nf">get_sys_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span data-line="220">    <span class="k">def</span><span class="w"> </span><span class="nf">get_sys_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 </span><span data-line="221"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="222"><span class="sd">        Get information about views in selected schema(SYS format)</span>
 </span><span data-line="223">
@@ -414,7 +414,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="280">
 <div class="viewcode-block" id="ExaExtension.get_sys_schemas">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_sys_schemas">[docs]</a>
-</span><span data-line="281">    <span class="k">def</span> <span class="nf">get_sys_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span data-line="281">    <span class="k">def</span><span class="w"> </span><span class="nf">get_sys_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 </span><span data-line="282"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="283"><span class="sd">        Get information about schemas (SYS format)</span>
 </span><span data-line="284">
@@ -463,7 +463,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="326">
 <div class="viewcode-block" id="ExaExtension.get_reserved_words">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_reserved_words">[docs]</a>
-</span><span data-line="327">    <span class="k">def</span> <span class="nf">get_reserved_words</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="327">    <span class="k">def</span><span class="w"> </span><span class="nf">get_reserved_words</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="328"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="329"><span class="sd">        Get reserved keywords which cannot be used as identifiers without double-quotes.</span>
 </span><span data-line="330">
@@ -488,7 +488,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="348">
 <div class="viewcode-block" id="ExaExtension.get_disk_space_usage">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.get_disk_space_usage">[docs]</a>
-</span><span data-line="349">    <span class="k">def</span> <span class="nf">get_disk_space_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="349">    <span class="k">def</span><span class="w"> </span><span class="nf">get_disk_space_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="350"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="351"><span class="sd">        Get the disk space usage of the exasol DB.</span>
 </span><span data-line="352">
@@ -541,7 +541,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="398">
 <div class="viewcode-block" id="ExaExtension.export_to_pandas_with_dtype">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.export_to_pandas_with_dtype">[docs]</a>
-</span><span data-line="399">    <span class="k">def</span> <span class="nf">export_to_pandas_with_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="399">    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_pandas_with_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="400"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="401"><span class="sd">        Export to pandas and attempt to guess correct dtypes based on Exasol columns.</span>
 </span><span data-line="402">
@@ -624,8 +624,8 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="479">            <span class="k">else</span><span class="p">:</span>
 </span><span data-line="480">                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;category&quot;</span>
 </span><span data-line="481">
-</span><span data-line="482">        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="483">            <span class="kn">import</span> <span class="nn">pandas</span>
+</span><span data-line="482">        <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="483">            <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
 </span><span data-line="484">
 </span><span data-line="485">            <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="486">
@@ -636,7 +636,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="490">
 <div class="viewcode-block" id="ExaExtension.explain_last">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaExtension.explain_last">[docs]</a>
-</span><span data-line="491">    <span class="k">def</span> <span class="nf">explain_last</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="491">    <span class="k">def</span><span class="w"> </span><span class="nf">explain_last</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </span><span data-line="492"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="493"><span class="sd">        Args:</span>
 </span><span data-line="494"><span class="sd">            details (bool):</span>
@@ -700,7 +700,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="552">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
 
 </span><span data-line="553">
-</span><span data-line="554">    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="554">    <span class="k">def</span><span class="w"> </span><span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="555">        <span class="c1"># Preserve ext-functions output format regardless of current options for user queries</span>
 </span><span data-line="556">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
 </span><span data-line="557">            <span class="s2">&quot;fetch_dict&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
@@ -712,7 +712,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="563">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
 </span><span data-line="564">        <span class="p">)</span>
 </span><span data-line="565">
-</span><span data-line="566">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="566">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="567">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span></pre></div>

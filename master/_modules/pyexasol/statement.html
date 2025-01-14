@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -112,16 +112,16 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.statement</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">collections</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">itertools</span>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 </span><span data-line="3">
-</span><span data-line="4"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constant</span>
-</span><span data-line="5"><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ExaRuntimeError</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">constant</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaRuntimeError</span>
 </span><span data-line="6">
 </span><span data-line="7">
 <div class="viewcode-block" id="ExaStatement">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement">[docs]</a>
-</span><span data-line="8"><span class="k">class</span> <span class="nc">ExaStatement</span><span class="p">:</span>
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">ExaStatement</span><span class="p">:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="10"><span class="sd">    This class executes and helps to fetch result set of single Exasol SQL statement.</span>
 </span><span data-line="11">
@@ -148,7 +148,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="32">
 <div class="viewcode-block" id="ExaStatement.__init__">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.__init__">[docs]</a>
-</span><span data-line="33">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span data-line="33">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span data-line="34">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="35">        <span class="n">connection</span><span class="p">,</span>
 </span><span data-line="36">        <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -230,7 +230,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="111">
 <div class="viewcode-block" id="ExaStatement.__iter__">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.__iter__">[docs]</a>
-</span><span data-line="112">    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="112">    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="113"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="114"><span class="sd">        The best way to fetch result set of statement is to use iterator:</span>
 </span><span data-line="115">
@@ -246,7 +246,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="125">        <span class="k">return</span> <span class="bp">self</span></div>
 
 </span><span data-line="126">
-</span><span data-line="127">    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="127">    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="128">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_total</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_total</span><span class="p">:</span>
 </span><span data-line="129">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">!=</span> <span class="s2">&quot;resultSet&quot;</span><span class="p">:</span>
 </span><span data-line="130">                <span class="k">raise</span> <span class="n">ExaRuntimeError</span><span class="p">(</span>
@@ -275,7 +275,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="153">
 <div class="viewcode-block" id="ExaStatement.fetchone">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchone">[docs]</a>
-</span><span data-line="154">    <span class="k">def</span> <span class="nf">fetchone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="154">    <span class="k">def</span><span class="w"> </span><span class="nf">fetchone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="155"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="156"><span class="sd">        Fetches one row of data.</span>
 </span><span data-line="157">
@@ -293,7 +293,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="168">
 <div class="viewcode-block" id="ExaStatement.fetchmany">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchmany">[docs]</a>
-</span><span data-line="169">    <span class="k">def</span> <span class="nf">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">constant</span><span class="o">.</span><span class="n">DEFAULT_FETCHMANY_SIZE</span><span class="p">):</span>
+</span><span data-line="169">    <span class="k">def</span><span class="w"> </span><span class="nf">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">constant</span><span class="o">.</span><span class="n">DEFAULT_FETCHMANY_SIZE</span><span class="p">):</span>
 </span><span data-line="170"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="171"><span class="sd">        Fetch multiple rows.</span>
 </span><span data-line="172">
@@ -310,7 +310,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="182">
 <div class="viewcode-block" id="ExaStatement.fetchall">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchall">[docs]</a>
-</span><span data-line="183">    <span class="k">def</span> <span class="nf">fetchall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="183">    <span class="k">def</span><span class="w"> </span><span class="nf">fetchall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="184"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="185"><span class="sd">        Fetches all remaining rows.</span>
 </span><span data-line="186">
@@ -326,7 +326,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="195">
 <div class="viewcode-block" id="ExaStatement.fetchcol">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchcol">[docs]</a>
-</span><span data-line="196">    <span class="k">def</span> <span class="nf">fetchcol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="196">    <span class="k">def</span><span class="w"> </span><span class="nf">fetchcol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="197"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="198"><span class="sd">        Fetches all values from the first column.</span>
 </span><span data-line="199">
@@ -340,7 +340,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="206">
 <div class="viewcode-block" id="ExaStatement.fetchval">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.fetchval">[docs]</a>
-</span><span data-line="207">    <span class="k">def</span> <span class="nf">fetchval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="207">    <span class="k">def</span><span class="w"> </span><span class="nf">fetchval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="208"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="209"><span class="sd">        Fetches first column of first row.</span>
 </span><span data-line="210">
@@ -364,7 +364,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="227">
 <div class="viewcode-block" id="ExaStatement.rowcount">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.rowcount">[docs]</a>
-</span><span data-line="228">    <span class="k">def</span> <span class="nf">rowcount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="228">    <span class="k">def</span><span class="w"> </span><span class="nf">rowcount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="229"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="230"><span class="sd">        Number of selected/processed rows.</span>
 </span><span data-line="231">
@@ -380,7 +380,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="240">
 <div class="viewcode-block" id="ExaStatement.columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.columns">[docs]</a>
-</span><span data-line="241">    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="241">    <span class="k">def</span><span class="w"> </span><span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="242"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="243"><span class="sd">        Retrieves column information of returned data.</span>
 </span><span data-line="244">
@@ -427,14 +427,14 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="284">
 <div class="viewcode-block" id="ExaStatement.column_names">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.column_names">[docs]</a>
-</span><span data-line="285">    <span class="k">def</span> <span class="nf">column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="285">    <span class="k">def</span><span class="w"> </span><span class="nf">column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="286"><span class="w">        </span><span class="sd">&quot;&quot;&quot;List of column names.&quot;&quot;&quot;</span>
 </span><span data-line="287">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span></div>
 
 </span><span data-line="288">
 <div class="viewcode-block" id="ExaStatement.close">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.close">[docs]</a>
-</span><span data-line="289">    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="289">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="290"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="291"><span class="sd">        Closes result set handle if it was opened.</span>
 </span><span data-line="292">
@@ -448,7 +448,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="300">        <span class="bp">self</span><span class="o">.</span><span class="n">is_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 </span><span data-line="301">
-</span><span data-line="302">    <span class="k">def</span> <span class="nf">_close_result_set_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="302">    <span class="k">def</span><span class="w"> </span><span class="nf">_close_result_set_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="303">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span><span class="p">:</span>
 </span><span data-line="304">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="305">                <span class="p">{</span>
@@ -459,7 +459,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="310">
 </span><span data-line="311">            <span class="bp">self</span><span class="o">.</span><span class="n">result_set_handle</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="312">
-</span><span data-line="313">    <span class="k">def</span> <span class="nf">_close_statement_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="313">    <span class="k">def</span><span class="w"> </span><span class="nf">_close_statement_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="314">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span><span class="p">:</span>
 </span><span data-line="315">            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="316">                <span class="p">{</span>
@@ -470,7 +470,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="321">
 </span><span data-line="322">            <span class="bp">self</span><span class="o">.</span><span class="n">statement_handle</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="323">
-</span><span data-line="324">    <span class="k">def</span> <span class="nf">_format_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">):</span>
+</span><span data-line="324">    <span class="k">def</span><span class="w"> </span><span class="nf">_format_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="p">):</span>
 </span><span data-line="325">        <span class="n">query</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 </span><span data-line="326">
 </span><span data-line="327">        <span class="k">if</span> <span class="n">query_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -478,7 +478,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="329">
 </span><span data-line="330">        <span class="k">return</span> <span class="n">query</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\n</span><span class="s2">;&quot;</span><span class="p">)</span>
 </span><span data-line="331">
-</span><span data-line="332">    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="332">    <span class="k">def</span><span class="w"> </span><span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="333">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="334">            <span class="p">{</span>
 </span><span data-line="335">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;execute&quot;</span><span class="p">,</span>
@@ -489,7 +489,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="340">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
 </span><span data-line="341">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
 </span><span data-line="342">
-</span><span data-line="343">    <span class="k">def</span> <span class="nf">_execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="343">    <span class="k">def</span><span class="w"> </span><span class="nf">_execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="344">        <span class="n">meta_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
 </span><span data-line="345">
 </span><span data-line="346">        <span class="k">if</span> <span class="s2">&quot;command&quot;</span> <span class="ow">in</span> <span class="n">meta_params</span><span class="p">:</span>
@@ -514,7 +514,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="365">        <span class="bp">self</span><span class="o">.</span><span class="n">execution_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">ws_req_time</span>
 </span><span data-line="366">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
 </span><span data-line="367">
-</span><span data-line="368">    <span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="368">    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="369">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="370">            <span class="p">{</span>
 </span><span data-line="371">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;createPreparedStatement&quot;</span><span class="p">,</span>
@@ -531,7 +531,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="382">
 <div class="viewcode-block" id="ExaStatement.execute_prepared">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaStatement.execute_prepared">[docs]</a>
-</span><span data-line="383">    <span class="k">def</span> <span class="nf">execute_prepared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="383">    <span class="k">def</span><span class="w"> </span><span class="nf">execute_prepared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="384">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="385">            <span class="p">{</span>
 </span><span data-line="386">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;executePreparedStatement&quot;</span><span class="p">,</span>
@@ -551,7 +551,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="400">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_result_set</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
 
 </span><span data-line="401">
-</span><span data-line="402">    <span class="k">def</span> <span class="nf">_init_result_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ret</span><span class="p">):</span>
+</span><span data-line="402">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_result_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ret</span><span class="p">):</span>
 </span><span data-line="403">        <span class="n">res</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </span><span data-line="404">
 </span><span data-line="405">        <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;resultType&quot;</span><span class="p">]</span>
@@ -584,7 +584,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="432">                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unknown resultType: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_type</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span data-line="433">            <span class="p">)</span>
 </span><span data-line="434">
-</span><span data-line="435">    <span class="k">def</span> <span class="nf">_next_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="435">    <span class="k">def</span><span class="w"> </span><span class="nf">_next_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="436">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="437">            <span class="p">{</span>
 </span><span data-line="438">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
@@ -602,7 +602,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="450">        <span class="bp">self</span><span class="o">.</span><span class="n">num_rows_chunk</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;responseData&quot;</span><span class="p">][</span><span class="s2">&quot;numRows&quot;</span><span class="p">]</span>
 </span><span data-line="451">        <span class="bp">self</span><span class="o">.</span><span class="n">pos_chunk</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span data-line="452">
-</span><span data-line="453">    <span class="k">def</span> <span class="nf">_check_duplicate_col_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="453">    <span class="k">def</span><span class="w"> </span><span class="nf">_check_duplicate_col_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="454"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="455"><span class="sd">        Exasol allows duplicate names in result sets, but it leads to various problems related to dictionaries</span>
 </span><span data-line="456"><span class="sd">        PyEXASOL adds additional check to prevent such problems and to allow safe .columns() and fetch_dict=True</span>
@@ -617,16 +617,16 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="465">                <span class="sa">f</span><span class="s1">&#39;Duplicate column names in result set: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">duplicate_col_names</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
 </span><span data-line="466">            <span class="p">)</span>
 </span><span data-line="467">
-</span><span data-line="468">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="468">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="469">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2"> stmt_idx=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stmt_idx</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 </span><span data-line="470">
-</span><span data-line="471">    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="471">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="472">        <span class="k">return</span> <span class="bp">self</span>
 </span><span data-line="473">
-</span><span data-line="474">    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+</span><span data-line="474">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 </span><span data-line="475">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span data-line="476">
-</span><span data-line="477">    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="477">    <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="478"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="479"><span class="sd">        close() is being called automatically in order to close handles which</span>
 </span><span data-line="480"><span class="sd">        might be still opened on Exasol server side</span>

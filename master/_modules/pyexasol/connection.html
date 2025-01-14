@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -112,44 +112,44 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.connection</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">base64</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">getpass</span>
-</span><span data-line="3"><span class="kn">import</span> <span class="nn">hashlib</span>
-</span><span data-line="4"><span class="kn">import</span> <span class="nn">itertools</span>
-</span><span data-line="5"><span class="kn">import</span> <span class="nn">platform</span>
-</span><span data-line="6"><span class="kn">import</span> <span class="nn">random</span>
-</span><span data-line="7"><span class="kn">import</span> <span class="nn">re</span>
-</span><span data-line="8"><span class="kn">import</span> <span class="nn">socket</span>
-</span><span data-line="9"><span class="kn">import</span> <span class="nn">ssl</span>
-</span><span data-line="10"><span class="kn">import</span> <span class="nn">threading</span>
-</span><span data-line="11"><span class="kn">import</span> <span class="nn">time</span>
-</span><span data-line="12"><span class="kn">import</span> <span class="nn">urllib.parse</span>
-</span><span data-line="13"><span class="kn">import</span> <span class="nn">zlib</span>
-</span><span data-line="14"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+</span><span data-line="6"><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+</span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">ssl</span>
+</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+</span><span data-line="11"><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+</span><span data-line="12"><span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
+</span><span data-line="13"><span class="kn">import</span><span class="w"> </span><span class="nn">zlib</span>
+</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span data-line="15">    <span class="n">NamedTuple</span><span class="p">,</span>
 </span><span data-line="16">    <span class="n">Optional</span><span class="p">,</span>
 </span><span data-line="17"><span class="p">)</span>
 </span><span data-line="18">
-</span><span data-line="19"><span class="kn">import</span> <span class="nn">rsa</span>
-</span><span data-line="20"><span class="kn">import</span> <span class="nn">websocket</span>
+</span><span data-line="19"><span class="kn">import</span><span class="w"> </span><span class="nn">rsa</span>
+</span><span data-line="20"><span class="kn">import</span><span class="w"> </span><span class="nn">websocket</span>
 </span><span data-line="21">
-</span><span data-line="22"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">callback</span> <span class="k">as</span> <span class="n">cb</span>
-</span><span data-line="23"><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="o">*</span>
-</span><span data-line="24"><span class="kn">from</span> <span class="nn">.ext</span> <span class="kn">import</span> <span class="n">ExaExtension</span>
-</span><span data-line="25"><span class="kn">from</span> <span class="nn">.formatter</span> <span class="kn">import</span> <span class="n">ExaFormatter</span>
-</span><span data-line="26"><span class="kn">from</span> <span class="nn">.http_transport</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="22"><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">callback</span> <span class="k">as</span> <span class="n">cb</span>
+</span><span data-line="23"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+</span><span data-line="24"><span class="kn">from</span><span class="w"> </span><span class="nn">.ext</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaExtension</span>
+</span><span data-line="25"><span class="kn">from</span><span class="w"> </span><span class="nn">.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaFormatter</span>
+</span><span data-line="26"><span class="kn">from</span><span class="w"> </span><span class="nn">.http_transport</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span data-line="27">    <span class="n">ExaHttpThread</span><span class="p">,</span>
 </span><span data-line="28">    <span class="n">ExaSQLExportThread</span><span class="p">,</span>
 </span><span data-line="29">    <span class="n">ExaSQLImportThread</span><span class="p">,</span>
 </span><span data-line="30"><span class="p">)</span>
-</span><span data-line="31"><span class="kn">from</span> <span class="nn">.logger</span> <span class="kn">import</span> <span class="n">ExaLogger</span>
-</span><span data-line="32"><span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">ExaMetaData</span>
-</span><span data-line="33"><span class="kn">from</span> <span class="nn">.script_output</span> <span class="kn">import</span> <span class="n">ExaScriptOutputProcess</span>
-</span><span data-line="34"><span class="kn">from</span> <span class="nn">.statement</span> <span class="kn">import</span> <span class="n">ExaStatement</span>
-</span><span data-line="35"><span class="kn">from</span> <span class="nn">.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+</span><span data-line="31"><span class="kn">from</span><span class="w"> </span><span class="nn">.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaLogger</span>
+</span><span data-line="32"><span class="kn">from</span><span class="w"> </span><span class="nn">.meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaMetaData</span>
+</span><span data-line="33"><span class="kn">from</span><span class="w"> </span><span class="nn">.script_output</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaScriptOutputProcess</span>
+</span><span data-line="34"><span class="kn">from</span><span class="w"> </span><span class="nn">.statement</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaStatement</span>
+</span><span data-line="35"><span class="kn">from</span><span class="w"> </span><span class="nn">.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
 </span><span data-line="36">
 </span><span data-line="37">
-</span><span data-line="38"><span class="k">class</span> <span class="nc">Host</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+</span><span data-line="38"><span class="k">class</span><span class="w"> </span><span class="nc">Host</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
 </span><span data-line="39"><span class="w">    </span><span class="sd">&quot;&quot;&quot;This represents a resolved host name with its IP address and port number.&quot;&quot;&quot;</span>
 </span><span data-line="40">
 </span><span data-line="41">    <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span>
@@ -160,7 +160,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="46">
 <div class="viewcode-block" id="ExaConnection">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection">[docs]</a>
-</span><span data-line="47"><span class="k">class</span> <span class="nc">ExaConnection</span><span class="p">:</span>
+</span><span data-line="47"><span class="k">class</span><span class="w"> </span><span class="nc">ExaConnection</span><span class="p">:</span>
 </span><span data-line="48"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="49"><span class="sd">    Warning:</span>
 </span><span data-line="50"><span class="sd">        Threads may share the module, but not connections</span>
@@ -196,7 +196,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="80">
 <div class="viewcode-block" id="ExaConnection.__init__">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.__init__">[docs]</a>
-</span><span data-line="81">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span data-line="81">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 </span><span data-line="82">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="83">        <span class="n">dsn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span data-line="84">        <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -401,7 +401,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="282">
 <div class="viewcode-block" id="ExaConnection.execute">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.execute">[docs]</a>
-</span><span data-line="283">    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExaStatement</span><span class="p">:</span>
+</span><span data-line="283">    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExaStatement</span><span class="p">:</span>
 </span><span data-line="284"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="285"><span class="sd">        Execute SQL query with optional query formatting parameters</span>
 </span><span data-line="286">
@@ -427,7 +427,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="305">
 <div class="viewcode-block" id="ExaConnection.execute_udf_output">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.execute_udf_output">[docs]</a>
-</span><span data-line="306">    <span class="k">def</span> <span class="nf">execute_udf_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="306">    <span class="k">def</span><span class="w"> </span><span class="nf">execute_udf_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="307"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="308"><span class="sd">        Execute SQL query with UDF script, capture output</span>
 </span><span data-line="309">
@@ -507,21 +507,21 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="382">
 <div class="viewcode-block" id="ExaConnection.commit">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.commit">[docs]</a>
-</span><span data-line="383">    <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="383">    <span class="k">def</span><span class="w"> </span><span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="384"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for query &#39;COMMIT&#39;&quot;&quot;&quot;</span>
 </span><span data-line="385">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;COMMIT&quot;</span><span class="p">)</span></div>
 
 </span><span data-line="386">
 <div class="viewcode-block" id="ExaConnection.rollback">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.rollback">[docs]</a>
-</span><span data-line="387">    <span class="k">def</span> <span class="nf">rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="387">    <span class="k">def</span><span class="w"> </span><span class="nf">rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="388"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for query &#39;ROLLBACK&#39;&quot;&quot;&quot;</span>
 </span><span data-line="389">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;ROLLBACK&quot;</span><span class="p">)</span></div>
 
 </span><span data-line="390">
 <div class="viewcode-block" id="ExaConnection.set_autocommit">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.set_autocommit">[docs]</a>
-</span><span data-line="391">    <span class="k">def</span> <span class="nf">set_autocommit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="391">    <span class="k">def</span><span class="w"> </span><span class="nf">set_autocommit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="392"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="393"><span class="sd">        Set autocommit mode.</span>
 </span><span data-line="394">
@@ -543,7 +543,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="409">
 <div class="viewcode-block" id="ExaConnection.set_query_timeout">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.set_query_timeout">[docs]</a>
-</span><span data-line="410">    <span class="k">def</span> <span class="nf">set_query_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="410">    <span class="k">def</span><span class="w"> </span><span class="nf">set_query_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="411"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="412"><span class="sd">        Set the maximum time in seconds for which a query can run before Exasol kills it automatically.</span>
 </span><span data-line="413">
@@ -561,7 +561,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="424">
 <div class="viewcode-block" id="ExaConnection.open_schema">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.open_schema">[docs]</a>
-</span><span data-line="425">    <span class="k">def</span> <span class="nf">open_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+</span><span data-line="425">    <span class="k">def</span><span class="w"> </span><span class="nf">open_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
 </span><span data-line="426"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="427"><span class="sd">        Wrapper for `OPEN SCHEMA`</span>
 </span><span data-line="428">
@@ -573,7 +573,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="433">
 <div class="viewcode-block" id="ExaConnection.current_schema">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.current_schema">[docs]</a>
-</span><span data-line="434">    <span class="k">def</span> <span class="nf">current_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="434">    <span class="k">def</span><span class="w"> </span><span class="nf">current_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="435"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="436"><span class="sd">        Get the name of the current schema.</span>
 </span><span data-line="437">
@@ -585,7 +585,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="442">
 <div class="viewcode-block" id="ExaConnection.export_to_file">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.export_to_file">[docs]</a>
-</span><span data-line="443">    <span class="k">def</span> <span class="nf">export_to_file</span><span class="p">(</span>
+</span><span data-line="443">    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_file</span><span class="p">(</span>
 </span><span data-line="444">        <span class="bp">self</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">export_params</span><span class="o">=</span><span class="kc">None</span>
 </span><span data-line="445">    <span class="p">):</span>
 </span><span data-line="446"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -619,7 +619,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="473">
 <div class="viewcode-block" id="ExaConnection.export_to_list">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.export_to_list">[docs]</a>
-</span><span data-line="474">    <span class="k">def</span> <span class="nf">export_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">export_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="474">    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">export_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="475"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="476"><span class="sd">        Export large amount of data from Exasol to basic Python `list` using fast HTTP transport.</span>
 </span><span data-line="477">
@@ -650,7 +650,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="501">
 <div class="viewcode-block" id="ExaConnection.export_to_pandas">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.export_to_pandas">[docs]</a>
-</span><span data-line="502">    <span class="k">def</span> <span class="nf">export_to_pandas</span><span class="p">(</span>
+</span><span data-line="502">    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_pandas</span><span class="p">(</span>
 </span><span data-line="503">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="504">        <span class="n">query_or_table</span><span class="p">,</span>
 </span><span data-line="505">        <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -697,7 +697,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="545">
 <div class="viewcode-block" id="ExaConnection.import_from_file">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.import_from_file">[docs]</a>
-</span><span data-line="546">    <span class="k">def</span> <span class="nf">import_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="546">    <span class="k">def</span><span class="w"> </span><span class="nf">import_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="547"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="548"><span class="sd">        Import a large amount of data from a file or file-like object.</span>
 </span><span data-line="549">
@@ -719,7 +719,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="564">
 <div class="viewcode-block" id="ExaConnection.import_from_iterable">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.import_from_iterable">[docs]</a>
-</span><span data-line="565">    <span class="k">def</span> <span class="nf">import_from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="565">    <span class="k">def</span><span class="w"> </span><span class="nf">import_from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="566"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="567"><span class="sd">        Import a large amount of data from an ``iterable`` Python object.</span>
 </span><span data-line="568">
@@ -739,7 +739,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="581">
 <div class="viewcode-block" id="ExaConnection.import_from_pandas">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.import_from_pandas">[docs]</a>
-</span><span data-line="582">    <span class="k">def</span> <span class="nf">import_from_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="582">    <span class="k">def</span><span class="w"> </span><span class="nf">import_from_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="583"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="584"><span class="sd">        Import a large amount of data from ``pandas.DataFrame``.</span>
 </span><span data-line="585">
@@ -758,7 +758,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="597">
 <div class="viewcode-block" id="ExaConnection.export_to_callback">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.export_to_callback">[docs]</a>
-</span><span data-line="598">    <span class="k">def</span> <span class="nf">export_to_callback</span><span class="p">(</span>
+</span><span data-line="598">    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_callback</span><span class="p">(</span>
 </span><span data-line="599">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="600">        <span class="n">callback</span><span class="p">,</span>
 </span><span data-line="601">        <span class="n">dst</span><span class="p">,</span>
@@ -851,7 +851,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="687">
 <div class="viewcode-block" id="ExaConnection.import_from_callback">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.import_from_callback">[docs]</a>
-</span><span data-line="688">    <span class="k">def</span> <span class="nf">import_from_callback</span><span class="p">(</span>
+</span><span data-line="688">    <span class="k">def</span><span class="w"> </span><span class="nf">import_from_callback</span><span class="p">(</span>
 </span><span data-line="689">        <span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span>
 </span><span data-line="690">    <span class="p">):</span>
 </span><span data-line="691"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -924,7 +924,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="757">
 <div class="viewcode-block" id="ExaConnection.export_parallel">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.export_parallel">[docs]</a>
-</span><span data-line="758">    <span class="k">def</span> <span class="nf">export_parallel</span><span class="p">(</span>
+</span><span data-line="758">    <span class="k">def</span><span class="w"> </span><span class="nf">export_parallel</span><span class="p">(</span>
 </span><span data-line="759">        <span class="bp">self</span><span class="p">,</span> <span class="n">exa_address_list</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">export_params</span><span class="o">=</span><span class="kc">None</span>
 </span><span data-line="760">    <span class="p">):</span>
 </span><span data-line="761"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -965,7 +965,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="795">
 <div class="viewcode-block" id="ExaConnection.import_parallel">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.import_parallel">[docs]</a>
-</span><span data-line="796">    <span class="k">def</span> <span class="nf">import_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exa_address_list</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="796">    <span class="k">def</span><span class="w"> </span><span class="nf">import_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exa_address_list</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="797"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="798"><span class="sd">        This function is part of :ref:`http_transport_parallel` API.</span>
 </span><span data-line="799">
@@ -999,7 +999,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="826">
 <div class="viewcode-block" id="ExaConnection.session_id">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.session_id">[docs]</a>
-</span><span data-line="827">    <span class="k">def</span> <span class="nf">session_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="827">    <span class="k">def</span><span class="w"> </span><span class="nf">session_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="828"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="829"><span class="sd">        Session id of current session.</span>
 </span><span data-line="830">
@@ -1011,7 +1011,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="835">
 <div class="viewcode-block" id="ExaConnection.protocol_version">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.protocol_version">[docs]</a>
-</span><span data-line="836">    <span class="k">def</span> <span class="nf">protocol_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="836">    <span class="k">def</span><span class="w"> </span><span class="nf">protocol_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="837"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="838"><span class="sd">        Actual protocol version used by the the established connection.</span>
 </span><span data-line="839">
@@ -1032,7 +1032,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="853">
 <div class="viewcode-block" id="ExaConnection.last_statement">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.last_statement">[docs]</a>
-</span><span data-line="854">    <span class="k">def</span> <span class="nf">last_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExaStatement</span><span class="p">:</span>
+</span><span data-line="854">    <span class="k">def</span><span class="w"> </span><span class="nf">last_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExaStatement</span><span class="p">:</span>
 </span><span data-line="855"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="856"><span class="sd">        Last created statement object</span>
 </span><span data-line="857">
@@ -1055,7 +1055,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="873">
 <div class="viewcode-block" id="ExaConnection.close">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.close">[docs]</a>
-</span><span data-line="874">    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disconnect</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="874">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disconnect</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 </span><span data-line="875"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="876"><span class="sd">        Closes connection to database.</span>
 </span><span data-line="877">
@@ -1080,7 +1080,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="895">
 <div class="viewcode-block" id="ExaConnection.get_attr">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.get_attr">[docs]</a>
-</span><span data-line="896">    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="896">    <span class="k">def</span><span class="w"> </span><span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="897">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="898">            <span class="p">{</span>
 </span><span data-line="899">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;getAttributes&quot;</span><span class="p">,</span>
@@ -1092,7 +1092,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="904">
 <div class="viewcode-block" id="ExaConnection.set_attr">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.set_attr">[docs]</a>
-</span><span data-line="905">    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">):</span>
+</span><span data-line="905">    <span class="k">def</span><span class="w"> </span><span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_attr</span><span class="p">):</span>
 </span><span data-line="906">        <span class="bp">self</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="907">            <span class="p">{</span>
 </span><span data-line="908">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;setAttributes&quot;</span><span class="p">,</span>
@@ -1106,7 +1106,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="915">
 <div class="viewcode-block" id="ExaConnection.get_nodes">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.get_nodes">[docs]</a>
-</span><span data-line="916">    <span class="k">def</span> <span class="nf">get_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="916">    <span class="k">def</span><span class="w"> </span><span class="nf">get_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="917"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="918"><span class="sd">        List of currently active Exasol nodes which is normally used for :ref:`http_transport_parallel`.</span>
 </span><span data-line="919">
@@ -1150,7 +1150,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="956">
 <div class="viewcode-block" id="ExaConnection.req">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.req">[docs]</a>
-</span><span data-line="957">    <span class="k">def</span> <span class="nf">req</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
+</span><span data-line="957">    <span class="k">def</span><span class="w"> </span><span class="nf">req</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
 </span><span data-line="958"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Send WebSocket request and wait for response&quot;&quot;&quot;</span>
 </span><span data-line="959">        <span class="bp">self</span><span class="o">.</span><span class="n">ws_req_count</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span data-line="960">        <span class="n">local_req_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ws_req_count</span>
@@ -1226,7 +1226,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1029">
 <div class="viewcode-block" id="ExaConnection.abort_query">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaConnection.abort_query">[docs]</a>
-</span><span data-line="1030">    <span class="k">def</span> <span class="nf">abort_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1030">    <span class="k">def</span><span class="w"> </span><span class="nf">abort_query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1031"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="1032"><span class="sd">        Abort running query</span>
 </span><span data-line="1033">
@@ -1253,7 +1253,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1054">            <span class="k">raise</span> <span class="n">ExaCommunicationError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
 
 </span><span data-line="1055">
-</span><span data-line="1056">    <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1056">    <span class="k">def</span><span class="w"> </span><span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1057">        <span class="n">start_ts</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 </span><span data-line="1058">
 </span><span data-line="1059">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">]:</span>
@@ -1295,7 +1295,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1095">            <span class="p">)</span>
 </span><span data-line="1096">            <span class="bp">self</span><span class="o">.</span><span class="n">_ws_recv</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ws</span><span class="o">.</span><span class="n">recv</span><span class="p">())</span>
 </span><span data-line="1097">
-</span><span data-line="1098">    <span class="k">def</span> <span class="nf">_login_password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1098">    <span class="k">def</span><span class="w"> </span><span class="nf">_login_password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1099">        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="1100">            <span class="p">{</span>
 </span><span data-line="1101">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;login&quot;</span><span class="p">,</span>
@@ -1310,7 +1310,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1110">
 </span><span data-line="1111">        <span class="k">return</span> <span class="n">auth_params</span>
 </span><span data-line="1112">
-</span><span data-line="1113">    <span class="k">def</span> <span class="nf">_login_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1113">    <span class="k">def</span><span class="w"> </span><span class="nf">_login_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1114">        <span class="bp">self</span><span class="o">.</span><span class="n">req</span><span class="p">(</span>
 </span><span data-line="1115">            <span class="p">{</span>
 </span><span data-line="1116">                <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;loginToken&quot;</span><span class="p">,</span>
@@ -1328,13 +1328,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1128">
 </span><span data-line="1129">        <span class="k">return</span> <span class="n">auth_params</span>
 </span><span data-line="1130">
-</span><span data-line="1131">    <span class="k">def</span> <span class="nf">_encrypt_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public_key_pem</span><span class="p">):</span>
+</span><span data-line="1131">    <span class="k">def</span><span class="w"> </span><span class="nf">_encrypt_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public_key_pem</span><span class="p">):</span>
 </span><span data-line="1132">        <span class="n">pk</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">PublicKey</span><span class="o">.</span><span class="n">load_pkcs1</span><span class="p">(</span><span class="n">public_key_pem</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 </span><span data-line="1133">        <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span>
 </span><span data-line="1134">            <span class="n">rsa</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">pk</span><span class="p">)</span>
 </span><span data-line="1135">        <span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 </span><span data-line="1136">
-</span><span data-line="1137">    <span class="k">def</span> <span class="nf">_init_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1137">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1138"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="1139"><span class="sd">        Init websocket connection</span>
 </span><span data-line="1140">
@@ -1352,7 +1352,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1152">                <span class="k">if</span> <span class="n">failed_attempts</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dsn_items</span><span class="p">):</span>
 </span><span data-line="1153">                    <span class="k">raise</span> <span class="n">ExaConnectionFailedError</span><span class="p">(</span>
 </span><span data-line="1154">                        <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Could not connect to Exasol: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span data-line="1155">                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+</span><span data-line="1155">                    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 </span><span data-line="1156">            <span class="k">else</span><span class="p">:</span>
 </span><span data-line="1157">                <span class="bp">self</span><span class="o">.</span><span class="n">_ws</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;socket_timeout&quot;</span><span class="p">])</span>
 </span><span data-line="1158">
@@ -1367,7 +1367,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1167">
 </span><span data-line="1168">                <span class="k">return</span>
 </span><span data-line="1169">
-</span><span data-line="1170">    <span class="k">def</span> <span class="nf">_create_websocket_connection</span><span class="p">(</span>
+</span><span data-line="1170">    <span class="k">def</span><span class="w"> </span><span class="nf">_create_websocket_connection</span><span class="p">(</span>
 </span><span data-line="1171">        <span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span>
 </span><span data-line="1172">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">websocket</span><span class="o">.</span><span class="n">WebSocket</span><span class="p">:</span>
 </span><span data-line="1173">        <span class="n">ws_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ws_options</span><span class="p">()</span>
@@ -1385,7 +1385,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1185">            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to connect [</span><span class="si">{</span><span class="n">connection_string</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span data-line="1186">            <span class="k">raise</span> <span class="n">e</span>
 </span><span data-line="1187">
-</span><span data-line="1188">    <span class="k">def</span> <span class="nf">_get_websocket_connection_string</span><span class="p">(</span>
+</span><span data-line="1188">    <span class="k">def</span><span class="w"> </span><span class="nf">_get_websocket_connection_string</span><span class="p">(</span>
 </span><span data-line="1189">        <span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span>
 </span><span data-line="1190">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span data-line="1191">        <span class="n">host</span> <span class="o">=</span> <span class="n">hostname</span>
@@ -1398,7 +1398,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1198">        <span class="k">else</span><span class="p">:</span>
 </span><span data-line="1199">            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ws://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span data-line="1200">
-</span><span data-line="1201">    <span class="k">def</span> <span class="nf">_get_ws_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1201">    <span class="k">def</span><span class="w"> </span><span class="nf">_get_ws_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1202">        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
 </span><span data-line="1203">            <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;connection_timeout&quot;</span><span class="p">],</span>
 </span><span data-line="1204">            <span class="s2">&quot;skip_utf8_validation&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
@@ -1432,7 +1432,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1232">
 </span><span data-line="1233">        <span class="k">return</span> <span class="n">options</span>
 </span><span data-line="1234">
-</span><span data-line="1235">    <span class="k">def</span> <span class="nf">_get_login_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1235">    <span class="k">def</span><span class="w"> </span><span class="nf">_get_login_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1236">        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span>
 </span><span data-line="1237">            <span class="s2">&quot;currentSchema&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;schema&quot;</span><span class="p">]),</span>
 </span><span data-line="1238">            <span class="s2">&quot;autocommit&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;autocommit&quot;</span><span class="p">],</span>
@@ -1446,7 +1446,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1246">
 </span><span data-line="1247">        <span class="k">return</span> <span class="n">attributes</span>
 </span><span data-line="1248">
-</span><span data-line="1249">    <span class="k">def</span> <span class="nf">_process_dsn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsn</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Host</span><span class="p">]:</span>
+</span><span data-line="1249">    <span class="k">def</span><span class="w"> </span><span class="nf">_process_dsn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsn</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Host</span><span class="p">]:</span>
 </span><span data-line="1250"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="1251"><span class="sd">        Parse DSN, expand ranges and resolve IP addresses for all hostnames.</span>
 </span><span data-line="1252">
@@ -1538,7 +1538,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1338">
 </span><span data-line="1339">        <span class="k">return</span> <span class="n">result</span>
 </span><span data-line="1340">
-</span><span data-line="1341">    <span class="k">def</span> <span class="nf">_resolve_hostname</span><span class="p">(</span>
+</span><span data-line="1341">    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_hostname</span><span class="p">(</span>
 </span><span data-line="1342">        <span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fingerprint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span data-line="1343">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Host</span><span class="p">]:</span>
 </span><span data-line="1344"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1554,11 +1554,11 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1354">                <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="1355">                <span class="sa">f</span><span class="s2">&quot;Could not resolve IP address of hostname [</span><span class="si">{</span><span class="n">hostname</span><span class="si">}</span><span class="s2">] &quot;</span>
 </span><span data-line="1356">                <span class="sa">f</span><span class="s2">&quot;derived from connection string&quot;</span><span class="p">,</span>
-</span><span data-line="1357">            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+</span><span data-line="1357">            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 </span><span data-line="1358">
 </span><span data-line="1359">        <span class="k">return</span> <span class="p">[</span><span class="n">Host</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">fingerprint</span><span class="p">)</span> <span class="k">for</span> <span class="n">ipaddr</span> <span class="ow">in</span> <span class="n">ipaddr_list</span><span class="p">]</span>
 </span><span data-line="1360">
-</span><span data-line="1361">    <span class="k">def</span> <span class="nf">_validate_fingerprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">provided_fingerprint</span><span class="p">):</span>
+</span><span data-line="1361">    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_fingerprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">provided_fingerprint</span><span class="p">):</span>
 </span><span data-line="1362">        <span class="n">server_fingerprint</span> <span class="o">=</span> <span class="p">(</span>
 </span><span data-line="1363">            <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ws</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">getpeercert</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 </span><span data-line="1364">        <span class="p">)</span>
@@ -1570,17 +1570,17 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1370">                <span class="sa">f</span><span class="s2">&quot;server fingerprint [</span><span class="si">{</span><span class="n">server_fingerprint</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
 </span><span data-line="1371">            <span class="p">)</span>
 </span><span data-line="1372">
-</span><span data-line="1373">    <span class="k">def</span> <span class="nf">_init_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1373">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1374">        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constant</span><span class="o">.</span><span class="n">DRIVER_NAME</span><span class="p">)</span>
 </span><span data-line="1375">        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
 </span><span data-line="1376">        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_default_handler</span><span class="p">()</span>
 </span><span data-line="1377">
-</span><span data-line="1378">    <span class="k">def</span> <span class="nf">_init_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1378">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1379">        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span><span data-line="1380">
-</span><span data-line="1381">    <span class="k">def</span> <span class="nf">_init_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1381">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1382">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;json_lib&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rapidjson&quot;</span><span class="p">:</span>
-</span><span data-line="1383">            <span class="kn">import</span> <span class="nn">rapidjson</span>
+</span><span data-line="1383">            <span class="kn">import</span><span class="w"> </span><span class="nn">rapidjson</span>
 </span><span data-line="1384">
 </span><span data-line="1385">            <span class="bp">self</span><span class="o">.</span><span class="n">json_encode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">False</span><span class="p">:</span> <span class="n">rapidjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
 </span><span data-line="1386">                <span class="n">x</span><span class="p">,</span>
@@ -1593,7 +1593,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1393">            <span class="p">)</span>
 </span><span data-line="1394">
 </span><span data-line="1395">        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;json_lib&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ujson&quot;</span><span class="p">:</span>
-</span><span data-line="1396">            <span class="kn">import</span> <span class="nn">ujson</span>
+</span><span data-line="1396">            <span class="kn">import</span><span class="w"> </span><span class="nn">ujson</span>
 </span><span data-line="1397">
 </span><span data-line="1398">            <span class="bp">self</span><span class="o">.</span><span class="n">json_encode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">False</span><span class="p">:</span> <span class="n">ujson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
 </span><span data-line="1399">                <span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">indent</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span>
@@ -1601,7 +1601,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1401">            <span class="bp">self</span><span class="o">.</span><span class="n">json_decode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ujson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span><span data-line="1402">
 </span><span data-line="1403">        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;json_lib&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;orjson&quot;</span><span class="p">:</span>
-</span><span data-line="1404">            <span class="kn">import</span> <span class="nn">orjson</span>
+</span><span data-line="1404">            <span class="kn">import</span><span class="w"> </span><span class="nn">orjson</span>
 </span><span data-line="1405">
 </span><span data-line="1406">            <span class="bp">self</span><span class="o">.</span><span class="n">json_encode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">False</span><span class="p">:</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
 </span><span data-line="1407">                <span class="n">x</span><span class="p">,</span>
@@ -1610,7 +1610,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1410">            <span class="bp">self</span><span class="o">.</span><span class="n">json_decode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span><span data-line="1411">
 </span><span data-line="1412">        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;json_lib&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
-</span><span data-line="1413">            <span class="kn">import</span> <span class="nn">json</span>
+</span><span data-line="1413">            <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 </span><span data-line="1414">
 </span><span data-line="1415">            <span class="bp">self</span><span class="o">.</span><span class="n">json_encode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">False</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
 </span><span data-line="1416">                <span class="n">x</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">indent</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span>
@@ -1620,15 +1620,15 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1420">        <span class="k">else</span><span class="p">:</span>
 </span><span data-line="1421">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported json library [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;json_lib&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
 </span><span data-line="1422">
-</span><span data-line="1423">    <span class="k">def</span> <span class="nf">_init_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1423">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1424">        <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span><span data-line="1425">
-</span><span data-line="1426">    <span class="k">def</span> <span class="nf">_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1426">    <span class="k">def</span><span class="w"> </span><span class="nf">_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1427">        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span><span data-line="1428">
-</span><span data-line="1429">    <span class="k">def</span> <span class="nf">_get_stmt_output_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="1430">        <span class="kn">import</span> <span class="nn">pathlib</span>
-</span><span data-line="1431">        <span class="kn">import</span> <span class="nn">tempfile</span>
+</span><span data-line="1429">    <span class="k">def</span><span class="w"> </span><span class="nf">_get_stmt_output_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1430">        <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+</span><span data-line="1431">        <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 </span><span data-line="1432">
 </span><span data-line="1433">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;udf_output_dir&quot;</span><span class="p">]:</span>
 </span><span data-line="1434">            <span class="n">base_output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;udf_output_dir&quot;</span><span class="p">]</span>
@@ -1646,19 +1646,19 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1446">
 </span><span data-line="1447">        <span class="k">return</span> <span class="n">stmt_output_dir</span>
 </span><span data-line="1448">
-</span><span data-line="1449">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1449">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1450">        <span class="k">return</span> <span class="p">(</span>
 </span><span data-line="1451">            <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span data-line="1452">            <span class="sa">f</span><span class="s2">&quot; dsn=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;dsn&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> user=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 </span><span data-line="1453">        <span class="p">)</span>
 </span><span data-line="1454">
-</span><span data-line="1455">    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1455">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1456">        <span class="k">return</span> <span class="bp">self</span>
 </span><span data-line="1457">
-</span><span data-line="1458">    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+</span><span data-line="1458">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 </span><span data-line="1459">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span data-line="1460">
-</span><span data-line="1461">    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="1461">    <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="1462"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="1463"><span class="sd">        Will close the connection.</span>
 </span><span data-line="1464">

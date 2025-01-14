@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -112,13 +112,13 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.formatter</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">re</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">string</span>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
 </span><span data-line="3">
 </span><span data-line="4">
 <div class="viewcode-block" id="ExaFormatter">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter">[docs]</a>
-</span><span data-line="5"><span class="k">class</span> <span class="nc">ExaFormatter</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+</span><span data-line="5"><span class="k">class</span><span class="w"> </span><span class="nc">ExaFormatter</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
 </span><span data-line="6"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="7"><span class="sd">        :class:`pyexasol.ExaFormatter` is a subclass of :class:`string.Formatter` designed to prevent SQL injections in Exasol dynamic SQL queries.</span>
 </span><span data-line="8">
@@ -140,7 +140,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="24">    <span class="n">safe_decimal_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(\+|-)?[0-9]+(\.[0-9]+)?$&quot;</span><span class="p">)</span>
 </span><span data-line="25">    <span class="n">safe_float_regexp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(\+|-)?[0-9]+(\.[0-9]+((e|E)(\+|-)[0-9]+)?)?$&quot;</span><span class="p">)</span>
 </span><span data-line="26">
-</span><span data-line="27">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+</span><span data-line="27">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
 </span><span data-line="28">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
 </span><span data-line="29">
 </span><span data-line="30">        <span class="bp">self</span><span class="o">.</span><span class="n">conversions</span> <span class="o">=</span> <span class="p">{</span>
@@ -172,7 +172,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="56">
 <div class="viewcode-block" id="ExaFormatter.format_field">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.format_field">[docs]</a>
-</span><span data-line="57">    <span class="k">def</span> <span class="nf">format_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
+</span><span data-line="57">    <span class="k">def</span><span class="w"> </span><span class="nf">format_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
 </span><span data-line="58">        <span class="k">if</span> <span class="n">format_spec</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
 </span><span data-line="59">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;format_spec is disabled for ExaFormatter&quot;</span><span class="p">)</span>
 </span><span data-line="60">
@@ -181,7 +181,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="62">
 <div class="viewcode-block" id="ExaFormatter.convert_field">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.convert_field">[docs]</a>
-</span><span data-line="63">    <span class="k">def</span> <span class="nf">convert_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">conversion</span><span class="p">):</span>
+</span><span data-line="63">    <span class="k">def</span><span class="w"> </span><span class="nf">convert_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">conversion</span><span class="p">):</span>
 </span><span data-line="64">        <span class="k">if</span> <span class="n">conversion</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span data-line="65">            <span class="n">conversion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_conversion</span>
 </span><span data-line="66">
@@ -199,7 +199,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.escape">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.escape">[docs]</a>
 </span><span data-line="77">    <span class="nd">@classmethod</span>
-</span><span data-line="78">    <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="78">    <span class="k">def</span><span class="w"> </span><span class="nf">escape</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="79"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="80"><span class="sd">        Takes a raw value and converts it into an and escaped string.</span>
 </span><span data-line="81">
@@ -216,7 +216,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.escape_ident">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.escape_ident">[docs]</a>
 </span><span data-line="91">    <span class="nd">@classmethod</span>
-</span><span data-line="92">    <span class="k">def</span> <span class="nf">escape_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="92">    <span class="k">def</span><span class="w"> </span><span class="nf">escape_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="93"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="94"><span class="sd">        Takes a raw value and converts it into an and escaped string.</span>
 </span><span data-line="95">
@@ -233,7 +233,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.escape_like">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.escape_like">[docs]</a>
 </span><span data-line="105">    <span class="nd">@classmethod</span>
-</span><span data-line="106">    <span class="k">def</span> <span class="nf">escape_like</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="106">    <span class="k">def</span><span class="w"> </span><span class="nf">escape_like</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="107"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="108"><span class="sd">        Escape LIKE-patterns.</span>
 </span><span data-line="109">
@@ -256,7 +256,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.quote">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.quote">[docs]</a>
 </span><span data-line="125">    <span class="nd">@classmethod</span>
-</span><span data-line="126">    <span class="k">def</span> <span class="nf">quote</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="126">    <span class="k">def</span><span class="w"> </span><span class="nf">quote</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="127"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="128"><span class="sd">        Escapes a string using :meth:`pyexasol.ExaFormatter.escape` and wraps it in single quotes ``&#39;``.</span>
 </span><span data-line="129"><span class="sd">        &quot;&quot;&quot;</span>
@@ -269,7 +269,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.quote_ident">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.quote_ident">[docs]</a>
 </span><span data-line="135">    <span class="nd">@classmethod</span>
-</span><span data-line="136">    <span class="k">def</span> <span class="nf">quote_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="136">    <span class="k">def</span><span class="w"> </span><span class="nf">quote_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="137"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="138"><span class="sd">        Escapes an object or a tuple of objects using :meth:`pyexasol.ExaFormatter.escape_ident` and wraps it in double quotes ``&quot;``.</span>
 </span><span data-line="139">
@@ -289,7 +289,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.safe_ident">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.safe_ident">[docs]</a>
 </span><span data-line="152">    <span class="nd">@classmethod</span>
-</span><span data-line="153">    <span class="k">def</span> <span class="nf">safe_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="153">    <span class="k">def</span><span class="w"> </span><span class="nf">safe_ident</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="154"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="155"><span class="sd">        Convert a raw identifier safely.</span>
 </span><span data-line="156">
@@ -331,7 +331,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.safe_float">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.safe_float">[docs]</a>
 </span><span data-line="191">    <span class="nd">@classmethod</span>
-</span><span data-line="192">    <span class="k">def</span> <span class="nf">safe_float</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="192">    <span class="k">def</span><span class="w"> </span><span class="nf">safe_float</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="193"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="194"><span class="sd">        Convert a float safely to string.</span>
 </span><span data-line="195">
@@ -358,7 +358,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="viewcode-block" id="ExaFormatter.safe_decimal">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaFormatter.safe_decimal">[docs]</a>
 </span><span data-line="215">    <span class="nd">@classmethod</span>
-</span><span data-line="216">    <span class="k">def</span> <span class="nf">safe_decimal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="216">    <span class="k">def</span><span class="w"> </span><span class="nf">safe_decimal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
 </span><span data-line="217"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="218"><span class="sd">        Convert a decimal safely to string.</span>
 </span><span data-line="219">
@@ -382,7 +382,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="237">        <span class="k">return</span> <span class="n">val</span></div>
 
 </span><span data-line="238">
-</span><span data-line="239">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="239">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="240">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span></pre></div>

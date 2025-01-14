@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -112,13 +112,13 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.meta</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constant</span>
-</span><span data-line="2"><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ExaRuntimeError</span>
+<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">constant</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExaRuntimeError</span>
 </span><span data-line="3">
 </span><span data-line="4">
 <div class="viewcode-block" id="ExaMetaData">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData">[docs]</a>
-</span><span data-line="5"><span class="k">class</span> <span class="nc">ExaMetaData</span><span class="p">:</span>
+</span><span data-line="5"><span class="k">class</span><span class="w"> </span><span class="nc">ExaMetaData</span><span class="p">:</span>
 </span><span data-line="6"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="7"><span class="sd">    This class implements lock-free meta data requests using ``/*snapshot execution*/`` SQL hint described in `IDEA-476 &lt;https://www.exasol.com/support/browse/IDEA-476&gt;`_.</span>
 </span><span data-line="8">
@@ -135,13 +135,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="19">
 </span><span data-line="20">    <span class="n">snapshot_execution_hint</span> <span class="o">=</span> <span class="s2">&quot;/*snapshot execution*/&quot;</span>
 </span><span data-line="21">
-</span><span data-line="22">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
+</span><span data-line="22">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">):</span>
 </span><span data-line="23">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
 </span><span data-line="24">        <span class="bp">self</span><span class="o">.</span><span class="n">sql_keywords</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="25">
 <div class="viewcode-block" id="ExaMetaData.sql_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.sql_columns">[docs]</a>
-</span><span data-line="26">    <span class="k">def</span> <span class="nf">sql_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="26">    <span class="k">def</span><span class="w"> </span><span class="nf">sql_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="27"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="28"><span class="sd">        Get result set columns of SQL query without executing it</span>
 </span><span data-line="29">
@@ -166,7 +166,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="47">
 <div class="viewcode-block" id="ExaMetaData.schema_exists">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.schema_exists">[docs]</a>
-</span><span data-line="48">    <span class="k">def</span> <span class="nf">schema_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">):</span>
+</span><span data-line="48">    <span class="k">def</span><span class="w"> </span><span class="nf">schema_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">):</span>
 </span><span data-line="49"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="50"><span class="sd">        Check if schema exists.</span>
 </span><span data-line="51">
@@ -203,7 +203,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="81">
 <div class="viewcode-block" id="ExaMetaData.table_exists">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.table_exists">[docs]</a>
-</span><span data-line="82">    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+</span><span data-line="82">    <span class="k">def</span><span class="w"> </span><span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
 </span><span data-line="83"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="84"><span class="sd">        Check if table exists.</span>
 </span><span data-line="85">
@@ -254,7 +254,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="129">
 <div class="viewcode-block" id="ExaMetaData.view_exists">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.view_exists">[docs]</a>
-</span><span data-line="130">    <span class="k">def</span> <span class="nf">view_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_name</span><span class="p">):</span>
+</span><span data-line="130">    <span class="k">def</span><span class="w"> </span><span class="nf">view_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_name</span><span class="p">):</span>
 </span><span data-line="131"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="132"><span class="sd">        Check if view exists.</span>
 </span><span data-line="133">
@@ -305,7 +305,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="177">
 <div class="viewcode-block" id="ExaMetaData.list_schemas">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_schemas">[docs]</a>
-</span><span data-line="178">    <span class="k">def</span> <span class="nf">list_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+</span><span data-line="178">    <span class="k">def</span><span class="w"> </span><span class="nf">list_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
 </span><span data-line="179"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="180"><span class="sd">        List Schemas.</span>
 </span><span data-line="181">
@@ -337,7 +337,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="206">
 <div class="viewcode-block" id="ExaMetaData.list_tables">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_tables">[docs]</a>
-</span><span data-line="207">    <span class="k">def</span> <span class="nf">list_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">table_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+</span><span data-line="207">    <span class="k">def</span><span class="w"> </span><span class="nf">list_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">table_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
 </span><span data-line="208"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="209"><span class="sd">        List Tables.</span>
 </span><span data-line="210">
@@ -374,7 +374,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="240">
 <div class="viewcode-block" id="ExaMetaData.list_views">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_views">[docs]</a>
-</span><span data-line="241">    <span class="k">def</span> <span class="nf">list_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">view_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+</span><span data-line="241">    <span class="k">def</span><span class="w"> </span><span class="nf">list_views</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">view_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
 </span><span data-line="242"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="243"><span class="sd">        List Views.</span>
 </span><span data-line="244">
@@ -411,7 +411,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="274">
 <div class="viewcode-block" id="ExaMetaData.list_columns">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_columns">[docs]</a>
-</span><span data-line="275">    <span class="k">def</span> <span class="nf">list_columns</span><span class="p">(</span>
+</span><span data-line="275">    <span class="k">def</span><span class="w"> </span><span class="nf">list_columns</span><span class="p">(</span>
 </span><span data-line="276">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="277">        <span class="n">column_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
 </span><span data-line="278">        <span class="n">column_table_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
@@ -463,7 +463,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="323">
 <div class="viewcode-block" id="ExaMetaData.list_objects">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_objects">[docs]</a>
-</span><span data-line="324">    <span class="k">def</span> <span class="nf">list_objects</span><span class="p">(</span>
+</span><span data-line="324">    <span class="k">def</span><span class="w"> </span><span class="nf">list_objects</span><span class="p">(</span>
 </span><span data-line="325">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="326">        <span class="n">object_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
 </span><span data-line="327">        <span class="n">object_type_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
@@ -515,7 +515,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="372">
 <div class="viewcode-block" id="ExaMetaData.list_object_sizes">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_object_sizes">[docs]</a>
-</span><span data-line="373">    <span class="k">def</span> <span class="nf">list_object_sizes</span><span class="p">(</span>
+</span><span data-line="373">    <span class="k">def</span><span class="w"> </span><span class="nf">list_object_sizes</span><span class="p">(</span>
 </span><span data-line="374">        <span class="bp">self</span><span class="p">,</span>
 </span><span data-line="375">        <span class="n">object_name_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
 </span><span data-line="376">        <span class="n">object_type_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
@@ -567,7 +567,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="421">
 <div class="viewcode-block" id="ExaMetaData.list_indices">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_indices">[docs]</a>
-</span><span data-line="422">    <span class="k">def</span> <span class="nf">list_indices</span><span class="p">(</span>
+</span><span data-line="422">    <span class="k">def</span><span class="w"> </span><span class="nf">list_indices</span><span class="p">(</span>
 </span><span data-line="423">        <span class="bp">self</span><span class="p">,</span> <span class="n">index_schema_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">index_table_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">index_owner_pattern</span><span class="o">=</span><span class="s2">&quot;%&quot;</span>
 </span><span data-line="424">    <span class="p">):</span>
 </span><span data-line="425"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -610,7 +610,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="461">
 <div class="viewcode-block" id="ExaMetaData.list_sql_keywords">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.list_sql_keywords">[docs]</a>
-</span><span data-line="462">    <span class="k">def</span> <span class="nf">list_sql_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="462">    <span class="k">def</span><span class="w"> </span><span class="nf">list_sql_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="463"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="464"><span class="sd">        Get reserved SQL keywords which cannot be used as identifiers without double-quote escaping</span>
 </span><span data-line="465">
@@ -646,7 +646,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="494">
 <div class="viewcode-block" id="ExaMetaData.execute_snapshot">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.execute_snapshot">[docs]</a>
-</span><span data-line="495">    <span class="k">def</span> <span class="nf">execute_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="495">    <span class="k">def</span><span class="w"> </span><span class="nf">execute_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="496"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="497"><span class="sd">        Execute query in snapshot transaction mode using SQL hint</span>
 </span><span data-line="498">
@@ -678,7 +678,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="523">
 <div class="viewcode-block" id="ExaMetaData.execute_meta_nosql">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaMetaData.execute_meta_nosql">[docs]</a>
-</span><span data-line="524">    <span class="k">def</span> <span class="nf">execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_command</span><span class="p">,</span> <span class="n">meta_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="524">    <span class="k">def</span><span class="w"> </span><span class="nf">execute_meta_nosql</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_command</span><span class="p">,</span> <span class="n">meta_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="525"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="526"><span class="sd">        Execute no SQL meta data command introduced in Exasol 7.0+</span>
 </span><span data-line="527">
@@ -717,7 +717,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="560">        <span class="p">)</span></div>
 
 </span><span data-line="561">
-</span><span data-line="562">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="562">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="563">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> session_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">session_id</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span></pre></div>

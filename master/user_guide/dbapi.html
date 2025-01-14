@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
@@ -127,7 +127,7 @@ data-aria-dark="Switch to auto color mode">
 <h3>Exasol WebSocket Driver<a class="headerlink" href="#exasol-websocket-driver" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">pyexasol</span></code> package includes a DBAPI2 compatible driver facade, located in the <code class="docutils literal notranslate"><span class="pre">exasol.driver</span></code> package. However, using pyexasol directly will generally yield better performance when utilizing Exasol in an OLAP manner, which is likely the typical use case.</p>
 <p>That said, in specific scenarios, the DBAPI2 API can be advantageous or even necessary. This is particularly true when integrating with “DB-Agnostic” frameworks. In such cases, you can just import and use the DBAPI2 compliant facade as illustrated in the example below.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">exasol.driver.websocket.dbapi2</span> <span class="kn">import</span> <span class="n">connect</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.driver.websocket.dbapi2</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="n">connection</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">dsn</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;exasol&#39;</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s1">&#39;TEST&#39;</span><span class="p">)</span>
 </span><span data-line="4">

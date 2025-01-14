@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=aeb20d5c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
@@ -112,22 +112,22 @@ data-aria-dark="Switch to auto color mode">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
           <h1>Source code for pyexasol.http_transport</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">import</span> <span class="nn">os</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">re</span>
-</span><span data-line="3"><span class="kn">import</span> <span class="nn">socket</span>
-</span><span data-line="4"><span class="kn">import</span> <span class="nn">socketserver</span>
-</span><span data-line="5"><span class="kn">import</span> <span class="nn">struct</span>
-</span><span data-line="6"><span class="kn">import</span> <span class="nn">sys</span>
-</span><span data-line="7"><span class="kn">import</span> <span class="nn">threading</span>
-</span><span data-line="8"><span class="kn">import</span> <span class="nn">zlib</span>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">socketserver</span>
+</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+</span><span data-line="6"><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">zlib</span>
 </span><span data-line="9">
 </span><span data-line="10">
-</span><span data-line="11"><span class="k">class</span> <span class="nc">ExaSQLThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+</span><span data-line="11"><span class="k">class</span><span class="w"> </span><span class="nc">ExaSQLThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
 </span><span data-line="12"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="13"><span class="sd">    Thread class which re-throws any Exception to parent thread</span>
 </span><span data-line="14"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="15">
-</span><span data-line="16">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">):</span>
+</span><span data-line="16">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">):</span>
 </span><span data-line="17">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
 </span><span data-line="18">        <span class="bp">self</span><span class="o">.</span><span class="n">compression</span> <span class="o">=</span> <span class="n">compression</span>
 </span><span data-line="19">
@@ -138,14 +138,14 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="24">
 </span><span data-line="25">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span data-line="26">
-</span><span data-line="27">    <span class="k">def</span> <span class="nf">set_http_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">http_thread</span><span class="p">):</span>
+</span><span data-line="27">    <span class="k">def</span><span class="w"> </span><span class="nf">set_http_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">http_thread</span><span class="p">):</span>
 </span><span data-line="28">        <span class="bp">self</span><span class="o">.</span><span class="n">http_thread</span> <span class="o">=</span> <span class="n">http_thread</span>
 </span><span data-line="29">        <span class="bp">self</span><span class="o">.</span><span class="n">exa_address_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">http_thread</span><span class="o">.</span><span class="n">exa_address</span><span class="p">]</span>
 </span><span data-line="30">
-</span><span data-line="31">    <span class="k">def</span> <span class="nf">set_exa_address_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exa_address_list</span><span class="p">):</span>
+</span><span data-line="31">    <span class="k">def</span><span class="w"> </span><span class="nf">set_exa_address_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exa_address_list</span><span class="p">):</span>
 </span><span data-line="32">        <span class="bp">self</span><span class="o">.</span><span class="n">exa_address_list</span> <span class="o">=</span> <span class="n">exa_address_list</span>
 </span><span data-line="33">
-</span><span data-line="34">    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="34">    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="35">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="36">            <span class="bp">self</span><span class="o">.</span><span class="n">run_sql</span><span class="p">()</span>
 </span><span data-line="37">        <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -155,16 +155,16 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="41">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_thread</span><span class="p">:</span>
 </span><span data-line="42">                <span class="bp">self</span><span class="o">.</span><span class="n">http_thread</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
 </span><span data-line="43">
-</span><span data-line="44">    <span class="k">def</span> <span class="nf">run_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="44">    <span class="k">def</span><span class="w"> </span><span class="nf">run_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="45">        <span class="k">pass</span>
 </span><span data-line="46">
-</span><span data-line="47">    <span class="k">def</span> <span class="nf">join_with_exc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span data-line="47">    <span class="k">def</span><span class="w"> </span><span class="nf">join_with_exc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 </span><span data-line="48">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </span><span data-line="49">
 </span><span data-line="50">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exc</span><span class="p">:</span>
 </span><span data-line="51">            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">exc</span>
 </span><span data-line="52">
-</span><span data-line="53">    <span class="k">def</span> <span class="nf">build_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="53">    <span class="k">def</span><span class="w"> </span><span class="nf">build_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="54">        <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 </span><span data-line="55">
 </span><span data-line="56">        <span class="k">if</span> <span class="s2">&quot;format&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -191,13 +191,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="77">
 </span><span data-line="78">        <span class="k">return</span> <span class="n">files</span>
 </span><span data-line="79">
-</span><span data-line="80">    <span class="k">def</span> <span class="nf">build_columns_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="80">    <span class="k">def</span><span class="w"> </span><span class="nf">build_columns_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="81">        <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
 </span><span data-line="82">            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 </span><span data-line="83">
 </span><span data-line="84">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]])</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span><span data-line="85">
-</span><span data-line="86">    <span class="k">def</span> <span class="nf">build_csv_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="86">    <span class="k">def</span><span class="w"> </span><span class="nf">build_csv_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="87">        <span class="k">if</span> <span class="s2">&quot;csv_cols&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
 </span><span data-line="88">            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 </span><span data-line="89">
@@ -212,19 +212,19 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="98">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;csv_cols&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span>
 </span><span data-line="99">
 </span><span data-line="100">
-</span><span data-line="101"><span class="k">class</span> <span class="nc">ExaSQLExportThread</span><span class="p">(</span><span class="n">ExaSQLThread</span><span class="p">):</span>
+</span><span data-line="101"><span class="k">class</span><span class="w"> </span><span class="nc">ExaSQLExportThread</span><span class="p">(</span><span class="n">ExaSQLThread</span><span class="p">):</span>
 </span><span data-line="102"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="103"><span class="sd">    Build and run EXPORT query into separate thread</span>
 </span><span data-line="104"><span class="sd">    Main thread is busy outputting data in callbacks</span>
 </span><span data-line="105"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="106">
-</span><span data-line="107">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">export_params</span><span class="p">):</span>
+</span><span data-line="107">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">query_or_table</span><span class="p">,</span> <span class="n">export_params</span><span class="p">):</span>
 </span><span data-line="108">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">)</span>
 </span><span data-line="109">
 </span><span data-line="110">        <span class="bp">self</span><span class="o">.</span><span class="n">query_or_table</span> <span class="o">=</span> <span class="n">query_or_table</span>
 </span><span data-line="111">        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">export_params</span>
 </span><span data-line="112">
-</span><span data-line="113">    <span class="k">def</span> <span class="nf">run_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="113">    <span class="k">def</span><span class="w"> </span><span class="nf">run_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="114">        <span class="k">if</span> <span class="p">(</span>
 </span><span data-line="115">            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_or_table</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
 </span><span data-line="116">            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_or_table</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
@@ -292,19 +292,19 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="178">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">))</span>
 </span><span data-line="179">
 </span><span data-line="180">
-</span><span data-line="181"><span class="k">class</span> <span class="nc">ExaSQLImportThread</span><span class="p">(</span><span class="n">ExaSQLThread</span><span class="p">):</span>
+</span><span data-line="181"><span class="k">class</span><span class="w"> </span><span class="nc">ExaSQLImportThread</span><span class="p">(</span><span class="n">ExaSQLThread</span><span class="p">):</span>
 </span><span data-line="182"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="183"><span class="sd">    Build and run EXPORT query into separate thread</span>
 </span><span data-line="184"><span class="sd">    Main thread is busy parsing results in callbacks</span>
 </span><span data-line="185"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="186">
-</span><span data-line="187">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="p">):</span>
+</span><span data-line="187">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">import_params</span><span class="p">):</span>
 </span><span data-line="188">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">compression</span><span class="p">)</span>
 </span><span data-line="189">
 </span><span data-line="190">        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table</span>
 </span><span data-line="191">        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">import_params</span>
 </span><span data-line="192">
-</span><span data-line="193">    <span class="k">def</span> <span class="nf">run_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="193">    <span class="k">def</span><span class="w"> </span><span class="nf">run_sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="194">        <span class="n">table_ident</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">default_format_ident</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
 </span><span data-line="195">
 </span><span data-line="196">        <span class="n">parts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -357,13 +357,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="243">        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">))</span>
 </span><span data-line="244">
 </span><span data-line="245">
-</span><span data-line="246"><span class="k">class</span> <span class="nc">ExaHttpThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+</span><span data-line="246"><span class="k">class</span><span class="w"> </span><span class="nc">ExaHttpThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
 </span><span data-line="247"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="248"><span class="sd">    HTTP communication and compression / decompression is offloaded to separate thread</span>
 </span><span data-line="249"><span class="sd">    Thread can be used instead of subprocess when compatibility is an issue</span>
 </span><span data-line="250"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="251">
-</span><span data-line="252">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">encryption</span><span class="p">):</span>
+</span><span data-line="252">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">encryption</span><span class="p">):</span>
 </span><span data-line="253">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">ExaTCPServer</span><span class="p">(</span>
 </span><span data-line="254">            <span class="p">(</span><span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
 </span><span data-line="255">            <span class="n">ExaHttpRequestHandler</span><span class="p">,</span>
@@ -379,10 +379,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="265">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span data-line="266">
 </span><span data-line="267">    <span class="nd">@property</span>
-</span><span data-line="268">    <span class="k">def</span> <span class="nf">exa_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="268">    <span class="k">def</span><span class="w"> </span><span class="nf">exa_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="269">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">exa_address_ipaddr</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">exa_address_port</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span data-line="270">
-</span><span data-line="271">    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="271">    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="272">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="273">            <span class="c1"># Handle exactly one HTTP request</span>
 </span><span data-line="274">            <span class="c1"># Exit loop if thread was explicitly terminated prior to receiving HTTP request</span>
@@ -393,17 +393,17 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="279">        <span class="k">finally</span><span class="p">:</span>
 </span><span data-line="280">            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">server_close</span><span class="p">()</span>
 </span><span data-line="281">
-</span><span data-line="282">    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="282">    <span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="283">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">can_finish_get</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 </span><span data-line="284">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
 </span><span data-line="285">
-</span><span data-line="286">    <span class="k">def</span> <span class="nf">join_with_exc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="286">    <span class="k">def</span><span class="w"> </span><span class="nf">join_with_exc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="287">        <span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 </span><span data-line="288">
 </span><span data-line="289">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exc</span><span class="p">:</span>
 </span><span data-line="290">            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">exc</span>
 </span><span data-line="291">
-</span><span data-line="292">    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="292">    <span class="k">def</span><span class="w"> </span><span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="293">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_terminated</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span data-line="294">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">can_finish_get</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 </span><span data-line="295">
@@ -415,7 +415,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="301">
 <div class="viewcode-block" id="ExaHTTPTransportWrapper">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaHTTPTransportWrapper">[docs]</a>
-</span><span data-line="302"><span class="k">class</span> <span class="nc">ExaHTTPTransportWrapper</span><span class="p">:</span>
+</span><span data-line="302"><span class="k">class</span><span class="w"> </span><span class="nc">ExaHTTPTransportWrapper</span><span class="p">:</span>
 </span><span data-line="303"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="304"><span class="sd">    Wrapper for :ref:`http_transport_parallel`.</span>
 </span><span data-line="305">
@@ -430,12 +430,12 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="314"><span class="sd">        wait for incoming connection, process data and exit.</span>
 </span><span data-line="315"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="316">
-</span><span data-line="317">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">encryption</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="317">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">encryption</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 </span><span data-line="318">        <span class="bp">self</span><span class="o">.</span><span class="n">http_thread</span> <span class="o">=</span> <span class="n">ExaHttpThread</span><span class="p">(</span><span class="n">ipaddr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">encryption</span><span class="p">)</span>
 </span><span data-line="319">        <span class="bp">self</span><span class="o">.</span><span class="n">http_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </span><span data-line="320">
 </span><span data-line="321">    <span class="nd">@property</span>
-</span><span data-line="322">    <span class="k">def</span> <span class="nf">exa_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="322">    <span class="k">def</span><span class="w"> </span><span class="nf">exa_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="323"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="324"><span class="sd">        Internal Exasol address as ``ipaddr:port`` string.</span>
 </span><span data-line="325">
@@ -448,7 +448,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="332">
 <div class="viewcode-block" id="ExaHTTPTransportWrapper.get_proxy">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaHTTPTransportWrapper.get_proxy">[docs]</a>
-</span><span data-line="333">    <span class="k">def</span> <span class="nf">get_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="333">    <span class="k">def</span><span class="w"> </span><span class="nf">get_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="334"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="335"><span class="sd">        Caution:</span>
 </span><span data-line="336"><span class="sd">            **DEPRECATED**, please use ``.exa_address`` property</span>
@@ -458,7 +458,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="339">
 <div class="viewcode-block" id="ExaHTTPTransportWrapper.export_to_callback">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaHTTPTransportWrapper.export_to_callback">[docs]</a>
-</span><span data-line="340">    <span class="k">def</span> <span class="nf">export_to_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="340">    <span class="k">def</span><span class="w"> </span><span class="nf">export_to_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="341"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="342"><span class="sd">        Exports chunk of data using callback function.</span>
 </span><span data-line="343">
@@ -500,7 +500,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="378">
 <div class="viewcode-block" id="ExaHTTPTransportWrapper.import_from_callback">
 <a class="viewcode-back" href="../../api.html#pyexasol.ExaHTTPTransportWrapper.import_from_callback">[docs]</a>
-</span><span data-line="379">    <span class="k">def</span> <span class="nf">import_from_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="379">    <span class="k">def</span><span class="w"> </span><span class="nf">import_from_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">callback_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span><span data-line="380"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="381"><span class="sd">        Import chunk of data using callback function.</span>
 </span><span data-line="382">
@@ -540,12 +540,12 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="416">            <span class="k">raise</span> <span class="n">e</span></div>
 
 </span><span data-line="417">
-</span><span data-line="418">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="418">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="419">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> exa_address=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exa_address</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </span><span data-line="420">
 </span><span data-line="421">
-</span><span data-line="422"><span class="k">class</span> <span class="nc">ExaTCPServer</span><span class="p">(</span><span class="n">socketserver</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">):</span>
+</span><span data-line="422"><span class="k">class</span><span class="w"> </span><span class="nc">ExaTCPServer</span><span class="p">(</span><span class="n">socketserver</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">):</span>
 </span><span data-line="423">    <span class="n">exa_address_ipaddr</span><span class="p">:</span> <span class="nb">str</span>
 </span><span data-line="424">    <span class="n">exa_address_port</span><span class="p">:</span> <span class="nb">int</span>
 </span><span data-line="425">
@@ -554,7 +554,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="428">
 </span><span data-line="429">    <span class="n">timeout</span> <span class="o">=</span> <span class="mi">1</span>
 </span><span data-line="430">
-</span><span data-line="431">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="431">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="432">        <span class="bp">self</span><span class="o">.</span><span class="n">compression</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 </span><span data-line="433">        <span class="bp">self</span><span class="o">.</span><span class="n">encryption</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;encryption&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </span><span data-line="434">
@@ -576,7 +576,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="450">
 </span><span data-line="451">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="452">
-</span><span data-line="453">    <span class="k">def</span> <span class="nf">server_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="453">    <span class="k">def</span><span class="w"> </span><span class="nf">server_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="454">        <span class="bp">self</span><span class="o">.</span><span class="n">set_sock_opts</span><span class="p">()</span>
 </span><span data-line="455">
 </span><span data-line="456"><span class="w">        </span><span class="sd">&quot;&quot;&quot; Special Exasol packet to establish tunneling and return internal exasol address, which can be used in query &quot;&quot;&quot;</span>
@@ -593,19 +593,19 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="467">                <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="p">,</span> <span class="n">server_side</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_handshake_on_connect</span><span class="o">=</span><span class="kc">False</span>
 </span><span data-line="468">            <span class="p">)</span>
 </span><span data-line="469">
-</span><span data-line="470">    <span class="k">def</span> <span class="nf">server_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="470">    <span class="k">def</span><span class="w"> </span><span class="nf">server_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="471">        <span class="k">pass</span>
 </span><span data-line="472">
-</span><span data-line="473">    <span class="k">def</span> <span class="nf">get_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="473">    <span class="k">def</span><span class="w"> </span><span class="nf">get_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="474">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_address</span>
 </span><span data-line="475">
-</span><span data-line="476">    <span class="k">def</span> <span class="nf">shutdown_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span><span data-line="476">    <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
 </span><span data-line="477">        <span class="k">pass</span>
 </span><span data-line="478">
-</span><span data-line="479">    <span class="k">def</span> <span class="nf">close_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span><span data-line="479">    <span class="k">def</span><span class="w"> </span><span class="nf">close_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
 </span><span data-line="480">        <span class="k">pass</span>
 </span><span data-line="481">
-</span><span data-line="482">    <span class="k">def</span> <span class="nf">set_sock_opts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="482">    <span class="k">def</span><span class="w"> </span><span class="nf">set_sock_opts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="483">        <span class="c1"># only large packets are expected for HTTP transport</span>
 </span><span data-line="484">        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">TCP_NODELAY</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </span><span data-line="485">
@@ -634,16 +634,16 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="508">            <span class="p">)</span>
 </span><span data-line="509">
 </span><span data-line="510">    <span class="nd">@staticmethod</span>
-</span><span data-line="511">    <span class="k">def</span> <span class="nf">generate_adhoc_ssl_context</span><span class="p">():</span>
+</span><span data-line="511">    <span class="k">def</span><span class="w"> </span><span class="nf">generate_adhoc_ssl_context</span><span class="p">():</span>
 </span><span data-line="512"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="513"><span class="sd">        Create temporary self-signed certificate for encrypted HTTP transport</span>
 </span><span data-line="514"><span class="sd">        Exasol does not check validity of certificates</span>
 </span><span data-line="515"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="516">        <span class="kn">import</span> <span class="nn">pathlib</span>
-</span><span data-line="517">        <span class="kn">import</span> <span class="nn">ssl</span>
-</span><span data-line="518">        <span class="kn">import</span> <span class="nn">tempfile</span>
+</span><span data-line="516">        <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+</span><span data-line="517">        <span class="kn">import</span><span class="w"> </span><span class="nn">ssl</span>
+</span><span data-line="518">        <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 </span><span data-line="519">
-</span><span data-line="520">        <span class="kn">from</span> <span class="nn">OpenSSL</span> <span class="kn">import</span> <span class="n">crypto</span>
+</span><span data-line="520">        <span class="kn">from</span><span class="w"> </span><span class="nn">OpenSSL</span><span class="w"> </span><span class="kn">import</span> <span class="n">crypto</span>
 </span><span data-line="521">
 </span><span data-line="522">        <span class="n">k</span> <span class="o">=</span> <span class="n">crypto</span><span class="o">.</span><span class="n">PKey</span><span class="p">()</span>
 </span><span data-line="523">        <span class="n">k</span><span class="o">.</span><span class="n">generate_key</span><span class="p">(</span><span class="n">crypto</span><span class="o">.</span><span class="n">TYPE_RSA</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
@@ -675,7 +675,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="549">            <span class="k">return</span> <span class="n">context</span>
 </span><span data-line="550">
 </span><span data-line="551">
-</span><span data-line="552"><span class="k">class</span> <span class="nc">ExaHttpRequestHandler</span><span class="p">(</span><span class="n">socketserver</span><span class="o">.</span><span class="n">StreamRequestHandler</span><span class="p">):</span>
+</span><span data-line="552"><span class="k">class</span><span class="w"> </span><span class="nc">ExaHttpRequestHandler</span><span class="p">(</span><span class="n">socketserver</span><span class="o">.</span><span class="n">StreamRequestHandler</span><span class="p">):</span>
 </span><span data-line="553">    <span class="n">success_headers</span> <span class="o">=</span> <span class="p">(</span>
 </span><span data-line="554">        <span class="sa">b</span><span class="s2">&quot;HTTP/1.1 200 OK</span><span class="se">\r\n</span><span class="s2">&quot;</span>
 </span><span data-line="555">        <span class="sa">b</span><span class="s2">&quot;Connection: close</span><span class="se">\r\n</span><span class="s2">&quot;</span>
@@ -689,7 +689,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="563">
 </span><span data-line="564">    <span class="n">server</span><span class="p">:</span> <span class="n">ExaTCPServer</span>
 </span><span data-line="565">
-</span><span data-line="566">    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="566">    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="567">        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">total_clients</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span data-line="568">
 </span><span data-line="569">        <span class="c1"># Extract method from the first header</span>
@@ -712,7 +712,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="586">        <span class="k">else</span><span class="p">:</span>
 </span><span data-line="587">            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported HTTP method [</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
 </span><span data-line="588">
-</span><span data-line="589">    <span class="k">def</span> <span class="nf">method_put_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="589">    <span class="k">def</span><span class="w"> </span><span class="nf">method_put_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="590">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="591">            <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_terminated</span><span class="p">:</span>
 </span><span data-line="592">                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_chunk</span><span class="p">()</span>
@@ -733,7 +733,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="607">        <span class="k">finally</span><span class="p">:</span>
 </span><span data-line="608">            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">write_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span data-line="609">
-</span><span data-line="610">    <span class="k">def</span> <span class="nf">method_put_compressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="610">    <span class="k">def</span><span class="w"> </span><span class="nf">method_put_compressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="611">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="612">            <span class="n">d</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompressobj</span><span class="p">(</span><span class="n">wbits</span><span class="o">=</span><span class="mi">16</span> <span class="o">+</span> <span class="n">zlib</span><span class="o">.</span><span class="n">MAX_WBITS</span><span class="p">)</span>
 </span><span data-line="613">
@@ -757,7 +757,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="631">        <span class="k">finally</span><span class="p">:</span>
 </span><span data-line="632">            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">write_pipe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span data-line="633">
-</span><span data-line="634">    <span class="k">def</span> <span class="nf">method_get_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="634">    <span class="k">def</span><span class="w"> </span><span class="nf">method_get_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="635">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="636">            <span class="bp">self</span><span class="o">.</span><span class="n">write_success_headers</span><span class="p">()</span>
 </span><span data-line="637">
@@ -779,7 +779,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="653">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">can_finish_get</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_terminated</span><span class="p">:</span>
 </span><span data-line="654">            <span class="bp">self</span><span class="o">.</span><span class="n">write_final_chunk</span><span class="p">()</span>
 </span><span data-line="655">
-</span><span data-line="656">    <span class="k">def</span> <span class="nf">method_get_compressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="656">    <span class="k">def</span><span class="w"> </span><span class="nf">method_get_compressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="657">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="658">            <span class="bp">self</span><span class="o">.</span><span class="n">write_success_headers</span><span class="p">()</span>
 </span><span data-line="659">            <span class="n">c</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compressobj</span><span class="p">(</span><span class="n">wbits</span><span class="o">=</span><span class="mi">16</span> <span class="o">+</span> <span class="n">zlib</span><span class="o">.</span><span class="n">MAX_WBITS</span><span class="p">)</span>
@@ -803,7 +803,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="677">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">can_finish_get</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_terminated</span><span class="p">:</span>
 </span><span data-line="678">            <span class="bp">self</span><span class="o">.</span><span class="n">write_final_chunk</span><span class="p">()</span>
 </span><span data-line="679">
-</span><span data-line="680">    <span class="k">def</span> <span class="nf">read_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="680">    <span class="k">def</span><span class="w"> </span><span class="nf">read_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="681">        <span class="n">hex_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 </span><span data-line="682">
 </span><span data-line="683">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_length</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -821,7 +821,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="695">
 </span><span data-line="696">        <span class="k">return</span> <span class="n">data</span>
 </span><span data-line="697">
-</span><span data-line="698">    <span class="k">def</span> <span class="nf">write_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+</span><span data-line="698">    <span class="k">def</span><span class="w"> </span><span class="nf">write_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 </span><span data-line="699">        <span class="n">chunk_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </span><span data-line="700">
 </span><span data-line="701">        <span class="k">if</span> <span class="n">chunk_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -829,13 +829,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="703">
 </span><span data-line="704">        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="si">%X</span><span class="se">\r\n</span><span class="s2">%b</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">chunk_len</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
 </span><span data-line="705">
-</span><span data-line="706">    <span class="k">def</span> <span class="nf">write_final_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="706">    <span class="k">def</span><span class="w"> </span><span class="nf">write_final_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="707">        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;0</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span data-line="708">
-</span><span data-line="709">    <span class="k">def</span> <span class="nf">write_success_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="709">    <span class="k">def</span><span class="w"> </span><span class="nf">write_success_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="710">        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">success_headers</span><span class="p">)</span>
 </span><span data-line="711">
-</span><span data-line="712">    <span class="k">def</span> <span class="nf">write_error_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="712">    <span class="k">def</span><span class="w"> </span><span class="nf">write_error_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="713">        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_headers</span><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
